@@ -1,0 +1,21 @@
+index.html
+  s_62801e7f3753d2::t_479642f84e3680 8
+favicon.svg
+  s_62801e7f3753d2::t_8e9b98ec437568 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "9c90024b3611c7c6bafdfb033517ae285dd84458",
+  "prompts": {},
+  "sessions": {
+    "s_62801e7f3753d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0570c2da-d597-42b2-a15b-5afe2907b2a0",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
