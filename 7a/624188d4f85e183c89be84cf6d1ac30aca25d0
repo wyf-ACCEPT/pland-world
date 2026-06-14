@@ -1,0 +1,21 @@
+index.html
+  s_62801e7f3753d2::t_e48a113121f58e 58
+  s_62801e7f3753d2::t_44105dec1775a5 81
+  s_62801e7f3753d2::t_1afdd4dc0601e3 9-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "7a624188d4f85e183c89be84cf6d1ac30aca25d0",
+  "prompts": {},
+  "sessions": {
+    "s_62801e7f3753d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0570c2da-d597-42b2-a15b-5afe2907b2a0",
+        "model": "claude-fable-5"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
