@@ -1117,7 +1117,12 @@ function renderDistribution(filtered) {
       formatter(p) {
         const i = p[0].dataIndex;
         const lo = Math.round((LO + i * BIN) * 100), hi = Math.round((LO + (i + 1) * BIN) * 100);
-        return `<b>${lo}% to ${hi}%</b><br/>${p[0].value} issue${p[0].value === 1 ? '' : 's'}` +
+        // The top bin is an OVERFLOW bucket: it pools every return >= +95% (up to
+        // the dataset's most extreme microcap pops), so it must read ">= +95%",
+        // NOT the literal "95% to 100%". The bottom bin needs no such treatment —
+        // a return can't fall below -100% (price can't go negative).
+        const range = (i === nBins - 1) ? `&ge; +${lo}%` : `${lo}% to ${hi}%`;
+        return `<b>${range}</b><br/>${p[0].value} issue${p[0].value === 1 ? '' : 's'}` +
           (i === medBin ? `<br/><span style="color:${C.accent}">contains median</span>` : '');
       },
     },
