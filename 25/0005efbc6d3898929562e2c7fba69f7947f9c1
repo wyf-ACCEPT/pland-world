@@ -1,0 +1,19 @@
+index.html
+  s_3c36663240c7c0::t_640652045cc8df 84-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "250005efbc6d3898929562e2c7fba69f7947f9c1",
+  "prompts": {},
+  "sessions": {
+    "s_3c36663240c7c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f81faa80-9cfb-4b89-a1c6-8b72a654429e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
