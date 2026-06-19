@@ -65,13 +65,15 @@
   .entry{display:flex;flex-direction:column;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:22px;transition:border-color .16s ease,transform .16s ease,background .16s ease;min-height:228px}
   .entry:hover{border-color:var(--accent);transform:translateY(-2px);background:var(--bg-card-2)}
   .entry-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .entry .arrow{margin-left:auto;font-size:19px;line-height:1;color:var(--ink-faint);transition:color .16s ease,transform .16s ease}
+  .entry:hover .arrow{color:var(--accent);transform:translateX(3px)}
   .entry .emoji{font-size:20px;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;background:var(--bg-raised);flex:none}
   .entry .who{font-weight:600;font-size:14px;display:flex;flex-direction:column;line-height:1.2;color:var(--ink)}
   .entry .who small{font-family:var(--mono);font-weight:500;font-size:10.5px;color:var(--accent);margin-top:4px;letter-spacing:.06em;text-transform:uppercase}
   .entry h3{font-family:var(--serif);font-weight:500;margin:0 0 9px;font-size:20px;letter-spacing:-.01em;color:var(--ink)}
   .entry p{margin:0;color:var(--ink-dim);font-size:13.5px;line-height:1.6;flex:1}
-  .entry .go{margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--ink-faint);letter-spacing:.04em}
-  .entry:hover .go{color:var(--accent)}
+  .entry .go{margin-top:18px;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(224,163,70,.42);border-radius:999px;padding:8px 14px;transition:background .16s ease,border-color .16s ease}
+  .entry:hover .go{background:rgba(224,163,70,.2);border-color:var(--accent)}
 
   /* 合成 / 收敛区块 */
   .synth{margin-top:18px;border:1px solid var(--line);border-radius:20px;background:var(--bg-raised);padding:30px 30px 28px;overflow:hidden}
@@ -143,19 +145,19 @@
       </div>
       <div class="cards">
         <a class="entry" href="pland-stripe.html">
-          <div class="entry-top"><span class="emoji">🧱</span><span class="who">PlanD<small>透镜 / 框架</small></span></div>
+          <div class="entry-top"><span class="emoji">🧱</span><span class="who">PlanD<small>透镜 / 框架</small></span><span class="arrow">→</span></div>
           <h3>Stripe 的三块脏活</h3>
           <p>复盘 Stripe 母题：护城河长在脏活里、不在管子里。为另外两条线提供分析脊柱。</p>
           <span class="go">打开页面 →</span>
         </a>
         <a class="entry" href="sipeng-permit.html">
-          <div class="entry-top"><span class="emoji">🧾</span><span class="who">思芃<small>反方 · 买家</small></span></div>
+          <div class="entry-top"><span class="emoji">🧾</span><span class="who">思芃<small>反方 · 买家</small></span><span class="arrow">→</span></div>
           <h3>给 agent 一张消费许可证</h3>
           <p>真买家不是开发者 / crypto 圈。产品是替他吞下"agent 花钱的授权、证据与责任"。</p>
           <span class="go">打开页面 →</span>
         </a>
         <a class="entry" href="yingmiao-no-stablecoin.html">
-          <div class="entry-top"><span class="emoji">⚔️</span><span class="who">应淼<small>反方 · rail</small></span></div>
+          <div class="entry-top"><span class="emoji">⚔️</span><span class="who">应淼<small>反方 · rail</small></span><span class="arrow">→</span></div>
           <h3>赢家不需要稳定币</h3>
           <p>用尽全力证明稳定币不是必需——杀不死，我们才挣到"必须用稳定币"的信念。</p>
           <span class="go">打开页面 →</span>
