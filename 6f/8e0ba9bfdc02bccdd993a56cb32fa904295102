@@ -1,0 +1,20 @@
+2026-06-us-ipo-aftermarket/index.html
+  s_3c36663240c7c0::t_56e2db16493d31 543-544
+  s_3c36663240c7c0::t_8f5597194e99f5 48-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "6f8e0ba9bfdc02bccdd993a56cb32fa904295102",
+  "prompts": {},
+  "sessions": {
+    "s_3c36663240c7c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f81faa80-9cfb-4b89-a1c6-8b72a654429e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
