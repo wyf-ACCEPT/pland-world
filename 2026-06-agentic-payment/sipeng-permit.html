@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Isometry 是否应该做 Agentic Payment 的责任层</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+      --line:#2a313c; --line-soft:#20262f;
+      --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+      --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+      --good:#5fb98c; --good-soft:rgba(95,185,140,.13);
+      --bad:#d9776b; --bad-soft:rgba(217,119,107,.13);
+      --warn:#e0a346; --warn-soft:rgba(224,163,70,.13);
+      --slate:#6f9bd1; --clay:#cf7a52;
+      --mono:"IBM Plex Mono",ui-monospace,monospace;
+      --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+      --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+      /* page-specific legacy aliases */
+      --muted:var(--ink-dim);
+      --soft:var(--bg-card-2);
+      --soft2:var(--bg-card-2);
+      --danger:var(--bad);
+      --danger-soft:var(--bad-soft);
+      --paper:var(--bg-card);
+      --max:1120px;
+      --radius:12px;
+      --shadow:0 18px 48px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1100px 620px at 80% -10%, rgba(224,163,70,.07), transparent 60%),
+        radial-gradient(900px 520px at 8% 4%, rgba(111,155,209,.05), transparent 55%),
+        var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+      font-size:17px;
+      line-height:1.68;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .page{width:min(var(--max),calc(100% - 32px));margin:18px auto 52px}
+    .sheet{background:var(--bg-raised);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+    .hero{padding:50px 60px 40px;border-bottom:1px solid var(--line);background:var(--bg-raised)}
+    .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:var(--ink-faint);margin-bottom:16px}
+    h1{font-family:var(--serif);font-weight:500;font-size:44px;line-height:1.14;letter-spacing:-.02em;margin:0 0 22px;max-width:880px;color:var(--ink)}
+    .lead{font-size:22px;line-height:1.55;font-weight:500;max-width:900px;margin:0;color:var(--ink-dim)}
+    .lead strong{color:var(--ink);font-weight:600}
+    .one-line{margin-top:28px;padding:17px 20px;border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--bg-card);border-radius:0 10px 10px 0;font-size:18px;font-weight:500;color:var(--ink)}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+    .pill{border:1px solid var(--line);background:var(--bg-card-2);border-radius:8px;padding:6px 10px;font-family:var(--mono);font-size:12px;color:var(--ink-dim);font-weight:500}
+    nav{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(14,17,22,.88);backdrop-filter:blur(12px);padding:12px 28px;display:flex;gap:8px;overflow:auto}
+    nav a{white-space:nowrap;color:var(--ink-dim);font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.02em;padding:8px 11px;border-radius:9px}
+    nav a:hover{background:var(--bg-card);color:var(--accent);text-decoration:none}
+    section{padding:50px 60px;border-bottom:1px solid var(--line)}
+    section:last-child{border-bottom:0}
+    .section-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;margin-bottom:8px}
+    h2{font-family:var(--serif);font-weight:500;font-size:31px;line-height:1.22;letter-spacing:-.01em;margin:0 0 16px;color:var(--ink)}
+    h3{font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.32;margin:0 0 10px;color:var(--ink)}
+    p{margin:0 0 16px}
+    .intro{font-size:19px;color:var(--ink-dim);max-width:900px;margin-bottom:28px}
+    .four{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .summary-card{border:1px solid var(--line);border-radius:var(--radius);padding:18px;background:var(--bg-card);min-height:160px}
+    .summary-card .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;letter-spacing:.06em;margin-bottom:10px}
+    .summary-card h3{font-size:19px}
+    .summary-card p{font-size:15px;color:var(--ink-dim);margin:0;line-height:1.55}
+    .not-box{margin-top:18px;border:1px dashed rgba(224,163,70,.4);background:var(--accent-soft);border-radius:14px;padding:16px 18px;color:var(--ink-dim)}
+    .not-box strong{color:var(--ink)}
+    .flow-wrap{margin-top:30px;border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--bg-card)}
+    .flow{display:grid;grid-template-columns:1fr 46px 1.55fr 46px 1fr 46px 1fr;align-items:stretch;gap:0}
+    .flow-node{border:1px solid var(--line);background:var(--bg-card-2);border-radius:12px;padding:18px;min-height:168px}
+    .flow-node.primary{border:1px solid rgba(224,163,70,.42);background:var(--accent-soft)}
+    .flow-node .label{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px}
+    .flow-node.primary .label{color:var(--accent)}
+    .flow-node h3{font-size:19px}
+    .flow-node ul{margin:10px 0 0;padding-left:20px;color:var(--ink-dim);font-size:14px}
+    .flow-arrow{display:grid;place-items:center;font-size:27px;color:var(--ink-faint)}
+    .plain-note{font-size:14px;color:var(--ink-dim);margin-top:14px}
+    .example{border-radius:14px;border:1px solid rgba(224,163,70,.42);background:linear-gradient(180deg,#181d25,#13171d);overflow:hidden;margin-top:28px}
+    .example-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .example-head h3{margin:0}
+    .example-head span{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;letter-spacing:.02em}
+    .example-grid{display:grid;grid-template-columns:1fr 1fr}
+    .example-col{padding:24px}
+    .example-col+ .example-col{border-left:1px solid var(--line)}
+    .example-col h4{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px}
+    .quote{font-family:var(--serif);font-size:20px;font-weight:500;line-height:1.48;margin:0 0 18px;color:var(--ink)}
+    .step{display:grid;grid-template-columns:34px 1fr;gap:10px;margin:12px 0}
+    .step b{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--bg-card-2);border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);font-size:13px;font-weight:500}
+    .step.good b{background:var(--good-soft);border-color:rgba(95,185,140,.4);color:var(--good)}
+    .step.bad b{background:var(--bad-soft);border-color:rgba(217,119,107,.4);color:var(--bad)}
+    .step p{font-size:15px;margin:1px 0 0;color:var(--ink-dim)}
+    .gap-line{margin-top:18px;padding:14px 16px;border-radius:10px;border:1px solid var(--warn-soft);background:var(--warn-soft);color:var(--warn);font-weight:500}
+    .landscape{display:grid;gap:14px;margin-top:26px}
+    .approach{display:grid;grid-template-columns:200px 1fr 1fr;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg-card)}
+    .approach>div{padding:19px 20px}
+    .approach>div+div{border-left:1px solid var(--line)}
+    .approach .name{background:var(--bg-card-2);font-weight:600;color:var(--ink)}
+    .approach .name small{display:block;color:var(--ink-dim);font-weight:400;margin-top:6px;line-height:1.45}
+    .approach h4{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 7px}
+    .approach>div:nth-child(2) h4{color:var(--good)}
+    .approach>div:nth-child(3) h4{color:var(--bad)}
+    .approach p{font-size:15px;margin:0;color:var(--ink-dim)}
+    .approach p strong{color:var(--ink)}
+    .customer-list{display:grid;gap:15px;margin-top:28px}
+    .customer{border:1px solid var(--line);border-radius:12px;padding:22px;background:var(--bg-card);display:grid;grid-template-columns:160px 1fr 1fr;gap:22px;align-items:start}
+    .customer .who{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--ink)}
+    .customer .who small{display:block;font-family:var(--sans);font-size:13px;color:var(--ink-dim);font-weight:400;margin-top:6px}
+    .customer h4{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 6px}
+    .customer p{font-size:15px;color:var(--ink-dim);margin:0}
+    .example-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;background:var(--bg-card-2);border:1px solid var(--line);border-radius:6px;padding:3px 7px;color:var(--ink-dim);font-weight:500;margin-bottom:8px}
+    .customer>div:nth-child(2) .example-tag{color:var(--bad);border-color:rgba(217,119,107,.35)}
+    .customer>div:nth-child(3) .example-tag{color:var(--good);border-color:rgba(95,185,140,.35)}
+    .bet{margin-top:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .bet-card{border-radius:12px;padding:18px;border:1px solid rgba(224,163,70,.42);background:var(--accent-soft)}
+    .bet-card b{display:block;font-family:var(--serif);font-size:18px;font-weight:500;margin-bottom:7px;color:var(--accent)}
+    .bet-card span{font-size:14px;color:var(--ink-dim)}
+    .warning{margin-top:18px;padding:16px 18px;border-radius:10px;border:1px solid rgba(224,163,70,.42);background:var(--warn-soft);color:var(--ink-dim)}
+    .warning strong{color:var(--warn)}
+    .open-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px}
+    .open-card{border:1px solid var(--line);border-radius:12px;padding:21px;background:var(--bg-card)}
+    .open-card h3{font-size:18px;margin-bottom:12px}
+    .option{display:flex;gap:9px;margin:8px 0;color:var(--ink-dim);font-size:14px}
+    .option:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ink-faint);margin-top:8px;flex:0 0 auto}
+    .lean{margin-top:12px;border-top:1px solid var(--line);padding-top:11px;color:var(--accent);font-family:var(--mono);font-size:13px;font-weight:500}
+    .decision{background:var(--bg-raised);color:var(--ink);padding:48px 60px}
+    .decision h2{color:var(--ink)}
+    .decision .intro{color:var(--ink-dim)}
+    .decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:25px}
+    .decision-card{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:20px}
+    .decision-card b{font-family:var(--serif);font-size:18px;font-weight:500;display:block;margin-bottom:8px;color:var(--ink)}
+    .decision-card p{font-size:14px;color:var(--ink-dim);margin:0}
+    .bottom-line{margin-top:26px;padding:18px 20px;border:1px solid rgba(224,163,70,.42);border-radius:10px;background:var(--bg-card);font-size:19px;font-weight:500;color:var(--ink)}
+    details{border:1px solid var(--line);border-radius:10px;background:var(--bg-card);margin-top:14px}
+    summary{cursor:pointer;padding:16px 18px;font-weight:600;color:var(--ink)}
+    details .detail-body{padding:0 18px 18px;color:var(--ink-dim);font-size:14px}
+    .source-list{margin:8px 0 0;padding-left:20px}
+    .source-list li{margin:7px 0}
+    .research-note{font-size:13px;color:var(--ink-dim);margin-top:14px}
+    .tools{position:fixed;right:20px;bottom:18px;display:flex;gap:8px;z-index:30}
+    .tools button{border:1px solid var(--line);background:var(--bg-card);color:var(--ink-dim);border-radius:10px;padding:10px 13px;font:inherit;font-family:var(--mono);font-size:13px;font-weight:500;box-shadow:0 4px 15px rgba(0,0,0,.35);cursor:pointer}
+    .tools button:hover{background:var(--bg-card-2);border-color:var(--accent);color:var(--accent)}
+    @media(max-width:900px){
+      .hero,section,.decision{padding:38px 26px}
+      h1{font-size:38px}.lead{font-size:21px}
+      .four,.bet,.decision-grid,.open-grid{grid-template-columns:1fr 1fr}
+      .flow{grid-template-columns:1fr}.flow-arrow{height:38px;transform:rotate(90deg)}
+      .example-grid{grid-template-columns:1fr}.example-col+.example-col{border-left:0;border-top:1px solid var(--line)}
+      .approach,.customer{grid-template-columns:1fr}
+      .approach>div+div{border-left:0;border-top:1px solid var(--line)}
+    }
+    @media(max-width:580px){
+      .page{width:100%;margin:0}.sheet{border-radius:0;border-left:0;border-right:0}
+      .hero,section,.decision{padding:32px 20px}
+      h1{font-size:33px}.lead{font-size:19px}.four,.bet,.decision-grid,.open-grid{grid-template-columns:1fr}
+      nav{padding:10px 12px;flex-wrap:wrap;overflow:visible;gap:6px}
+      nav a{font-size:13px;padding:6px 8px}
+      .tools{display:none}
+    }
+    @media print{
+      body{background:var(--bg);font-size:13px}.page{width:100%;margin:0}.sheet{border:0;box-shadow:none;border-radius:0}
+      nav,.tools{display:none}.hero,section,.decision{padding:28px 35px}
+      h1{font-size:34px}h2{font-size:25px}.lead{font-size:17px}
+      .four,.bet,.decision-grid{grid-template-columns:repeat(4,1fr)}
+      .open-grid{grid-template-columns:1fr 1fr}
+      .flow-node{min-height:0}.customer,.approach{break-inside:avoid}
+      details{break-inside:avoid}details .detail-body{display:block!important}
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <main class="sheet">
+    <header class="hero">
+      <div class="eyebrow">方向评审：责任层</div>
+      <h1>Isometry 应该做 Agentic Payment 的责任层吗</h1>
+      <p class="lead">现有支付系统已经能处理付款本身。新的问题是：当 Agent 代人花钱时，谁确认它按委托做事，出错后谁处理。</p>
+      <div class="one-line">本文的判断：支付系统回答“这笔钱能不能付”；责任层回答“这笔钱是否符合这次委托”，并把补救流程提前写清楚。</div>
+      <div class="meta">
+        <span class="pill">不是钱包</span>
+        <span class="pill">不是新支付轨道</span>
+        <span class="pill">不保证 Agent 永远正确</span>
+        <span class="pill">重点是边界、拦截、证据和补救</span>
+      </div>
+    </header>
+
+    <nav aria-label="页面目录">
+      <a href="#what">责任层做什么</a>
+      <a href="#why">问题在哪里</a>
+      <a href="#missing">现有方案</a>
+      <a href="#customers">适合谁</a>
+      <a href="#open">开放问题</a>
+      <a href="#decision">需要判断什么</a>
+    </nav>
+
+    <section id="what">
+      <div class="section-kicker">一、定义</div>
+      <h2>责任层到底做什么</h2>
+      <p class="intro">它放在用户意图和最终付款之间。它不替 Agent 做推荐，而是在付款发生前，把可承保的委托条件变成明确检查；付款后留下证据，并把退款、赔付或追偿送到正确的责任方。</p>
+
+      <div class="four">
+        <article class="summary-card"><div class="num">01</div><h3>明确委托</h3><p>把“帮我买合适的”拆成金额、商户、商品、时间、审批、退款条件等可验证条款。</p></article>
+        <article class="summary-card"><div class="num">02</div><h3>付款前检查</h3><p>商户报价或最终订单不符合条款时，阻止支付、要求确认或转人工，而不是事后解释。</p></article>
+        <article class="summary-card"><div class="num">03</div><h3>留下证据</h3><p>保存用户授权、Agent 身份、报价、购物车、审批、Token 范围和最终扣款，用于裁决。</p></article>
+        <article class="summary-card"><div class="num">04</div><h3>安排补救</h3><p>按预先写明的规则退款、先行垫付、进入卡组织争议或向商户追偿；具体承保范围仍待拍板。</p></article>
+      </div>
+
+      <div class="flow-wrap" aria-label="责任层产品流程图">
+        <div class="flow">
+          <div class="flow-node">
+            <div class="label">用户 / 企业</div>
+            <h3>提出任务与边界</h3>
+            <ul><li>最多花多少</li><li>可以买什么</li><li>何时需要审批</li><li>必须满足哪些条件</li></ul>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node primary">
+            <div class="label">Isometry 责任层</div>
+            <h3>把委托变成可执行责任</h3>
+            <ul><li>条件编译与确认（谓词化、电路化）</li><li>支付前规则校验</li><li>证据包与责任路由</li><li>赔付、退款、追偿流程</li></ul>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">
+            <div class="label">支付轨道</div>
+            <h3>移动资金</h3>
+            <ul><li>银行卡</li><li>银行转账</li><li>稳定币</li><li>其他支付方式</li></ul>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">
+            <div class="label">商户</div>
+            <h3>接受订单并履约</h3>
+            <ul><li>价格与库存</li><li>税费与配送</li><li>退款与售后</li><li>订单状态</li></ul>
+          </div>
+        </div>
+        <p class="plain-note">稳定币可以用于内部准备金、垫赔、托管和结算，但用户不需要因此变成加密货币用户。用户侧可以多轨执行，责任标准保持一致。</p>
+      </div>
+    </section>
+
+    <section id="why">
+      <div class="section-kicker">二、问题</div>
+      <h2>为什么付款成功不等于交易正确</h2>
+      <p class="intro">传统支付主要验证资金、凭证、身份和商户风险。Agent 带来的新问题是：凭证完全合法、金额也不异常，但订单依然违反了用户交给 Agent 的任务。</p>
+
+      <div class="example">
+        <div class="example-head"><h3>例子：凌晨两点，航班取消</h3><span>付款合法不等于符合委托</span></div>
+        <div class="example-grid">
+          <div class="example-col">
+            <h4>用户给 Agent 的任务</h4>
+            <p class="quote">“自动重订：总价不超过 $400，今晚 22:00 前到东京，最多一次中转，必须可退款。”</p>
+            <div class="step"><b>1</b><p>Agent 找到一张 $365 的机票。</p></div>
+            <div class="step bad"><b>2</b><p>它有两次中转，因此违反用户明确条件。</p></div>
+            <div class="step"><b>3</b><p>但银行卡是真卡、金额正常、航司也是真商户。</p></div>
+          </div>
+          <div class="example-col">
+            <h4>不同系统会看到什么</h4>
+            <div class="step"><b>卡</b><p>凭证和交易看起来合法，因此可能授权。</p></div>
+            <div class="step"><b>链</b><p>签名有效、余额足够，因此可以结算。</p></div>
+            <div class="step"><b>店</b><p>订单和付款都到了，因此可以出票。</p></div>
+            <div class="step good"><b>责</b><p>两次中转不符合委托，因此付款前应拦截；如果承保交易被误放行，进入预定补救。</p></div>
+            <div class="gap-line">缺口不是“钱怎么付”，而是“这笔合法付款是否符合这次委托，以及不符合时谁负责”。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="missing">
+      <div class="section-kicker">三、现有方案</div>
+      <h2>现有方案解决了很多事，但不等于责任层</h2>
+      <p class="intro">责任层不能建立在“别人没有权限、Token 或 Mandate”这个假设上——这些能力已经在出现。真正需要证明的是：是否仍缺一个跨支付轨道、带支付前否决和补救责任的产品。</p>
+
+      <div class="landscape">
+        <article class="approach">
+          <div class="name">Wallet / x402 / Tempo<small>机器付款与稳定币结算</small></div>
+          <div><h4>已经解决</h4><p>让 Agent 或程序在 HTTP 请求中完成付款；适合 API、内容和按次计费。Tempo 的公开文档重点是 Challenge → Pay → Receipt 的机器支付流。</p></div>
+          <div><h4>还没直接解决</h4><p>买了什么是否符合人的商业任务，以及后续的退款、赔付和追偿。例子：研究 Agent 付 $0.02 调 API 很合适；旅行 Agent 买错航班时，签名正确<strong>也不能解决责任</strong>。</p></div>
+        </article>
+
+        <article class="approach">
+          <div class="name">信用卡欺诈风控 / 3DS<small>身份、凭证与欺诈判断</small></div>
+          <div><h4>已经解决</h4><p>验证消费者、识别盗卡、账户接管、异常金额与商户风险。3DS 的核心目标是防止无卡交易欺诈。</p></div>
+          <div><h4>还没直接解决</h4><p>卡是否被合法持有人允许 Agent 按某项具体任务使用。例子：$365 航司交易是真实的，但“最多一次中转”<strong>不是</strong>卡组织传统授权字段。</p></div>
+        </article>
+
+        <article class="approach">
+          <div class="name">Scoped Token / Visa / Mastercard / Stripe<small>Agent 身份、限额、商户与指令控制</small></div>
+          <div><h4>已经解决或正在逼近</h4><p>受限 Token、Agent 识别、金额与商户控制、用户指令匹配、风险信号和争议证据。它们已经覆盖了责任层的很多控制零件。</p></div>
+          <div><h4>仍需验证的缺口</h4><p>是否存在一个通用、跨轨道的产品，明确承诺：某类委托条款被系统误放行时，先给用户补救，再追到最终责任方。例子：有证据能证明错单，不等于<strong>今天</strong>就有人把钱先退给用户。</p></div>
+        </article>
+
+        <article class="approach">
+          <div class="name">AP2 / Mandate 协议<small>表达授权与生成审计轨迹</small></div>
+          <div><h4>已经解决</h4><p>把 Checkout Mandate、Payment Mandate 等凭证串起来，表达用户约束并形成可验证的审计链。</p></div>
+          <div><h4>还没直接解决</h4><p>协议本身不等于运营者、准备金或理赔团队。例子：审计链证明 Agent 越过了 $400 上限，但仍需要<strong>某个主体</strong>决定、垫付并追偿。</p></div>
+        </article>
+
+        <article class="approach">
+          <div class="name">Canton / Daml<small>权利义务、授权与账本完整性</small></div>
+          <div><h4>已经解决</h4><p>可以精确表达合约参与方、授权、义务、状态与一致性，是责任对象和证据的潜在技术底座。</p></div>
+          <div><h4>还没直接解决</h4><p>技术底座不会自动成为承保人。例子：账本可以证明“谁同意了什么”，但<strong>证明责任和向用户退款</strong>是两件不同的事。</p></div>
+        </article>
+      </div>
+
+      <div class="warning"><strong>竞争风险：</strong>Stripe、Visa 和 Mastercard 正在向指令匹配、Agent 身份、Token、风险信号与争议能力扩张。因此 Isometry 不能只做 Permit 或 Policy Engine；如果窗口存在，它应该来自补救责任、跨轨道编排和具体场景中的承保能力。</div>
+    </section>
+
+    <section id="customers">
+      <div class="section-kicker">四、适用对象</div>
+      <h2>哪些客户可能需要责任层</h2>
+      <p class="intro">真正需要这一层的，是那些 Agent 一旦花错钱、自己就要收拾的人：平台、企业、支出方和商户。他们的共同点是——额度、Token 和欺诈风控都拦不住“合法但不符合委托”的交易，而真出了事，没人愿意从零搭一套兜底和理赔。</p>
+
+      <div class="customer-list">
+        <article class="customer">
+          <div class="who">AI Agent 平台 / 应用方<small>对外发 Agent，出事第一个被找</small></div>
+          <div><span class="example-tag">现在的问题</span><h4>例子</h4><p>购物或助理类 Agent 替用户下了单——买错型号、订了不可退的酒店、或重复付款。用户只会找平台；平台得自己翻日志、联系商户、判断要不要退钱，还要扛口碑。Payment API 只解决“付得出去”，不解决“付错了谁收拾”。</p></div>
+          <div><span class="example-tag">责任层能补什么</span><h4>可能的价值</h4><p>把付款前规则、证据包、Claim 路由和先行赔付交给独立责任层。平台不必从零搭金融与理赔运营，也能对用户给出明确的兜底承诺。</p></div>
+        </article>
+
+        <article class="customer">
+          <div class="who">高客单垂直 Agent<small>差旅、票务、B2B 采买，单笔金额大</small></div>
+          <div><span class="example-tag">现在的问题</span><h4>例子</h4><p>差旅 Agent 在航班取消时自动重订机酒，单笔上千、时间紧、且多是不可退票价。一旦订得不符合委托（超预算、改签条款不符），钱已经出去，损失真实又难追回。</p></div>
+          <div><span class="example-tag">责任层能补什么</span><h4>可能的价值</h4><p>扣款前按预算、可退改、到达时间这些硬条件拦截；真出错且在承保范围内，先垫付给用户、再向责任方追偿。金额越大、越不可逆，这层越值钱。</p></div>
+        </article>
+
+        <article class="customer">
+          <div class="who">企业采购 / 财务<small>要的是政策执行，不只是额度</small></div>
+          <div><span class="example-tag">现在的问题</span><h4>例子</h4><p>采购 Agent 用公司卡买了 $900 SaaS，金额没超卡限额，但供应商不在合格名单、也没有 PO。卡风控只看欺诈和额度，不会替 CFO 执行内部政策。</p></div>
+          <div><span class="example-tag">责任层能补什么</span><h4>可能的价值</h4><p>把供应商、PO、成本中心、审批阈值、发票要求变成付款前硬闸门；交易后留下能直接用于对账与合规的审计证据。</p></div>
+        </article>
+
+        <article class="customer">
+          <div class="who">费控 / 支出平台<small>Ramp、Brex 式，想给客户上 Agent 支出</small></div>
+          <div><span class="example-tag">现在的问题</span><h4>例子</h4><p>想让客户的 Agent 自动支出，但 Agent 一旦花错，赔付、争议和合规就全压到平台头上；自建一套承保与理赔，既慢又不是主业。</p></div>
+          <div><span class="example-tag">责任层能补什么</span><h4>可能的价值</h4><p>以嵌入方式接入责任层，把闸门、证据和赔付变成底层能力。对外仍是自己的品牌，却不必亲自扛兜底所需的资本与牌照。</p></div>
+        </article>
+
+        <article class="customer">
+          <div class="who">商户 / 交易市场<small>想安全接住 Agent 流量</small></div>
+          <div><span class="example-tag">现在的问题</span><h4>例子</h4><p>Agent 下单 20 件而不是 2 件，或买了明显超出用户意图的东西。商户只看到有效 Token 和成功付款，发货后才被投诉，还分不清错在 Agent 越权、平台误放行，还是自己履约。</p></div>
+          <div><span class="example-tag">责任层能补什么</span><h4>可能的价值</h4><p>每张 Agent 订单都带委托范围、报价快照和订单 Hash；出问题能快速定责，减少错单、拒付和无谓的客诉拉锯。</p></div>
+        </article>
+      </div>
+
+      <div class="bet">
+        <div class="bet-card"><b>写清楚</b><span>把自然语言意图变成可裁决条款。</span></div>
+        <div class="bet-card"><b>先拦截</b><span>在钱离开前拥有真正的否决权。</span></div>
+        <div class="bet-card"><b>留证据</b><span>保存一份双方都能用的交易证据。</span></div>
+        <div class="bet-card"><b>可补救</b><span>让“谁先退、谁最终承担”成为产品流程。</span></div>
+      </div>
+    </section>
+
+    <section id="open">
+      <div class="section-kicker">五、未定问题</div>
+      <h2>这些还没有定，不能写成结论</h2>
+      <p class="intro">目前比较确定的是“责任缺口”这个方向；授权规则如何形成、承保到哪一步、谁出资本、从哪类交易开始，都需要继续验证。</p>
+
+      <div class="open-grid">
+        <article class="open-card"><h3>1. 授权规则谁来定？</h3>
+          <div class="option">A. 用户 / 企业直接填写结构化条件。</div>
+          <div class="option">B. Isometry 把自然语言编译成规则，再由用户确认。</div>
+          <div class="option">C. 商户或行业提供标准模板，再由用户修改。</div>
+          <div class="lean">当前倾向（非结论）：B + C；用户拥有目标，Isometry 负责把语义写清。</div>
+        </article>
+        <article class="open-card"><h3>2. Isometry 承保什么？</h3>
+          <div class="option">A. 只保本应拦截却误放行的情况。</div>
+          <div class="option">B. 再保商户提供的关键事实错误。</div>
+          <div class="option">C. 再保航班延误、配送迟到等现实结果。</div>
+          <div class="lean">当前倾向（非结论）：先做 A；B 需要追偿关系，C 已接近保险。</div>
+        </article>
+        <article class="open-card"><h3>3. 谁提供赔付资本与牌照？</h3>
+          <div class="option">A. Isometry 自有准备金和合同保证。</div>
+          <div class="option">B. 与保险公司、Issuer 或 PSP 合作。</div>
+          <div class="option">C. 商户押金、Escrow 或交易级风险准备金。</div>
+          <div class="lean">必须单独完成法律、监管和资产负债设计；“赔”不能只是产品文案。</div>
+        </article>
+        <article class="open-card"><h3>4. 支付轨道怎么选？</h3>
+          <div class="option">A. 卡优先，复用消费者和商户已有习惯。</div>
+          <div class="option">B. 稳定币优先，获得可编程结算和垫付。</div>
+          <div class="option">C. 对用户多轨，对内部使用稳定币调度资金。</div>
+          <div class="lean">当前方向：多轨执行，统一责任标准；不强迫用户使用稳定币。</div>
+        </article>
+        <article class="open-card"><h3>5. 赔付如何裁决？</h3>
+          <div class="option">A. 完全确定性规则自动裁决。</div>
+          <div class="option">B. 硬规则自动裁决，灰区转人工。</div>
+          <div class="option">C. 依赖模型判断用户“真实预期”。</div>
+          <div class="lean">当前倾向（非结论）：B；模型可以整理证据，但不应成为最终赔付法官。</div>
+        </article>
+        <article class="open-card"><h3>6. 第一种可承保交易是什么？</h3>
+          <div class="option">A. 低金额、可退款、有锁价 Quote 的消费。</div>
+          <div class="option">B. 有明确企业政策的采购与 SaaS 支出。</div>
+          <div class="option">C. 时间紧迫、条件明确的旅行重订。</div>
+          <div class="lean">选择标准应是“条款客观、证据稳定、可阻断、可追偿”，而不是先按客群做 GTM。</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="decision" class="decision">
+      <div class="section-kicker">六、需要判断什么</div>
+      <h2>这次要判断的不是某个 API，而是三个产品判断是否成立</h2>
+      <p class="intro">如果不同意其中任何一条，方向都应该调整；如果基本同意，下一步才是把开放问题变成可验证的产品实验。</p>
+      <div class="decision-grid">
+        <article class="decision-card"><b>判断一：缺口是责任，不是支付管道</b><p>Agentic Payment 的稀缺价值来自用户和机构敢于委托，而不只是 Agent 能把钱转出去。</p></article>
+        <article class="decision-card"><b>判断二：控制必须连接补救</b><p>单独的 Permit、Token 和规则会被平台与网络吸收；Isometry 必须把闸门、证据和补救连成产品。</p></article>
+        <article class="decision-card"><b>判断三：跨轨道，而不是稳定币界面</b><p>稳定币可以成为内部资金工具，但责任标准应覆盖卡、银行与链上结算，不要求客户先成为加密货币用户。</p></article>
+      </div>
+      <div class="bottom-line">最简单的产品定义：Isometry 让人和公司能够把“可以自动做，但做错会很麻烦”的付款任务交给 Agent。</div>
+    </section>
+
+    <section id="sources">
+      <div class="section-kicker">资料和边界</div>
+      <h2>公开资料依据与边界</h2>
+      <p class="intro">以下不是竞品矩阵，只用于确认各类方案目前公开覆盖的能力，以及我们不能夸大的地方。资料检查日期：2026-06-19。</p>
+      <details>
+        <summary>展开：支付网络、协议与基础设施的公开能力</summary>
+        <div class="detail-body">
+          <ul class="source-list">
+            <li><a href="https://www.emvco.com/emv-technologies/3-d-secure/" target="_blank" rel="noreferrer">EMVCo 3-D Secure</a>：面向无卡交易消费者认证与欺诈防护。</li>
+            <li><a href="https://developer.visa.com/capabilities/visa-intelligent-commerce" target="_blank" rel="noreferrer">Visa Intelligent Commerce</a>：Agent Token、用户指令匹配、网络级控制与争议信号；产品仍在部署中。</li>
+            <li><a href="https://www.mastercard.com/global/en/news-and-trends/stories/2025/agentic-commerce-framework.html" target="_blank" rel="noreferrer">Mastercard Agent Pay Acceptance Framework</a>：Agent 注册、身份验证、Token 与商户接受框架。</li>
+            <li><a href="https://stripe.com/blog/agentic-commerce-suite" target="_blank" rel="noreferrer">Stripe Agentic Commerce Suite</a> 与 <a href="https://stripe.com/blog/supporting-additional-payment-methods-for-agentic-commerce" target="_blank" rel="noreferrer">Shared Payment Tokens</a>：商户、Checkout、Fraud、受限支付凭证与多支付方式。</li>
+            <li><a href="https://ap2-protocol.org/" target="_blank" rel="noreferrer">AP2</a>：Checkout / Payment Mandate 与人不在场交易的可验证审计链。</li>
+            <li><a href="https://docs.tempo.xyz/guide/machine-payments" target="_blank" rel="noreferrer">Tempo Agentic Payments</a>：基于 MPP 的 HTTP 内联付款与稳定币结算。</li>
+            <li><a href="https://docs.digitalasset.com/overview/3.4/explanations/ledger-model/ledger-integrity.html" target="_blank" rel="noreferrer">Canton / Daml Ledger Integrity</a>：合约一致性、授权、签署方和义务表达。</li>
+          </ul>
+          <p>研究边界：我们只能根据公开产品和文档判断。尤其 Visa、Mastercard、Stripe 正在快速演进，因此“没有责任层”不能作为永久结论；Isometry 必须用真实承保、Claims 运营或跨轨道责任编排来证明差异。</p>
+        </div>
+      </details>
+      <p class="research-note">本材料是产品方向讨论，不构成保险、支付或监管法律意见；承保、先行赔付、准备金与资金传输安排必须经过专项法律与合规设计。</p>
+    </section>
+  </main>
+</div>
+<div class="tools" aria-label="页面工具">
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">回到顶部</button>
+  <button onclick="window.print()">打印 / PDF</button>
+</div>
+</body>
+</html>

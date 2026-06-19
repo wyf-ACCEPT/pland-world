@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<title>Stripe 的三块脏活｜Stripe 母题拆解</title>
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --good:#5fb98c; --good-soft:rgba(95,185,140,.13);
+    --bad:#d9776b; --bad-soft:rgba(217,119,107,.13);
+    --warn:#e0a346; --warn-soft:rgba(224,163,70,.13);
+    --slate:#6f9bd1; --clay:#cf7a52;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+    --muted:var(--ink-dim);
+    --line2:var(--line);
+    --accent2:var(--slate);
+    --shadow:0 18px 48px rgba(0,0,0,.4);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 620px at 80% -10%, rgba(224,163,70,.07), transparent 60%),
+      radial-gradient(900px 520px at 8% 4%, rgba(111,155,209,.05), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .page{max-width:1240px;margin:0 auto;padding:34px 22px 68px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 18px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:600;letter-spacing:.01em;color:var(--ink-dim)}
+  .brand-mark{
+    width:36px;height:36px;border:1px solid var(--line);border-radius:10px;
+    display:grid;place-items:center;background:var(--bg-raised);color:var(--accent);font-weight:700;
+  }
+  .nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .nav a{text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:8px 13px;background:var(--bg-raised);color:var(--ink-dim);font-size:13px;font-family:var(--mono);transition:border-color .16s ease,color .16s ease}
+  .nav a:hover{border-color:var(--accent);color:var(--accent)}
+  .hero{display:grid;grid-template-columns:1.08fr .92fr;gap:24px;align-items:stretch;margin-top:22px}
+  .hero-card,.panel,.section-card{
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  }
+  .hero-card{padding:34px 34px 28px;position:relative;overflow:hidden;min-height:460px}
+  .hero-card:before{content:"";position:absolute;inset:-80px -120px auto auto;width:320px;height:320px;border-radius:50%;background:rgba(224,163,70,.08);filter:blur(8px)}
+  .kicker{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500;letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:500;font-size:58px;line-height:1.04;margin:0 0 18px;letter-spacing:-.02em;max-width:760px}
+  h1 .stroke{color:var(--accent)}
+  .subtitle{font-size:21px;line-height:1.55;color:var(--ink-dim);margin:0 0 24px;max-width:860px}
+  .punchline{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;background:var(--bg-card);padding:18px 20px 16px;margin-top:18px;font-size:21px;line-height:1.45;font-weight:600;color:var(--ink)}
+  .punchline span{color:var(--accent)}
+  .definition-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+  .def{padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--bg-card)}
+  .def b{display:block;font-size:14px;margin-bottom:6px;color:var(--ink)}
+  .def p{margin:0;color:var(--ink-dim);font-size:13px;line-height:1.45}
+  .right-stack{display:grid;gap:16px}
+  .mini-card{padding:20px;border-radius:14px;background:var(--bg-card);border:1px solid var(--line)}
+  .mini-card h3{margin:0 0 8px;font-size:18px;font-family:var(--serif);font-weight:500;color:var(--ink)}
+  .mini-card p{margin:0;color:var(--ink-dim);line-height:1.55;font-size:14px}
+  .mini-card p b{color:var(--ink)}
+  .tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .tag{font-family:var(--mono);font-size:12px;border-radius:999px;border:1px solid var(--line);padding:6px 10px;background:var(--bg-raised);color:var(--ink-dim);font-weight:500}
+  .tag.hot{background:var(--accent-soft);color:var(--accent);border-color:rgba(224,163,70,.4)}
+  .section{margin-top:26px}
+  .section-title{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:0 0 14px}
+  .section-title h2{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.01em;margin:0;color:var(--ink)}
+  .section-title p{color:var(--ink-faint);margin:0;max-width:520px;line-height:1.5;font-size:14px;text-align:right}
+  .diagram-card{padding:28px;background:var(--bg-raised);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;margin-top:8px}
+  .diagram-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}
+  .diagram-header h2{font-family:var(--serif);font-weight:500;font-size:28px;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)}
+  .diagram-header p{margin:0;color:var(--ink-dim);line-height:1.4;font-size:14px;max-width:560px}
+  .diagram-badge{border:1px solid rgba(224,163,70,.42);border-radius:16px;padding:12px 14px;background:var(--bg-card);color:var(--ink);font-weight:600;text-align:center;min-width:200px;font-size:14px;line-height:1.35}
+  .vs-grid{display:grid;grid-template-columns:1fr 74px 1.4fr;gap:14px;align-items:stretch}
+  .column{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);padding:18px;min-height:420px;position:relative}
+  .column h3{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:-.01em;margin:0 0 12px;display:flex;align-items:center;gap:9px;color:var(--ink)}
+  .column .caption{color:var(--ink-dim);font-size:13px;line-height:1.42;margin:0 0 14px}
+  .narrow-flow{display:grid;gap:10px;margin-top:18px}
+  .flow-node{border:1px solid var(--line);border-radius:16px;padding:13px 12px;background:var(--bg-card-2);position:relative}
+  .flow-node b{display:block;font-size:14px;margin-bottom:4px;color:var(--ink)}
+  .flow-node small{color:var(--ink-dim);font-size:12px;line-height:1.35;display:block}
+  .flow-arrow{text-align:center;color:var(--ink-faint);font-weight:600;font-size:18px;line-height:1}
+  .trap{margin-top:16px;background:var(--bad-soft);border:1px solid rgba(217,119,107,.3);border-radius:14px;padding:12px;color:var(--ink-dim);font-size:13px;line-height:1.45}
+  .trap b{color:var(--bad)}
+  .vs-bolt{display:grid;place-items:center;height:100%;font-family:var(--mono);font-weight:600;color:var(--accent);font-size:18px}
+  .vs-bolt span{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:var(--bg-raised);border:1px solid rgba(224,163,70,.42)}
+  .permit-flow{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+  .permit-step{border:1px solid var(--line);border-radius:14px;background:var(--bg-card-2);padding:14px;min-height:96px;position:relative;overflow:hidden}
+  .permit-step:before{content:attr(data-step);position:absolute;right:10px;top:4px;font-family:var(--mono);font-size:42px;line-height:1;color:rgba(224,163,70,.1);font-weight:600}
+  .permit-step b{display:block;font-size:15px;margin-bottom:6px;color:var(--ink)}
+  .permit-step small{font-size:12px;color:var(--ink-dim);line-height:1.42;display:block}
+  .permit-step.strong{border:1px solid rgba(224,163,70,.42);background:var(--accent-soft)}
+  .capture-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:6px}
+  .capture{border-radius:14px;border:1px solid var(--line);background:var(--bg-card-2);padding:11px;text-align:center;font-size:12px;font-weight:600;color:var(--ink)}
+  .capture small{display:block;color:var(--ink-faint);font-family:var(--mono);font-weight:400;margin-top:3px;font-size:11px}
+  .promise{margin-top:16px;border-radius:16px;background:linear-gradient(180deg,#181d25,#13171d);border:1px solid rgba(224,163,70,.42);color:var(--ink);padding:15px 16px;font-size:18px;font-weight:600;text-align:center;line-height:1.4}
+  .promise span{color:var(--accent)}
+  .brain{margin:14px auto;max-width:560px;border:1px solid rgba(224,163,70,.42);border-radius:16px;background:linear-gradient(180deg,#181d25,#13171d);padding:16px 18px;text-align:center}
+  .brain b{font-size:18px;display:block;margin-bottom:6px;color:var(--ink)}
+  .brain small{color:var(--ink-dim);font-size:13px;line-height:1.45}
+  .statline{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+  .stat{border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:16px;text-align:center}
+  .stat b{display:block;font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-.02em;color:var(--accent)}
+  .stat small{color:var(--ink-dim);font-size:12.5px;line-height:1.4;display:block;margin-top:4px}
+  .matrix{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  .matrix-card{padding:22px;border-radius:16px;border:1px solid var(--line);background:var(--bg-card)}
+  .matrix-card h3{margin:0 0 12px;font-family:var(--serif);font-weight:500;font-size:20px;display:flex;gap:8px;align-items:center;color:var(--ink)}
+  .matrix-card ul{margin:0;padding-left:19px;line-height:1.65;color:var(--ink-dim);font-size:14px}
+  .matrix-card li{margin:7px 0}
+  .matrix-card li b{color:var(--ink)}
+  .matrix-card.cover{border-color:rgba(95,185,140,.3);background:var(--good-soft)}
+  .matrix-card.deny{border-color:rgba(217,119,107,.3);background:var(--bad-soft)}
+  .agentbox{margin-top:18px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:14px;padding:16px 18px;background:var(--bg-card);color:var(--ink-dim);font-size:15px;line-height:1.6}
+  .agentbox b{color:var(--accent)}
+  .ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:6px}
+  .rung{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:16px 14px;min-height:188px;cursor:pointer;transition:.18s ease}
+  .rung:hover{transform:translateY(-2px);border-color:var(--accent);background:var(--bg-card-2)}
+  .rung.active{border:2px solid var(--accent);background:var(--accent-soft)}
+  .rung:not(:last-child):after{content:"→";position:absolute;right:-17px;top:46%;font-size:24px;font-weight:600;color:var(--ink-faint);z-index:2}
+  .rung .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:9px;background:var(--accent-soft);border:1px solid rgba(224,163,70,.42);color:var(--accent);font-family:var(--mono);font-size:13px;margin-bottom:10px;font-weight:600}
+  .rung b{display:block;font-size:15px;margin-bottom:6px;letter-spacing:-.01em;color:var(--ink)}
+  .rung small{color:var(--ink-dim);font-size:12px;line-height:1.42;display:block}
+  .rung .who{margin-top:9px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 8px;display:inline-block}
+  .rung-detail{margin-top:16px;border:1px solid rgba(224,163,70,.42);border-radius:16px;background:var(--bg-card);box-shadow:var(--shadow);padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .rung-detail .rd-pipe,.rung-detail .rd-moat{font-size:14px;line-height:1.6;color:var(--ink-dim)}
+  .rung-detail h4{margin:0 0 8px;font-size:15px;color:var(--ink)}
+  .selector-wrap{display:grid;grid-template-columns:300px 1fr;gap:18px}
+  .sel-list{display:grid;gap:10px}
+  .sel-btn{width:100%;text-align:left;border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:14px;cursor:pointer;display:flex;gap:12px;align-items:center;transition:.18s ease;font-family:var(--sans)}
+  .sel-btn:hover{transform:translateY(-1px);border-color:var(--accent);background:var(--bg-card-2)}
+  .sel-btn.active{border:2px solid var(--accent);background:var(--accent-soft)}
+  .sel-emoji{font-size:24px;width:34px;text-align:center}
+  .sel-btn b{display:block;font-size:15px;color:var(--ink)}
+  .sel-btn small{display:block;color:var(--ink-dim);font-size:12px;margin-top:2px}
+  .sel-detail{padding:24px;min-height:300px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+  .detail-card{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);padding:20px}
+  .detail-card.bad{background:var(--bad-soft);border-color:rgba(217,119,107,.3)}
+  .detail-card.good{background:var(--good-soft);border-color:rgba(95,185,140,.3)}
+  .detail-card h3{margin:0 0 10px;font-family:var(--serif);font-weight:500;font-size:19px;letter-spacing:-.01em;color:var(--ink)}
+  .detail-card ul{margin:0;padding-left:20px;color:var(--ink-dim);line-height:1.64;font-size:14px}
+  .detail-card li{margin:7px 0}
+  .detail-card li b{color:var(--ink)}
+  .sel-bottom{grid-column:1/-1;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:14px;padding:14px 16px;background:var(--bg-card-2);color:var(--ink-dim);font-size:15px;line-height:1.5}
+  .sel-bottom b{color:var(--accent)}
+  .footer-note{margin-top:28px;border-radius:16px;background:linear-gradient(180deg,#181d25,#13171d);border:1px solid rgba(224,163,70,.42);color:var(--ink);padding:22px 24px;text-align:center;font-family:var(--serif);font-size:23px;font-weight:500;letter-spacing:-.01em;box-shadow:var(--shadow);line-height:1.35}
+  .footer-note span{color:var(--accent)}
+  .src{margin-top:16px;color:var(--ink-faint);font-family:var(--mono);font-size:12px;line-height:1.6;text-align:center}
+  .src a{color:var(--slate)}
+
+  .journey{display:grid;gap:16px;margin-top:8px}
+  .detail-card p{margin:0;color:var(--ink-dim);line-height:1.6;font-size:14px}
+  .trigger{border:1px solid rgba(224,163,70,.42);border-radius:16px;background:var(--bg-card);box-shadow:var(--shadow);padding:24px 26px}
+  .trigger>b{font-family:var(--serif);font-weight:500;font-size:19px;display:block;margin-bottom:8px;letter-spacing:-.01em;color:var(--ink)}
+  .trigger p{margin:0;color:var(--ink-dim);font-size:15px;line-height:1.62}
+  .trigger p strong{color:var(--ink)}
+  .trigger .gap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .trigger .gap>div{border:1px solid var(--line);border-radius:14px;background:var(--bg-card-2);padding:13px;font-size:13px;color:var(--ink-dim);line-height:1.45}
+  .trigger .gap b{font-size:13px;color:var(--accent);display:inline}
+  .stage{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);padding:20px 22px}
+  .stage-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .stage-head .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--accent-soft);border:1px solid rgba(224,163,70,.42);color:var(--accent);font-family:var(--mono);font-size:14px;font-weight:600;flex:none;margin-top:2px}
+  .stage-head b{font-family:var(--serif);font-weight:500;font-size:19px;letter-spacing:-.01em;display:block;color:var(--ink)}
+  .stage-head small{display:block;color:var(--ink-dim);font-size:13px;line-height:1.45;margin-top:3px}
+  .fork{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+  /* 支付管道 chain */
+  .chain{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap;overflow-x:auto;padding:4px 2px 14px}
+  .chain-node{flex:1 1 0;min-width:118px;border:1px solid var(--line);border-radius:16px;background:var(--bg-card);padding:12px 10px;text-align:center;cursor:pointer;transition:.16s ease}
+  .chain-node .ce{font-size:22px;line-height:1}
+  .chain-node b{display:block;font-size:13px;margin:7px 0 4px;letter-spacing:-.01em;color:var(--ink)}
+  .chain-node small{display:block;color:var(--ink-dim);font-size:11px;line-height:1.35}
+  .chain-node.hot,.chain-node.active{border:2px solid var(--accent);background:var(--accent-soft)}
+  .chain-node:hover{transform:translateY(-2px);border-color:var(--accent);background:var(--bg-card-2)}
+  .chain-detail{margin-top:6px;border:1px solid rgba(224,163,70,.42);border-radius:16px;background:var(--bg-card);box-shadow:var(--shadow);padding:16px 18px;min-height:170px}
+  .chain-detail h4{margin:0 0 10px;font-family:var(--serif);font-weight:500;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+  .chain-detail .cd-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .chain-detail .cd-grid>div{font-size:14px;line-height:1.6;color:var(--ink-dim)}
+  .chain-detail .cd-grid b{display:block;font-family:var(--mono);font-size:12.5px;color:var(--accent);margin-bottom:4px}
+  .chain-arrow{flex:0 0 20px;display:grid;place-items:center;color:var(--ink-faint);font-weight:600;font-size:17px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:12.5px;color:var(--ink-dim)}
+  .legend b{color:var(--ink)}
+
+  /* 探索历程 quiz */
+  .quiz{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);box-shadow:var(--shadow);padding:24px 24px 20px}
+  .quiz-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}
+  .quiz-meta{display:flex;align-items:center;gap:12px}
+  .quiz-stage{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+  .quiz-dots{display:flex;gap:6px}
+  .quiz-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg-card-2);transition:.18s ease}
+  .quiz-dot.done{background:var(--accent);border-color:var(--accent)}
+  .quiz-dot.cur{background:var(--ink);border-color:var(--accent);transform:scale(1.2)}
+  .quiz-count{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink-dim);letter-spacing:.03em;white-space:nowrap}
+  .quiz-q{font-family:var(--serif);font-size:22px;letter-spacing:-.01em;margin:0 0 5px;font-weight:500;line-height:1.2;color:var(--ink)}
+  .quiz-sit{color:var(--ink-dim);font-size:14px;line-height:1.5;margin:0 0 18px}
+  .quiz-opts{display:grid;gap:12px}
+  .opt{text-align:left;border:1px solid var(--line);border-radius:14px;background:var(--bg-card-2);padding:15px 16px;cursor:pointer;transition:.16s ease;font-size:15px;line-height:1.55;color:var(--ink-dim);display:flex;gap:12px;align-items:flex-start;font-family:var(--sans)}
+  .opt:hover{transform:translateY(-1px);border-color:var(--accent)}
+  .opt .mark{flex:none;width:26px;height:26px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:13px;color:var(--ink-faint);background:var(--bg-raised)}
+  .opt.correct{border-color:rgba(95,185,140,.55);background:var(--good-soft)}
+  .opt.correct .mark{background:var(--good);border-color:var(--good);color:var(--bg)}
+  .opt.wrong{border-color:rgba(217,119,107,.55);background:var(--bad-soft)}
+  .opt.wrong .mark{background:var(--bad);border-color:var(--bad);color:var(--bg)}
+  .opt.dim{opacity:.5}
+  .opt[disabled]{cursor:default}
+  .quiz-reveal{margin-top:16px;border-left:4px solid var(--accent);background:var(--bg-card-2);border-radius:0 14px 14px 0;padding:14px 16px;font-size:14.5px;line-height:1.62;color:var(--ink-dim);display:none}
+  .quiz-reveal.show{display:block;animation:fadein .22s ease}
+  .quiz-reveal b{color:var(--accent)}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+  .quiz-hint{font-size:13px;color:var(--ink-faint)}
+  .quiz-next{border:1px solid rgba(224,163,70,.42);border-radius:14px;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:15px;padding:11px 20px;cursor:pointer;font-family:var(--mono);white-space:nowrap;transition:.16s ease}
+  .quiz-next:not([disabled]):hover{background:var(--accent);color:var(--bg)}
+  .quiz-next[disabled]{opacity:.38;cursor:default}
+
+  @media(max-width:980px){
+    h1{font-size:44px}.hero{grid-template-columns:1fr}.vs-grid{grid-template-columns:1fr}.vs-bolt{height:60px}.permit-flow{grid-template-columns:1fr}.statline{grid-template-columns:1fr}.matrix{grid-template-columns:1fr}.ladder{grid-template-columns:1fr}.fork{grid-template-columns:1fr}.trigger .gap{grid-template-columns:1fr}.rung:not(:last-child):after{display:none}.rung-detail{grid-template-columns:1fr}.chain-detail .cd-grid{grid-template-columns:1fr}.selector-wrap{grid-template-columns:1fr}.sel-detail{grid-template-columns:1fr}.section-title{display:block}.section-title p{text-align:left;margin-top:8px}
+  }
+  @media(max-width:560px){.page{padding:22px 14px 44px}.hero-card{padding:24px 20px}.definition-grid{grid-template-columns:1fr}.diagram-card{padding:18px}.diagram-header{display:block}.diagram-badge{margin-top:12px;min-width:auto}.capture-strip{grid-template-columns:1fr 1fr}.topbar{display:block}.nav{margin-top:14px;justify-content:flex-start}h1{font-size:36px}.subtitle{font-size:18px}}
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand"><div class="brand-mark">S</div><div>Stripe 母题拆解 · 三块脏活</div></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#stack">支付管道</a><a href="#journey">探索历程</a><a href="#fraud">① 防欺诈</a><a href="#onboarding">② 小商家托管</a><a href="#ladder">③ 灵活接入</a><a href="#synthesis">母题</a>
+      </nav>
+    </div>
+
+    <section class="hero">
+      <div class="hero-card">
+        <div class="kicker">Stripe 母题 / 不是竞品扫描</div>
+        <h1>Stripe 凭什么<br><span class="stroke">值一千亿</span></h1>
+        <p class="subtitle">不是因为"能扣一张卡"——那是一个周末就能写完的<strong>管子</strong>。是因为它吞下了三块又脏、又没人愿碰、单个商家又干不了的活：<strong>防欺诈、小商家托管、灵活接入</strong>。</p>
+        <div class="punchline">研究 Stripe 不是为了抄它的产品，而是为了看清：<span>真正的护城河，永远在那块你本能想外包的脏活里。</span></div>
+        <div class="definition-grid">
+          <div class="def"><b>① 防欺诈</b><p>把"一个商家看不见的"变成"整个网络看得见的"。数据网络效应 = 复利护城河。</p></div>
+          <div class="def"><b>② 小商家托管</b><p>把"N 个商家各自去银行开户"变成"挂在 Stripe 一个主账户下即时开通"。</p></div>
+          <div class="def"><b>③ 灵活接入</b><p>先用最简单的托管页起步，做大了往上爬到完整 API，永远不用 rip-and-replace。</p></div>
+          <div class="def"><b>共同母题</b><p>三块都不是"更快付款"，而是"替你扛下你最不想碰的那部分"。这才是别人复制不了的东西。</p></div>
+        </div>
+      </div>
+      <div class="right-stack">
+        <div class="mini-card">
+          <h3>为什么做这页</h3>
+          <p>本页拆解 Stripe 母题，为 agentic payment 找"对的产品形态"：把三块脏活讲清楚，并逐块映射到——agent 花钱时，谁吞下对应的脏活谁赢。</p>
+          <div class="tagrow"><span class="tag hot">护城河 ≠ 管子</span><span class="tag">脏活才值钱</span></div>
+        </div>
+        <div class="mini-card">
+          <h3>和 Spend Permit 页互补</h3>
+          <p>另一页讲"该造一个什么产品"；这页讲"Stripe 当年靠什么脏活成的"。两页共用一个判断：rail 是实现细节，责任/风控/接入门槛才是价值。</p>
+          <div class="tagrow"><span class="tag">同一个母题</span><span class="tag">兄弟页</span></div>
+        </div>
+        <div class="mini-card">
+          <h3>读法</h3>
+          <p>页面顺序：先看<b>探索历程（HOW）</b>——产品一号位差点踩进的坑；再看<b>三块脏活（WHAT）</b>，每块按"管子 → 脏活 → agent 对位"拆；最后是会上讨论抓手。</p>
+          <div class="tagrow"><span class="tag">HOW → WHAT → 母题</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 支付管道补课 -->
+    <section id="stack" class="section">
+      <div class="section-title">
+        <h2>补课：一笔在线刷卡，要穿过这么多角色</h2>
+        <p>上面提到的 "gateway"、"processor" 到底是什么？把它们放进整条链里就清楚了——gateway 就是在线刷卡的"技术前门"。</p>
+      </div>
+      <div class="diagram-card">
+        <div class="chain">
+          <div class="chain-node"><div class="ce">💳</div><b>顾客的卡</b><small>发卡行发的卡</small></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="ce">🛒</div><b>商户网站 / App</b><small>结账页，把卡号交出来</small></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="ce">🚪</div><b>Gateway 网关</b><small>抓取+加密卡号、转发授权、回传结果 = 在线版 POS 终端</small></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="ce">⚙️</div><b>Processor 处理商</b><small>真正去和卡组织对接、处理清结算</small></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="ce">🏦</div><b>Acquirer 收单行</b><small>商户账户，钱落到这里</small></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="ce">🛰️</div><b>Visa / MC 卡组织</b><small>路由这条授权的"轨道"</small></div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node"><div class="ce">🏛️</div><b>Issuer 发卡行</b><small>顾客的银行，批准/拒绝、真正出钱</small></div>
+        </div>
+        <div class="chain-detail" id="chainDetail"></div>
+        <div class="legend">
+          <span>🚪 <b>网关只搬信息，不碰钱</b></span>
+          <span>💰 钱走 Acquirer ↔ 卡组织 ↔ Issuer 这条线</span>
+          <span>⏱️ 授权往返通常 1–2 秒内完成</span>
+        </div>
+        <div class="promise" style="margin-top:16px">Stripe 的"七行代码"，就是把 <span>Gateway + Processor + 商户账户</span> 三层塌缩成一个 API、一次注册。</div>
+        <div class="agentbox">
+          <b>→ 为什么要懂这个：</b>"对接 gateway / processor / 申请 merchant account"是三件不同的事、三个供应商、三套集成——这正是 Stripe 之前那堵"三周的墙"。我们拆 agentic payment 时也要分清：谁是"网关"（信息前门）、谁是"处理 / 结算"、谁是"承担风险的聚合者"，别把它们混成一句"接个支付 API"。
+        </div>
+      </div>
+    </section>
+
+    <!-- 探索历程 -->
+    <section id="journey" class="section">
+      <div class="section-title">
+        <h2>产品一号位的探索历程 · 那些差点踩进的坑</h2>
+        <p>事后那套干净叙事会把岔路口抹平。这里把当年的"近失"重放一遍——每一步旁边都站着一条更诱人的错路，和一次忍住的转身。</p>
+      </div>
+      <div class="journey">
+        <div class="trigger">
+          <b>起点：一个不合理的落差（不是被调研出来的，是自己流血流出来的）</b>
+          <p>2010 年，爱尔兰兄弟 <strong>Patrick Collison</strong>（后来的 Stripe CEO）和 <strong>John Collison</strong>（总裁）想做个网络小生意，东西两周就写完了——造一个能用的 web app 已经便宜到几小时的事。然后他们想收钱，掉进了地狱：申请 merchant account、几周承保、自己对接 gateway、出欺诈自己兜，或退而用体验糟糕、动不动冻结账户的 PayPal。<br /><span style="color:var(--muted);font-size:13px">——这对兄弟后来把 Stripe 做成全球估值最高的金融科技公司之一，自己也写进了支付史。</span></p>
+          <div class="gap">
+            <div><b>造产品</b>：几小时的事（AWS / Heroku / Rails 让"能造 app"白菜价）</div>
+            <div><b>收钱</b>：还是几周的事（一堵三周的承保墙）</div>
+          </div>
+          <p style="margin-top:14px">刺痛点不是"支付很难"，而是 <strong>这两件本该对称的事，难度差了三个数量级</strong>。所有东西都从这个违和感开始——真痛点常常就长这样：你亲身撞上、且明显不合理的落差。</p>
+        </div>
+
+        <div class="quiz" id="quiz">
+          <div class="quiz-top">
+            <div class="quiz-stage" id="qStage"></div>
+            <div class="quiz-meta"><div class="quiz-dots" id="qDots"></div><div class="quiz-count" id="qCount"></div></div>
+          </div>
+          <h3 class="quiz-q" id="qTitle"></h3>
+          <p class="quiz-sit" id="qSit"></p>
+          <div class="quiz-opts" id="qOpts"></div>
+          <div class="quiz-reveal" id="qReveal"></div>
+          <div class="quiz-nav">
+            <div class="quiz-hint" id="qHint">选一个——选错也没关系，岔路口的手感才是重点。</div>
+            <button class="quiz-next" id="qNext" disabled>下一题 →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="agentbox" style="margin-top:18px">
+        <b>→ 这对我们的意义：</b>事后看 Stripe 的成功像必然，但它每一步旁边都站着一条更诱人的错路——尤其岔路①（做个更快的管子）对我们这群工程师诱惑最大。做 agentic payment 时我们会反复撞上一模一样的岔路口。<b>下面三块脏活，就是这条探索路径最终挖出来的具体护城河</b>（第 5 步 → ①②，第 3+第 1 步 → ③）。
+      </div>
+    </section>
+
+    <!-- ① 防欺诈 -->
+    <section id="fraud" class="section">
+      <div class="diagram-card">
+        <div class="diagram-header">
+          <div>
+            <h2>① 防欺诈：一个人看不见的，整个网络看得见</h2>
+            <p>作为聚合方，Stripe 自己承担 chargeback 和欺诈损失——它被逼着把风控做成全网级的能力，而不是一个个商家各自为战。</p>
+          </div>
+          <div class="diagram-badge">单个商家只看得见自己<br>Stripe 看得见所有人</div>
+        </div>
+
+        <div class="capture-strip">
+          <div class="capture">商家 A<small>只看自己流量</small></div>
+          <div class="capture">商家 B<small>只看自己流量</small></div>
+          <div class="capture">商家 C<small>只看自己流量</small></div>
+          <div class="capture">商家 D<small>只看自己流量</small></div>
+          <div class="capture">商家 E<small>只看自己流量</small></div>
+        </div>
+        <div class="flow-arrow" style="margin:10px 0">▼ 全网信号汇入同一个大脑 ▼</div>
+        <div class="brain">
+          <b>Stripe Radar · 全网风控大脑</b>
+          <small>一张卡在商家 A 被盗刷，下一秒在 B·C·D·E 全部被识别。机器学习模型用跨越数百万商家、数百亿笔交易的全网数据打分：放行 / 转人工 / 退回 issuer——全程约 100ms。</small>
+        </div>
+
+        <div class="statline">
+          <div class="stat"><b>92%</b><small>到店的卡，有 92% 的概率"在 Stripe 全网见过"——这是单个商家永远拿不到的先验</small></div>
+          <div class="stat"><b>$1.9T</b><small>每年流经全网的交易额，喂养同一个模型；量越大模型越聪明</small></div>
+          <div class="stat"><b>−32%</b><small>平均把商家的欺诈降低约三分之一，且接入方什么都不用自己做</small></div>
+        </div>
+
+        <div class="matrix">
+          <div class="matrix-card deny">
+            <h3>🔧 表面的管子（不值钱）</h3>
+            <ul>
+              <li>判断"这一笔交易的卡有没有被盗刷"——一个商家拿规则也能写个粗版。</li>
+              <li>问题是它只看得见自己的流量，等于盲人摸象。</li>
+              <li>这层谁都能做，所以它不构成壁垒。</li>
+            </ul>
+          </div>
+          <div class="matrix-card cover">
+            <h3>🧱 吞下的脏活（护城河）</h3>
+            <ul>
+              <li><b>承担损失</b>：作为聚合方，欺诈和拒付的钱 Stripe 自己先扛——商家不必变成风控专家。</li>
+              <li><b>数据网络效应</b>：处理的交易越多 → 信号越全 → 模型越准 → 越没人追得上。复利。</li>
+              <li><b>接进卡组织底层</b>：和 Visa/MC/Amex 拿 TC40、SAFE、早期争议通知，在争议发生前就识别。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="agentbox">
+          <b>→ agentic payment 对位：</b>agent 带来一套全新欺诈面——失控连环消费、prompt injection、agent 冒充、无人在环确认。<b>为人类设计的卡组织风控模型，给 agent 的风险定不了价。</b>谁处理的 agent 交易最多，谁就握有"agent 欺诈信号"的网络效应。"风险承担"真正该往下钻的，不是泛泛承担风险，而是承担一块<b>别人形状扛不住的、agent 特有的新风险</b>——那才是护城河，不是 feature。
+        </div>
+      </div>
+    </section>
+
+    <!-- ② 小商家托管 -->
+    <section id="onboarding" class="section">
+      <div class="diagram-card">
+        <div class="diagram-header">
+          <div>
+            <h2>② 小商家托管：把 N 个许可问题，变成 1 个</h2>
+            <p>Stripe 没去说服 Visa 改规则。它找一家 sponsor bank、把成千上万小商家聚合到自己一个主账户下，吞下承保和风险——gatekeeper 只需信任一个 Stripe。</p>
+          </div>
+          <div class="diagram-badge">银行只承保 Stripe 一个<br>长尾商家瞬间开通</div>
+        </div>
+
+        <div class="vs-grid">
+          <div class="column">
+            <h3>🏚️ 旧世界</h3>
+            <p class="caption">每个小商家都要自己去搞定一整套金融关系，绝大多数直接卡死在门口。</p>
+            <div class="narrow-flow">
+              <div class="flow-node"><b>自己申请 merchant account</b><small>向 acquiring bank 申请独立商户号（MID）。</small></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-node"><b>几周承保 + 填表</b><small>信用审核、合规材料、自己对接 gateway/processor。</small></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-node"><b>自担风险</b><small>欺诈、拒付、合规全是自己的事。</small></div>
+            </div>
+            <div class="trap"><b>结构性问题：</b>银行不想逐个承保长尾小商家——太小、太碎、太麻烦，单个商家的交易量根本不值得为它开一个账户。于是大多数人被挡在门外。</div>
+          </div>
+          <div class="vs-bolt"><span>VS</span></div>
+          <div class="column">
+            <h3>🏬 Stripe（Payment Facilitator）</h3>
+            <p class="caption">Stripe 自己持有一个主商户号（master MID），把所有小商家当 sub-merchant 挂在下面。台面上只有 Stripe 一个在交易。</p>
+            <div class="permit-flow">
+              <div class="permit-step strong" data-step="1"><b>一个主账户</b><small>Stripe 持有 master MID，对卡组织/银行只暴露一个交易主体。</small></div>
+              <div class="permit-step" data-step="2"><b>子商户即时开通</b><small>小商家拿 sub-merchant ID，几分钟上线，不必自建任何银行关系。</small></div>
+              <div class="permit-step" data-step="3"><b>程序化承保</b><small>KYC、风险评估、合规由 Stripe 自动化即时完成。</small></div>
+              <div class="permit-step strong" data-step="4"><b>Stripe 吞下风险</b><small>欺诈、拒付、合规责任由 Stripe 承担——这是它收费的理由。</small></div>
+            </div>
+            <div class="promise">把"N 个商家各自求银行点头"<br>变成 <span>"银行只需对一个 Stripe 点头"</span>。</div>
+          </div>
+        </div>
+
+        <div class="agentbox">
+          <b>→ agentic payment 对位：</b>数亿 agent / 非技术用户，<b>不可能每个都去"申请一个钱包 + KYC + 拿到支付权限"</b>（这正是 anyway.sh 那套 env-var 凭证的死穴：它要求每个用户自己当商户）。必须有人把长尾用户聚合到一个伞下，吞下凭证、托管、限额、风险这块脏活——这就是反"每人自建钱包"的核心论点。gatekeeper（这里是 AI 平台）也只需要信任一个聚合者，而不是数亿个 agent。
+        </div>
+      </div>
+    </section>
+
+    <!-- ③ 灵活接入 -->
+    <section id="ladder" class="section">
+      <div class="diagram-card">
+        <div class="diagram-header">
+          <div>
+            <h2>③ 灵活接入：先用最简单的，做大了也不用换</h2>
+            <p>点任意一档看细节。关键不是"选项多"，而是它们共享同一套底层 API——简单档不是玩具死胡同，是通往完整系统的 on-ramp。</p>
+          </div>
+          <div class="diagram-badge">小处零门槛接住你<br>陪你长大不用 re-platform</div>
+        </div>
+
+        <div class="ladder" id="ladder">
+          <div class="rung active" data-id="link"><span class="num">1</span><b>Payment Links</b><small>一个链接就能收钱，零代码。</small><span class="who">想立刻收钱</span></div>
+          <div class="rung" data-id="checkout"><span class="num">2</span><b>Checkout</b><small>Stripe 托管的结账页，几行代码。</small><span class="who">最小集成</span></div>
+          <div class="rung" data-id="elements"><span class="num">3</span><b>Elements</b><small>可嵌入自己页面的 UI 组件。</small><span class="who">要品牌/控制</span></div>
+          <div class="rung" data-id="api"><span class="num">4</span><b>Payment Intents API</b><small>直接调底层 API，完全自定义。</small><span class="who">复杂支付逻辑</span></div>
+          <div class="rung" data-id="connect"><span class="num">5</span><b>Connect</b><small>平台/市场多方分账与代收。</small><span class="who">平台/marketplace</span></div>
+        </div>
+
+        <div class="rung-detail" id="rungDetail"></div>
+
+        <div class="matrix">
+          <div class="matrix-card deny">
+            <h3>🔧 表面的管子（不值钱）</h3>
+            <ul>
+              <li>"七行代码就能收款"是看得见的糖，单看可复制。</li>
+              <li>如果每一档是割裂的产品，做大就要推倒重接——大多数支付工具就死在这。</li>
+            </ul>
+          </div>
+          <div class="matrix-card cover">
+            <h3>🧱 吞下的脏活（护城河）</h3>
+            <ul>
+              <li><b>同一套底层 API</b>：从托管页爬到完整 API，永远不用 rip-and-replace——没有迁移悬崖。</li>
+              <li><b>每一档都替你扛 PCI 合规</b>：卡号 tokenize，永不碰你的服务器。</li>
+              <li><b>商业逻辑</b>：简单档是获客楔子（"只想收钱"的开发者几分钟上手），Connect 是 lock-in。小处接住你，陪你长大。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="agentbox">
+          <b>→ agentic payment 对位：</b>凭证 / 接入也需要这样一条 on-ramp——非技术用户能不能从<b>一张"授权卡片"零门槛起步（不是 env-var！）</b>，而同一套系统又能向上爬到企业 policy、审计、多方分账？crypto 的 env-var 凭证恰恰相反：<b>起步就难、且只服务"开发者 ∩ crypto"</b>，天花板和地板一样高。"先简单、再长大、中途不换"正是它做不到、而真正的产品必须做到的。
+        </div>
+      </div>
+    </section>
+
+    <!-- 母题合成 -->
+    <section id="synthesis" class="section">
+      <div class="section-title">
+        <h2>三块脏活，同一个母题（会上讨论抓手）</h2>
+        <p>点左侧任意一块，右侧给你最精简的"管子 vs 脏活"，以及我们在 agent 支付里要去吞的那块脏活。</p>
+      </div>
+      <div class="selector-wrap">
+        <div class="sel-list" id="selList"></div>
+        <div class="section-card sel-detail" id="selDetail" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <div class="footer-note">母题：Stripe 不靠"能付款"值钱，靠"替你扛下你最不想碰的那三块"。<br><span>agentic payment 的赢家，也会是吞下 agent 花钱时那三块脏活的人——不是又造一根更快的管子的人。</span></div>
+
+    <div class="src">
+      事实核对来源：
+      <a href="https://stripe.com/radar" target="_blank">Stripe Radar</a> ·
+      <a href="https://stripe.com/guides/payfacs" target="_blank">Stripe Payfacs Guide</a> ·
+      <a href="https://www.goodreads.com/book/show/53405431-the-anatomy-of-the-swipe" target="_blank">The Anatomy of the Swipe</a> ·
+      <a href="http://paulgraham.com/ds.html" target="_blank">PG · Do Things That Don't Scale</a>。
+      数字（92% / $1.9T / −32%）为 Stripe 官方口径。
+    </div>
+  </main>
+
+<script>
+// ③ 灵活接入 —— 档位细节
+const rungs = {
+  link:    {pipe:'一条收款链接，发出去就能收钱，完全不用写代码。', moat:'背后仍是同一套支付、对账、退款、风控系统——以后想往上爬，数据和配置都不丢。'},
+  checkout:{pipe:'几行代码嵌入一个 Stripe 托管的结账页，PCI 合规全由 Stripe 兜。', moat:'托管页帮你扛下卡号安全与合规，开发者只管把用户引过来。'},
+  elements:{pipe:'把支付 UI 拆成可嵌入自己页面的组件，外观自己定。', moat:'拿到品牌与体验控制权，但卡号仍走 Stripe tokenize，合规风险不落到你头上。'},
+  api:     {pipe:'直接调 Payment Intents 等底层 API，支持任意复杂的支付流程。', moat:'完全自定义，却和前面几档共享同一对象模型——升级不是重写，是解锁。'},
+  connect: {pipe:'面向平台/市场：代多个卖家收款、分账、合规、打款。', moat:'把"成为一个 payment facilitator"打包成产品卖给平台——最深的脏活，最强的 lock-in。'}
+};
+const ladder = document.getElementById('ladder');
+const rungDetail = document.getElementById('rungDetail');
+function renderRung(id){
+  const r = rungs[id] || rungs.link;
+  [...ladder.querySelectorAll('.rung')].forEach(el=>el.classList.toggle('active', el.dataset.id===id));
+  rungDetail.innerHTML = `
+    <div class="rd-pipe"><h4>🔧 表面：你看到的便利</h4>${r.pipe}</div>
+    <div class="rd-moat"><h4>🧱 底下：替你吞掉的脏活</h4>${r.moat}</div>`;
+}
+[...ladder.querySelectorAll('.rung')].forEach(el=>el.addEventListener('click',()=>renderRung(el.dataset.id)));
+renderRung('link');
+
+// 支付管道 chain —— 可点击，每个角色映射到 agent 支付
+const chainInfo = [
+  {role:'💳 顾客的卡', does:'顾客的支付凭证与资金来源，由发卡行签发。', agent:'用户授权给 agent 的支付额度 / 凭证——是受限凭证，不是把私钥或整个钱包交给 agent。'},
+  {role:'🛒 商户网站 / App', does:'想收钱的一方，在结账页把卡号收上来。', agent:'被 agent 调用、需要被付费的 API / 商家 / 服务。'},
+  {role:'🚪 Gateway 网关', does:'信息前门：安全抓取+加密卡号、转发授权请求、回传结果，相当于在线版 POS 终端。', agent:'agent 与支付系统之间的协议层——x402 / AP2 / MCP 支付扩展，负责把一次付款请求安全送进系统。'},
+  {role:'⚙️ Processor 处理商', does:'真正干活的：对接卡组织、处理清算与结算。', agent:'实际执行结算的 rail 本身——卡 / 银行 / 稳定币链。'},
+  {role:'🏦 Acquirer 收单行', does:'商户这边的银行，持有商户账户，钱最后落到这里。', agent:'商家侧的收款 / 结算账户。'},
+  {role:'🛰️ Visa / MC 卡组织', does:'在收单行和发卡行之间路由授权请求的"轨道"。', agent:'选择走哪条 rail（卡网 vs 稳定币链 vs 银行轨道）——rail 是实现细节，不是产品价值所在。'},
+  {role:'🏛️ Issuer 发卡行', does:'顾客的银行，批准 / 拒绝交易、真正出钱。', agent:'给 agent 授信 / 扣款、并强制额度与权限的一方——钱包 + policy / 风控引擎。这层最接近"脏活护城河"。'}
+];
+(function(){
+  const nodes=[...document.querySelectorAll('.chain-node')];
+  const detail=document.getElementById('chainDetail');
+  if(!nodes.length||!detail) return;
+  function show(i){
+    nodes.forEach((n,k)=>n.classList.toggle('active',k===i));
+    const c=chainInfo[i];
+    detail.innerHTML=`<h4>${c.role}</h4><div class="cd-grid"><div><b>在卡支付里干什么</b>${c.does}</div><div><b>→ agent 支付里的对位</b>${c.agent}</div></div>`;
+  }
+  nodes.forEach((n,i)=>n.addEventListener('click',()=>show(i)));
+  show(2); // 默认高亮 Gateway
+})();
+
+// 母题合成 selector
+const mechs = [
+  {
+    id:'fraud', emoji:'🛡️', title:'① 防欺诈', sub:'Radar / 全网风控',
+    pipeTitle:'表面的管子', pipe:[
+      '判断单笔交易的卡有没有被盗刷。',
+      '一个商家只看得见自己的流量。',
+      '这层谁都能写个粗版，不构成壁垒。'
+    ],
+    moatTitle:'吞下的脏活 = 护城河', moat:[
+      '自己承担欺诈/拒付损失，商家不必当风控专家。',
+      '全网数据网络效应：交易越多模型越准，复利。',
+      '接进卡组织底层信号，争议发生前就识别。'
+    ],
+    line:'agent 支付要吞的脏活：承担 agent 特有的新风险（失控消费、prompt injection、冒充）——人类风控模型扛不住的那块。谁交易量大谁握信号。'
+  },
+  {
+    id:'onboarding', emoji:'🏬', title:'② 小商家托管', sub:'PayFac / 聚合',
+    pipeTitle:'表面的管子', pipe:[
+      '帮商家把钱收上来这件事本身。',
+      '旧世界里每个商家要自己开 merchant account。',
+      '几周承保 + 自担风险，长尾被挡在门外。'
+    ],
+    moatTitle:'吞下的脏活 = 护城河', moat:[
+      '一个主账户聚合千万子商户，即时开通。',
+      '程序化承保 + 自己吞下欺诈/拒付/合规。',
+      '把 N 个许可问题变成 1 个：银行只信一个 Stripe。'
+    ],
+    line:'agent 支付要吞的脏活：把数亿非技术用户聚合到一个伞下，替他们扛凭证/托管/限额/风险——而不是让每人自建钱包（env-var 之死）。'
+  },
+  {
+    id:'ladder', emoji:'🪜', title:'③ 灵活接入', sub:'统一 API 的接入阶梯',
+    pipeTitle:'表面的管子', pipe:[
+      '"七行代码收款"是看得见的糖。',
+      '单看可复制，不是壁垒。',
+      '割裂的档位会让人做大后被迫推倒重接。'
+    ],
+    moatTitle:'吞下的脏活 = 护城河', moat:[
+      '同一套底层 API：从托管页爬到完整 API，无迁移悬崖。',
+      '每一档都替你扛 PCI 合规（卡号 tokenize）。',
+      '简单档是获客楔子，Connect 是 lock-in，陪你长大。'
+    ],
+    line:'agent 支付要吞的脏活：让凭证/接入有 on-ramp——非技术用户从"授权卡片"零门槛起步，同一套系统又能爬到企业 policy/审计/分账。'
+  }
+];
+const selList = document.getElementById('selList');
+const selDetail = document.getElementById('selDetail');
+function renderMech(id){
+  const m = mechs.find(x=>x.id===id) || mechs[0];
+  [...selList.querySelectorAll('button')].forEach(b=>b.classList.toggle('active', b.dataset.id===m.id));
+  selDetail.innerHTML = `
+    <div class="detail-card bad">
+      <h3>🔧 ${m.pipeTitle}</h3>
+      <ul>${m.pipe.map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div>
+    <div class="detail-card good">
+      <h3>🧱 ${m.moatTitle}</h3>
+      <ul>${m.moat.map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div>
+    <div class="sel-bottom"><b>→ 我们要吞的脏活：</b>${m.line}</div>`;
+}
+mechs.forEach((m,i)=>{
+  const b = document.createElement('button');
+  b.className = 'sel-btn' + (i===0?' active':'');
+  b.dataset.id = m.id;
+  b.innerHTML = `<span class="sel-emoji">${m.emoji}</span><span><b>${m.title}</b><small>${m.sub}</small></span>`;
+  b.addEventListener('click',()=>renderMech(m.id));
+  selList.appendChild(b);
+});
+renderMech('fraud');
+
+// 探索历程 —— 选择题
+const forks = [
+  {stage:'岔路① · tech 陷阱', q:'收钱很痛之后，工程师的第一反应该往哪走？', sit:'造 app 几小时、收钱要几周。你刚被支付接入折磨完。',
+   trap:'做一个更便宜、更快的 gateway，跟 Authorize.net 比管子粗细和费率。',
+   good:'痛的不是处理交易，是"开始处理交易之前"那堵三周的墙——价值在 rail 之前。',
+   why:'管子谁都能写，不构成壁垒。Stripe 把注意力从"交易"挪到"接入体验"。'},
+  {stage:'岔路② · GTM 陷阱', q:'产品方向有了，找客户先打谁？', sit:'下一个最自然的冲动，也是最容易踩的 GTM 抢跑。',
+   trap:'大商户交易量大，组个销售队一家家去签大商户。',
+   good:'先别卖。回到上游问题：真正在流血、且没人管的是谁？',
+   why:'签大商户纯线性、同质化，而且大商户最懂支付、最不痛——这是 GTM 抢跑。'},
+  {stage:'核心重构 · 买家是谁', q:'谁才是真正决定用不用的人？', sit:'当时所有支付产品都在为某种人设计——为谁？',
+   trap:'付钱的商户 / CFO / 采购，所以产品要能打电话、能签合同。',
+   good:'是那个正在写代码、想把收款集成进去的开发者。',
+   why:'买家一换，产品瞬间变成"七行代码、自助、文档即一切"。此刻没签一个客户，但产品形态已清楚——这就是 product 和 GTM 的分界线。'},
+  {stage:'岔路④ · 巨头的形状', q:'PayPal 已经那么强了，怎么办？', sit:'2010 年，支付不是一片空白。',
+   trap:'它那么强，正面打不过，绕开支付做别的吧。',
+   good:'PayPal 的形状是为 eBay 消费者浇筑的，服务不好 web 开发者——被它遗弃的人就是入口。',
+   why:'巨头不是不够强，是它的形状为上一个时代而造。找被巨头形状结构性抛弃的人。'},
+  {stage:'岔路⑤ · 护城河在哪', q:'Stripe 真正的护城河是哪一块？', sit:'这一步直接长出了后面的 ① 和 ②。',
+   trap:'那漂亮的、几行代码就能收款的 API。',
+   good:'把开发者最怕、最不想碰的脏活（承保 / 风控 / 欺诈 / 聚合结算）自己吞下来。',
+   why:'七行代码是看得见的糖，可复制。真正难复制的是"我替你扛下了你最不想碰的风险"。'},
+  {stage:'岔路⑥ · 是不是一波浪', q:'这是一次性小生意，还是一波浪？', sit:'做完该不该继续 all-in？',
+   trap:'就是个能收款的小工具，做完算了。',
+   good:'AWS / Heroku / Rails 让"能造 app 的人"暴增、"能收钱的人"没跟上——站对水位，水自己涨上来。',
+   why:'每天都有更多人掉进当初那个落差里。不创造需求，踩对上涨的水位。'},
+  {stage:'岔路⑦ · 怎么验证', q:'怎么确认这个痛点是真的？', sit:'早期，你需要的是证据，不是观点。',
+   trap:'发问卷问"你需不需要更好的支付？"',
+   good:'坐到开发者旁边，把笔记本拿过来当场装上，看他几分钟能不能跑通。',
+   why:'嘴上说需要不算数。看他装的时候眼睛亮不亮、装完愿不愿立刻上线——这就是 "Collison installation"。'}
+];
+(function(){
+  const quiz=document.getElementById('quiz'); if(!quiz) return;
+  const qStage=document.getElementById('qStage'), qDots=document.getElementById('qDots'),
+        qCount=document.getElementById('qCount'), qTitle=document.getElementById('qTitle'),
+        qSit=document.getElementById('qSit'), qOpts=document.getElementById('qOpts'),
+        qReveal=document.getElementById('qReveal'), qNext=document.getElementById('qNext'),
+        qHint=document.getElementById('qHint');
+  let idx=0, answered=false;
+  forks.forEach(()=>{const d=document.createElement('div');d.className='quiz-dot';qDots.appendChild(d);});
+  function paintDots(){[...qDots.children].forEach((d,i)=>{d.className='quiz-dot'+(i<idx?' done':'')+(i===idx?' cur':'');});}
+  function render(){
+    const f=forks[idx]; answered=false;
+    qStage.textContent=f.stage;
+    qCount.textContent=`第 ${idx+1} / ${forks.length} 题`;
+    qTitle.textContent=f.q; qSit.textContent=f.sit;
+    qReveal.className='quiz-reveal'; qReveal.innerHTML='';
+    qNext.disabled=true; qNext.textContent = idx===forks.length-1 ? '看三块脏活 →' : '下一题 →';
+    qHint.style.display='';
+    const opts = (idx%2===0) ? [{t:f.trap,c:false},{t:f.good,c:true}] : [{t:f.good,c:true},{t:f.trap,c:false}];
+    qOpts.innerHTML='';
+    opts.forEach((o,i)=>{
+      const b=document.createElement('button');
+      b.className='opt'; b.type='button';
+      b.innerHTML=`<span class="mark">${String.fromCharCode(65+i)}</span><span>${o.t}</span>`;
+      b.addEventListener('click',()=>choose(o.c,opts));
+      qOpts.appendChild(b);
+    });
+    paintDots();
+  }
+  function choose(correct,opts){
+    if(answered) return; answered=true;
+    const f=forks[idx], btns=[...qOpts.children];
+    btns.forEach((el,i)=>{
+      el.setAttribute('disabled','');
+      if(opts[i].c) el.classList.add('correct'); else el.classList.add('dim');
+    });
+    if(!correct){
+      const wrongIdx = opts.findIndex(o=>!o.c);
+      btns[wrongIdx].classList.remove('dim'); btns[wrongIdx].classList.add('wrong');
+    }
+    qReveal.innerHTML = (correct
+        ? '✅ <b>对。</b> '
+        : '🕳️ <b>你选了那条诱人的错路</b>——别担心，大多数工程师都会。<br>') + f.why;
+    qReveal.classList.add('show');
+    qNext.disabled=false; qHint.style.display='none';
+  }
+  qNext.addEventListener('click',()=>{
+    if(idx<forks.length-1){ idx++; render(); quiz.scrollIntoView({behavior:'smooth',block:'center'}); }
+    else{ document.getElementById('fraud').scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>
