@@ -44,8 +44,9 @@
   .brand{display:flex;align-items:center;gap:12px;font-weight:600;letter-spacing:.01em;color:var(--ink-dim)}
   .brand-mark{
     width:36px;height:36px;border:1px solid var(--line);border-radius:10px;
-    display:grid;place-items:center;background:var(--bg-raised);color:var(--accent);font-weight:700;
+    display:grid;place-items:center;background:var(--bg-raised);color:var(--accent);font-weight:700;text-decoration:none;transition:border-color .16s ease;
   }
+  .brand-mark:hover{border-color:var(--accent)}
   .nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .nav a{text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:8px 13px;background:var(--bg-raised);color:var(--ink-dim);font-size:13px;font-family:var(--mono);transition:border-color .16s ease,color .16s ease}
   .nav a:hover{border-color:var(--accent);color:var(--accent)}
@@ -232,7 +233,7 @@
 <body>
   <main class="page">
     <div class="topbar">
-      <div class="brand"><div class="brand-mark">S</div><div>Stripe 母题拆解 · 三块脏活</div></div>
+      <div class="brand"><a class="brand-mark" href="./" title="返回上级 · Agentic Payment 研究" aria-label="返回上级">S</a><div>Stripe 母题拆解 · 三块脏活</div></div>
       <nav class="nav" aria-label="页面导航">
         <a href="#stack">支付管道</a><a href="#journey">探索历程</a><a href="#fraud">① 防欺诈</a><a href="#onboarding">② 小商家托管</a><a href="#ladder">③ 灵活接入</a><a href="#synthesis">母题</a>
       </nav>
