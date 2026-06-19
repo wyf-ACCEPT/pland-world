@@ -1,0 +1,22 @@
+README.md
+  s_3c36663240c7c0::t_b58d93ce31008a 1-34
+index.html
+  s_3c36663240c7c0::t_0a337293a556c5 65
+  s_3c36663240c7c0::t_c5cdebfdcbbed2 89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "240a4a8bb9713f1b934d35a7efa1d9dec19dd600",
+  "prompts": {},
+  "sessions": {
+    "s_3c36663240c7c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f81faa80-9cfb-4b89-a1c6-8b72a654429e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
