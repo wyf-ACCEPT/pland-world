@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="思维导图：Agentic Payment 的最终赢家不需要稳定币 —— 论证逻辑梳理。" />
+<title>思维导图｜Agentic Payment 不需要稳定币</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --good:#5fb98c; --good-soft:rgba(95,185,140,.13);
+    --bad:#d9776b; --bad-soft:rgba(217,119,107,.13);
+    --slate:#6f9bd1; --slate-soft:rgba(111,155,209,.13); --clay:#cf7a52;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 80% -10%, rgba(224,163,70,.07), transparent 60%),
+      radial-gradient(900px 520px at 8% 4%, rgba(111,155,209,.05), transparent 55%),
+      var(--bg);}
+  a{color:inherit}
+  .shell{max-width:1280px;margin:0 auto;padding:20px 22px 70px}
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:10px 0 15px;background:linear-gradient(180deg,rgba(14,17,22,.98),rgba(14,17,22,.82),transparent);backdrop-filter:blur(10px)}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:600;letter-spacing:-.01em}
+  .logo{width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:var(--bg-raised);color:var(--accent);font-size:18px;font-weight:700;text-decoration:none;transition:border-color .16s ease}
+  .logo:hover{border-color:var(--accent)}
+  .brand small{display:block;color:var(--ink-faint);font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+
+  .head-block{margin:6px 0 22px}
+  .eyebrow{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:500;letter-spacing:.13em;text-transform:uppercase;margin-bottom:10px}
+  h1{font-family:var(--serif);font-weight:500;margin:0 0 10px;font-size:38px;line-height:1.1;letter-spacing:-.02em}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--ink-dim);font-size:15px;line-height:1.6;max-width:760px}
+
+  /* two-scene intro */
+  .scenes{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:18px 0 6px}
+  .scene{border-radius:16px;background:var(--bg-card);border:1px solid var(--line);padding:17px 19px;position:relative}
+  .scene .stag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .scene h3{font-family:var(--serif);font-weight:500;font-size:18px;margin:0 0 7px;line-height:1.25}
+  .scene p{margin:0;font-size:13px;line-height:1.6;color:var(--ink-dim)}
+  .scene p b{color:var(--ink)}
+  .scene.a{border-top:3px solid var(--good)}
+  .scene.b{border-top:3px solid var(--slate)}
+  .intro-note{font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.03em;margin:4px 0 0}
+
+  /* ===== mind map ===== */
+  .map{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:8px 4px 18px}
+  /* center node */
+  .center{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;justify-content:center;
+    width:236px;min-height:200px;padding:22px 20px;border-radius:20px;
+    background:linear-gradient(180deg,#1e242e,#15191f);border:1px solid rgba(224,163,70,.5);
+    box-shadow:0 0 0 1px rgba(224,163,70,.08),0 18px 46px rgba(0,0,0,.45)}
+  .center .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+  .center h2{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.18;margin:0 0 12px}
+  .center h2 b{color:var(--accent);font-weight:600}
+  .center .premise{border-top:1px solid var(--line);padding-top:11px;font-size:12px;line-height:1.5;color:var(--ink-dim)}
+  .center .premise b{color:var(--ink)}
+
+  /* connector column */
+  .connect{flex:0 0 46px;align-self:stretch;position:relative}
+  .connect:before{content:"";position:absolute;left:0;top:50%;width:22px;height:1px;background:var(--line)}
+  .connect:after{content:"";position:absolute;left:22px;top:14%;bottom:14%;width:1px;background:var(--line)}
+
+  /* branches column */
+  .branches{flex:1 1 auto;display:flex;flex-direction:column;gap:13px;min-width:560px}
+  .branch{position:relative;border-radius:14px;background:var(--bg-card);border:1px solid var(--line);padding:15px 17px}
+  .branch:before{content:"";position:absolute;left:-24px;top:50%;width:24px;height:1px;background:var(--line)}
+  .branch.b-left{border-left:3px solid var(--accent)}
+  .branch .bhead{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+  .branch .num{flex:0 0 auto;width:26px;height:26px;display:grid;place-items:center;border-radius:8px;
+    font-family:var(--mono);font-size:12px;font-weight:600;background:var(--accent-soft);border:1px solid rgba(224,163,70,.42);color:var(--accent)}
+  .branch h3{font-family:var(--serif);font-weight:500;font-size:17px;margin:0;line-height:1.25}
+  .branch .core{font-size:12.5px;color:var(--ink-dim);line-height:1.55;margin:0 0 10px}
+  .branch .core b{color:var(--ink)}
+
+  /* leaf chips */
+  .leaves{display:flex;flex-wrap:wrap;gap:7px}
+  .leaf{font-size:11.5px;line-height:1.4;padding:7px 10px;border-radius:10px;background:var(--bg-card-2);border:1px solid var(--line-soft);color:var(--ink-dim)}
+  .leaf b{color:var(--ink);font-weight:600}
+  .leaf.good{background:var(--good-soft);border-color:rgba(95,185,140,.32);color:var(--good)}
+  .leaf.slate{background:var(--slate-soft);border-color:rgba(111,155,209,.32);color:var(--slate)}
+  .leaf.warn{background:var(--accent-soft);border-color:rgba(224,163,70,.32);color:var(--accent)}
+
+  /* two-scene mini split inside branch 4 */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+  .split>div{border-radius:10px;padding:8px 10px;font-size:11px;line-height:1.45}
+  .split .s1{background:var(--good-soft);border:1px solid rgba(95,185,140,.32);color:var(--good)}
+  .split .s2{background:var(--slate-soft);border:1px solid rgba(111,155,209,.32);color:var(--slate)}
+  .split b{display:block;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;opacity:.85}
+
+  /* conclusion bar */
+  .conclude{margin-top:18px;border-radius:16px;padding:18px 20px;
+    background:linear-gradient(180deg,#181d25,#13171d);border:1px solid rgba(224,163,70,.42);
+    box-shadow:0 0 0 1px rgba(224,163,70,.06),0 18px 48px rgba(0,0,0,.4)}
+  .conclude .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+  .conclude p{margin:0;font-size:16px;line-height:1.55;font-weight:600}
+  .conclude p span{color:var(--accent)}
+  .conclude .small{margin-top:8px;font-size:12.5px;font-weight:400;color:var(--ink-dim);line-height:1.55}
+
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:.03em}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .legend .l1{background:var(--good)} .legend .l2{background:var(--slate)} .legend .l3{background:var(--accent)}
+
+  .footer{margin-top:22px;border-top:1px solid var(--line-soft);padding-top:14px;display:flex;justify-content:space-between;gap:16px;color:var(--ink-faint);font-family:var(--mono);font-size:10px;line-height:1.45;flex-wrap:wrap;letter-spacing:.03em}
+
+  @media(max-width:980px){
+    .map{flex-direction:column;align-items:stretch}
+    .center{width:auto;align-self:stretch}
+    .connect{display:none}
+    .branches{min-width:0}
+    .branch:before{display:none}
+    h1{font-size:30px}
+  }
+  @media print{body{background:var(--bg)}.topbar{display:none}.map{overflow:visible}@page{size:A3 landscape;margin:10mm}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <a class="logo" href="./" title="返回上级 · Agentic Payment 研究" aria-label="返回上级">¬</a>
+      <div>Agentic Payment 论证地图<small>Argument map · 2026-06-22</small></div>
+    </div>
+  </header>
+
+  <div class="head-block">
+    <div class="eyebrow">Argument map</div>
+    <h1>Agentic Payment 的最终赢家<span> 不需要稳定币</span></h1>
+    <p class="sub">先说清楚 Agent Payment 分哪两种场景，再用六条理由从六个维度论证：让 AI 替你花钱这件事，最终赢家不需要稳定币。</p>
+  </div>
+
+  <div class="scenes">
+    <div style="grid-column:1/-1;font-size:14px;line-height:1.65;color:var(--ink-dim)">
+      <b style="color:var(--ink)">Agent Payment 和以前最大的区别：</b>以前买东西、订服务，都是<b style="color:var(--ink)">你自己去找、自己下单</b>；现在是<b style="color:var(--ink)">让 AI 替你去找、去下单</b>。由此分成两种大场景——
+    </div>
+    <div class="scene a">
+      <div class="stag">场景 ①</div>
+      <h3>人让 AI 替自己买东西</h3>
+      <p>用户想买某个商品 / 订某个服务，<b>把"下单这个动作"外包给 AI agent</b>——比如让 AI 订机票、续会员、买日用品。背后<b>有真实的人和真实的商家</b>。</p>
+    </div>
+    <div class="scene b">
+      <div class="stag">场景 ②</div>
+      <h3>AI 为完成任务自己去买</h3>
+      <p>AI 在做自己的任务时，为了拿到结果，<b>主动去找并购买一些服务</b>——订阅个接口、买点数据、付一笔 Token / 算力费等等。这是 <b>AI 自发的消费</b>，常常是机器对机器。</p>
+    </div>
+    <p class="intro-note">下面的论证会反复用到这两种场景。核心结论：两种场景都算上，赢家依然不需要稳定币。</p>
+  </div>
+
+  <div class="map">
+    <div class="center">
+      <div class="tag">Thesis · 核心观点</div>
+      <h2>让 AI 替你花钱<b> 不需要稳定币</b></h2>
+      <div class="premise"><b>一句话前提：</b>这场竞争拼的是「谁来管 AI 能不能花、花错了谁负责」，不是「钱用哪条管道转」。管道随时能换，管不管得住才是关键。</div>
+    </div>
+
+    <div class="connect"></div>
+
+    <div class="branches">
+
+      <div class="branch b-left">
+        <div class="bhead"><div class="num">1</div><h3>能退钱才是优点，不能反悔是缺点</h3></div>
+        <p class="core"><b>AI 会"产生幻觉"是改不掉的毛病</b>——它一定会有理解错、买错、被诱导乱下单的时候。所以「让 AI 花钱」天生就比人自己花钱更容易出错；再加上买东西、订服务本来就有大量退订/退款/取消。<b>所以"退钱"这类交易在 Agent Payment 里一定又多又必须满足，这是 AI 时代特有的刚需。</b></p>
+        <div class="leaves">
+          <span class="leaf"><b>AI 特色：</b>大模型幻觉无法根除 → 买错是常态，不是意外</span>
+          <span class="leaf good">刷卡 + 现有监管：天生就支持退款、拒付、消费者保护这套兜底逻辑</span>
+        </div>
+        <p class="core" style="margin-top:11px"><b>调研结论——稳定币目前几乎都不支持"原生退款"：</b></p>
+        <div class="leaves">
+          <span class="leaf">链上交易一旦确认<b>就不可逆</b>，想"退"只能再发一笔反向交易（A→B 退款要靠 B→A），且必须收款方自愿配合</span>
+          <span class="leaf">所谓"反向冻结"只是发行方（如 Tether）配合执法冻结非法地址，是<b>中心化的例外干预，不是商业退款</b></span>
+          <span class="leaf">智能合约托管（escrow）能勉强模拟，但要<b>双方预先约定、流程复杂</b>，不是默认能力</span>
+          <span class="leaf warn">Tempo、x402 等支付链主打"低成本结算"，<b>都没把"原生退款/争议"作为标配</b></span>
+          <span class="leaf good">→ AI 越容易出错，能反悔的刷卡就越不可替代；稳定币恰恰最缺这个</span>
+        </div>
+      </div>
+
+      <div class="branch b-left">
+        <div class="bhead"><div class="num">2</div><h3>「手续费、跨境」是稳定币的真优势——但场景占比有限，且卡组织正在全面降本</h3></div>
+        <p class="core">这点要诚实：稳定币<b>在"高频 + 小额 + 跨境"上确实是它最强的地方</b>。传统刷卡每笔有固定基础收费，小额高频会被这笔固定费吃垮（Tempo 就主打每笔 0.1 美分）。但要用这个优势论证"赢家必须用稳定币"，需要同时回答两个问题：<b>这种场景到底占多大盘？卡组织有没有办法把成本压下来？</b></p>
+
+        <p class="core" style="margin-top:11px"><b>第一层：场景占比——目前还是长尾</b></p>
+        <div class="split">
+          <div class="s1"><b>过去：小额是长尾</b>大部分真实交易都是较大额（十几美元以上），小额高频占比小，痛点不明显</div>
+          <div class="s2"><b>AI 时代（场景②）：小额可能变大</b>AI 频繁买数据、调 API、付内容/算力费，小额高频从"长尾"变"主力"——但<b>这还是预期，不是现实</b></div>
+        </div>
+        <div class="leaves" style="margin-top:8px">
+          <span class="leaf slate"><b>真实数据：</b>2025 年稳定币链上去重后约 25 万亿美元，但有真实支付背景的<b>占比不足 1%</b>——眼下绝大多数还是炒币/搬砖</span>
+          <span class="leaf">用「未来可能很大的边缘场景」去论证「主流赢家必须用稳定币」，是用<b>尾部否定主体，逻辑不成立</b></span>
+        </div>
+
+        <p class="core" style="margin-top:11px"><b>第二层：卡组织正通过 token 化，专门解决高频 + 小额 + 跨境问题</b></p>
+        <p class="core" style="font-weight:400;font-size:12.5px;color:var(--ink-dim);margin-bottom:10px">稳定币的优势是三件事叠在一起——笔数多、金额小、跨越国界。卡组织拆开来看，每一件都有 token 化的解法：</p>
+        <div class="leaves">
+          <span class="leaf warn"><b>「小额」→ token 化可以设额度、不绑全额信用。Visa Flexible Credential（弹性凭证）</b>让用户给一个 token 分配特定金额和用途，"一个凭证访问多个账户和资金来源"（Visa 调研 51% 用户有这需求），51~100 刀先充到 token 里、花完为止——纯卡轨道上的预充值体系。Visa Commercial Pay 同样通过虚拟卡给每笔/每天设限额，token 用完即废。</span>
+          <span class="leaf warn"><b>「高频」→ 用 token + 虚拟卡 + 集中结算把多笔打成一笔。Stripe Issuing</b>为每个 Agent 生成一对一的虚拟卡，Agent 可以高频小额地刷，但 Stripe 在后端把周期内所有小额汇总成一笔清算——每笔的固定成本被分摊到趋近于零。万事达卡 2024 年已有 30% 交易代币化，说明这套已经在规模化。</span>
+          <span class="leaf warn"><b>「跨境」→ 卡网络自己的实时通道早已覆盖。Visa Direct</b> 本身就是即时跨境转账网络——覆盖 195 个国家约 110 亿张卡、银行账户和数字钱包，不必等 T+2 清算周期、不必用链。Mastercard Move 已扩展到亚/欧/中东/非/拉美 22 个新市场做准实时支付。这套完全跑在卡轨道上，不需要任何稳定币参与。</span>
+          <span class="leaf warn"><b>「防欺诈 + 免维护」→ token 自带的安全进一步压低隐性成本。Visa 代币化后亚太区诈骗率降低 58%</b>；域限定 token 即使泄露也无法在别处盗刷；Account Updater 让卡过期了 token 自动续、Agent 授权不中断——这些是纯 token 化能力，不需要任何新轨道。</span>
+        </div>
+        <div class="callout" style="margin-top:12px;padding:12px 14px;font-size:14px">
+          核心逻辑：<em>小额高频跨境，不用换轨道</em>——token 设额度（解决"小额"）、虚拟卡聚合清算（解决"高频"）、卡网络自己的实时通道（解决"跨境"）。<b>三件分开解决，全在卡轨道上。</b>
+        </div>
+      </div>
+
+      <div class="branch b-left">
+        <div class="bhead"><div class="num">3</div><h3>真正难的是「管住 AI」，而这恰恰稳定币管不了</h3></div>
+        <p class="core">让 AI 去 act、去付款，钱怎么转其实是最简单的一步。真正难、也真正决定成败的是<b>这三件事</b>，而它们<b>稳定币一件都解决不了</b>：</p>
+        <div class="leaves">
+          <span class="leaf"><b>① 是不是真的"他"要花？</b>这笔到底是本人/企业授权的，还是 AI 被诱导、被劫持、自己乱来的？——身份与授权</span>
+          <span class="leaf"><b>② 能花多少、买什么？</b>额度、品类、商家范围，得有人给 AI 划好红线——边界与权限</span>
+          <span class="leaf"><b>③ 什么时候停？</b>任务变了、授权过期了、出异常了，要能立刻刹车、撤销——可控与可撤销</span>
+        </div>
+        <p class="core" style="margin-top:11px"><b>为什么这三件事是最关键、最拉开差距的痛点？</b></p>
+        <div class="leaves">
+          <span class="leaf"><b>因为 AI 把"花钱的人"换成了不可信的代理。</b>人自己花钱，授权天然成立；可 AI 会幻觉、会被攻击，"它真的该花这笔吗"第一次成了必须回答的问题</span>
+          <span class="leaf">这三件事一旦没做好，后果是<b>资金失控</b>——比手续费高一点严重得多，是用户敢不敢把钱交给 AI 的<b>信任前提</b></span>
+          <span class="leaf">稳定币只解决"把钱转过去"，它<b>不知道也不关心</b>这笔该不该花、谁授权的、要不要停</span>
+          <span class="leaf good">而 Visa / 万事达 / Stripe 给 AI 发的"专用支付凭证"，正是冲这三件事设计的：限额、绑商家、可随时撤销</span>
+          <span class="leaf good">→ 胜负手在"谁能管住 AI"，这是刷卡网络几十年的老本行，也是稳定币的结构性空白</span>
+        </div>
+      </div>
+
+      <div class="branch b-left">
+        <div class="bhead"><div class="num">4</div><h3>「即时到账」不是稳定币的专利，传统支付已经做到了</h3></div>
+        <p class="core">稳定币看下来唯一最有价值的点其实是<b>实时结算</b>——7×24、即时到账、不等清算周期。但这一点传统支付早就不是问题了，而且不是 PPT、是已经落地有规模的：</p>
+        <div class="leaves">
+          <span class="leaf warn"><b>Visa Direct</b>：基于卡网络的即时转账，已落地欧洲/EEA；2026 年与<b>银联</b>打通，实现全球最大汇款通道之一的<b>实时跨境转账</b>，覆盖银联数十亿张卡</span>
+          <span class="leaf warn"><b>Mastercard Move</b>（原 Mastercard Send 升级版）：准实时支付已扩展到亚/欧/中东/非/拉美 <b>22 个新市场</b>，企业可即时跨境付款</span>
+          <span class="leaf"><b>FedNow</b>（美联储 2023 上线）：7×24×365 即时清算，周末也到账，35+ 银行已接入</span>
+          <span class="leaf"><b>RTP</b>（清算所实时支付网络）：银行间即时转账，2017 年起运行</span>
+          <span class="leaf"><b>沃尔玛 + Fiserv NOW</b>（2026）：直接从银行账户即时付款，零售巨头亲自下场绕开卡费</span>
+          <span class="leaf">还有印度 UPI、巴西 PIX 等国家级即时支付系统，已覆盖数亿人日常使用</span>
+        </div>
+        <p class="core" style="margin-top:11px"><b>为什么没有稳定币也能做？</b>因为"即时"的本质不是"用了区块链"，而是<b>把清算结算从"批处理"改成了"实时逐笔"</b>。FedNow/RTP 是央行和清算所改造基础设施做到的；Visa Direct/Mastercard Move 是卡网络在自己的 rails 上开了实时通道。它们都不需要链上结算，照样秒到账。</p>
+        <div class="leaves">
+          <span class="leaf good">→ 稳定币的"即时到账"优势已经被这些方案抹平。Agent 需要即时付款？Visa Direct 已经能做到</span>
+        </div>
+      </div>
+
+      <div class="branch b-left">
+        <div class="bhead"><div class="num">5</div><h3>KYC：稳定币的"许可制悖论"——越做 KYC 就越像银行</h3></div>
+        <p class="core">让 AI 自动花钱，"这笔到底是谁花的、能不能查到人"是基本要求。很多稳定币项目嘴上说"能做 KYC"，但调研下来——<b>它们的 KYC 只在入口，管不住中间</b>。逐个看：</p>
+        <div class="leaves">
+          <span class="leaf warn"><b>Tempo</b>：启动时许可制验证节点（瑞银/德银），但承诺"未来过渡到无需许可"——一旦放开，地址间 P2P 流转就查不到人了</span>
+          <span class="leaf warn"><b>Bridge</b>（Stripe 收购）：申请 OCC 国家银行牌照——<b>KYC 靠牌照不靠链，等于变回银行</b></span>
+          <span class="leaf warn"><b>x402</b>（Coinbase）：官方宣传"无注册、无邮箱验证"——<b>协议层零 KYC</b>，身份验证甩给接入方自己看着办</span>
+          <span class="leaf warn"><b>Circle</b>（USDC）：发行口 KYC 强，但 USDC 一旦进入自托管钱包流转，只能<b>事后冻结地址</b>，不知道背后是谁</span>
+          <span class="leaf warn"><b>Tether</b>：累计冻结 44 亿美元——这个数字恰恰证明<b>事前根本查不住人</b>，全靠事后救火</span>
+          <span class="leaf warn"><b>Zen7 等 Agent 支付项目</b>：几乎<b>没有 KYC 设计</b>，还在解决"能不能花"</span>
+        </div>
+        <p class="core" style="margin-top:11px"><b>根本困境——许可制悖论：</b></p>
+        <div class="split">
+          <div class="s1"><b>走"许可制 + 入口 KYC"</b>能查到人，但那就变成"换了皮的银行/卡网络"，丢掉了所有差异化优势</div>
+          <div class="s2"><b>走"无需许可 + 去中心化"</b>有优势，但 FATF 警告：自托管钱包间 P2P 流转"几乎无法追踪真实身份"，KYC 沦为话术</div>
+        </div>
+        <div class="leaves" style="margin-top:10px">
+          <span class="leaf"><b>对比卡网络：</b>每笔天然绑实名账户 → 全程可追踪 → 事前可拦截（授权/风控/3DS 在扣款前就拦住）</span>
+          <span class="leaf good">→ 它们越做 KYC 就越像卡网络（没理由需要稳定币）；越去中心化 KYC 就越空。Agent 只会要求更严的身份验证，这对卡是资产</span>
+        </div>
+      </div>
+
+      <div class="branch b-left">
+        <div class="bhead"><div class="num">6</div><h3>接受度与网络效应：稳定币要从零说服所有人</h3></div>
+        <p class="core">支付是典型的<b>双边市场</b>——用户用，前提是商家收；商家收，前提是用户用。卡组织已经把这个双边网络建好了：<b>数十亿持卡用户 × 全球上亿商户 × 几十年信任</b>。稳定币两边都缺。</p>
+        <div class="leaves">
+          <span class="leaf"><b>用户侧：</b>得先让用户持有稳定币（开钱包、买币、懂链/gas）——凭空多一步，普通人没动机跨</span>
+          <span class="leaf"><b>商家侧：</b>得让商家愿意收、敢收（价格波动、合规、记账、退款都是负担）</span>
+          <span class="leaf slate"><b>真实数据：</b>2025 年稳定币链上去重后约 25 万亿美元，但有真实支付背景的<b>占比不足 1%</b>——双边都没起来</span>
+          <span class="leaf">要靠 Stablecoin Standard 这类行业协会去"推广采用"——一个东西真好用、网络效应已成，是不需要被"推广"的</span>
+          <span class="leaf"><b>Agent 场景关键点：</b>AI 要复用的是用户<b>已经有的</b>支付方式，不是逼用户先变成 crypto 用户</span>
+          <span class="leaf good">→ 卡是"用户已经在那儿"，稳定币是"先把用户搬过来"。没人愿意为了让 AI 花钱，自己先学 crypto</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="conclude">
+    <div class="tag">Verdict · 总结</div>
+    <p>六条论据从六个不同维度证明同一件事：退款兜底、成本消解、授权管控、即时到账、KYC 身份验证、网络效应——<span>没有一个需要稳定币</span>。稳定币要么在这些维度上不是瓶颈，要么正被传统轨道解决，要么越做 KYC 就越像卡网络。</p>
+    <p class="small">所以——无论哪种场景成主流、底层走哪种钱：<b style="color:var(--ink)">让 AI 替你花钱这件事，最终的赢家不需要稳定币。</b></p>
+  </div>
+
+  <div class="legend">
+    <span><i class="l1"></i>支持「不需要稳定币」的理由</span>
+    <span><i class="l2"></i>稳定币的强项 / 对方论据</span>
+    <span><i class="l3"></i>卡组织降本 / 即时到账方案</span>
+    <span><i class="l1" style="background:var(--bad)"></i>稳定币合规硬伤</span>
+  </div>
+
+  <footer class="footer">
+    <div>论证地图 · 配套 yingmiao-no-stablecoin.html · 2026-06-21</div>
+    <div>仅为本辩题构建的单边论证逻辑梳理，非中立结论。</div>
+  </footer>
+</div>
+</body>
+</html>
