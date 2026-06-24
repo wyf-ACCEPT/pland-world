@@ -43,6 +43,46 @@
     -webkit-font-smoothing:antialiased; min-height:100vh;
     display:flex; flex-direction:column;
   }
+
+  /* Animated ambient gold orbs — drift slowly behind all content.
+     Palette is centered tightly on the accent gold (#e0a346) with small
+     warm/deep shifts so the glow reads as one coherent theme color. */
+  .aurora{
+    position:fixed; inset:0; z-index:-1; overflow:hidden;
+    pointer-events:none; filter:blur(45px) saturate(118%);
+  }
+  .aurora .orb{position:absolute; border-radius:50%; mix-blend-mode:screen; will-change:transform}
+  .aurora .o1{width:44vw; height:44vw; left:-6vw; top:-8vw; opacity:.5;
+    background:radial-gradient(circle at 50% 50%, rgba(224,163,70,.52), rgba(224,163,70,0) 70%);
+    animation:drift1 11s ease-in-out infinite}
+  .aurora .o2{width:38vw; height:38vw; right:-8vw; top:2vw; opacity:.46;
+    background:radial-gradient(circle at 50% 50%, rgba(214,150,58,.5), rgba(214,150,58,0) 70%);
+    animation:drift2 14s ease-in-out infinite}
+  .aurora .o3{width:48vw; height:48vw; left:16vw; bottom:-20vw; opacity:.42;
+    background:radial-gradient(circle at 50% 50%, rgba(232,178,92,.46), rgba(232,178,92,0) 70%);
+    animation:drift3 18s ease-in-out infinite}
+  .aurora .o4{width:28vw; height:28vw; right:12vw; bottom:0; opacity:.46;
+    background:radial-gradient(circle at 50% 50%, rgba(201,138,53,.48), rgba(201,138,53,0) 70%);
+    animation:drift4 12s ease-in-out infinite}
+  .aurora .o5{width:34vw; height:34vw; left:34vw; top:-16vw; opacity:.38;
+    background:radial-gradient(circle at 50% 50%, rgba(224,163,70,.42), rgba(224,163,70,0) 70%);
+    animation:drift5 15s ease-in-out infinite}
+  .aurora .o6{width:24vw; height:24vw; left:4vw; top:42vh; opacity:.4;
+    background:radial-gradient(circle at 50% 50%, rgba(218,160,72,.46), rgba(218,160,72,0) 70%);
+    animation:drift6 10s ease-in-out infinite}
+  .aurora .o7{width:30vw; height:30vw; right:22vw; top:30vh; opacity:.36;
+    background:radial-gradient(circle at 50% 50%, rgba(208,146,56,.42), rgba(208,146,56,0) 70%);
+    animation:drift7 19s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(7vw,5vw) scale(1.12)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-6vw,8vw) scale(1.08)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1.04)}50%{transform:translate(5vw,-7vw) scale(.92)}}
+  @keyframes drift4{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-8vw,-4vw) scale(1.16)}}
+  @keyframes drift5{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-5vw,7vw) scale(1.1)}}
+  @keyframes drift6{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,-6vw) scale(1.14)}}
+  @keyframes drift7{0%,100%{transform:translate(0,0) scale(1.02)}50%{transform:translate(-7vw,5vw) scale(.9)}}
+  @media (prefers-reduced-motion: reduce){
+    .aurora .orb{animation:none}
+  }
   .wrap{width:100%; max-width:760px; margin:0 auto; padding:clamp(40px,9vh,120px) 28px 48px; flex:1 0 auto}
   .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.22em; color:var(--accent); text-transform:uppercase}
   .rule{height:1px; background:linear-gradient(90deg,var(--line),transparent); margin:18px 0 26px}
@@ -76,6 +116,15 @@
 </style>
 </head>
 <body>
+  <div class="aurora" aria-hidden="true">
+    <span class="orb o1"></span>
+    <span class="orb o2"></span>
+    <span class="orb o3"></span>
+    <span class="orb o4"></span>
+    <span class="orb o5"></span>
+    <span class="orb o6"></span>
+    <span class="orb o7"></span>
+  </div>
   <main class="wrap">
     <h1>pland<span class="dot">.</span>world</h1>
     <div class="status"><span class="blip"></span>Under construction</div>
