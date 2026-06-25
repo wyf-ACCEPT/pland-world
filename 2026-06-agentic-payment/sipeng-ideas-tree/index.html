@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>Agentic Payment：一棵向上长的树</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --good:#5fb98c; --slate:#6f9bd1; --clay:#cf7a52;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+    /* 四层语义色 + 树干 */
+    --l1:var(--clay); --l2:var(--good); --l3:var(--slate); --l4:var(--accent);
+    --earth:#6f6052;
+    --pad:24px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 80% -10%, rgba(224,163,70,.07), transparent 60%),
+      radial-gradient(900px 520px at 8% 4%, rgba(111,155,209,.05), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 var(--pad)}
+  strong,b{font-weight:600}
+
+  .top-wrap{padding-top:20px}
+  .backbtn{display:inline-grid;place-items:center;width:38px;height:38px;border:1px solid var(--line);border-radius:11px;background:var(--bg-raised);color:var(--ink-dim);font-size:18px;line-height:1;transition:border-color .16s ease,color .16s ease}
+  .backbtn:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+
+  /* ---------------- hero ---------------- */
+  header{padding:40px 0 18px;text-align:center}
+  .kick{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 20px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,5.4vw,56px);line-height:1.08;letter-spacing:-.02em;margin:0 0 20px;color:var(--ink)}
+  h1 .it{font-style:italic;font-weight:400}
+  .thesis{font-size:clamp(17px,2.1vw,20px);line-height:1.6;color:var(--ink-dim);max-width:680px;margin:0 auto}
+  .correction{max-width:640px;margin:26px auto 0;padding:15px 18px;font-size:14px;line-height:1.62;
+    color:var(--ink-dim);background:var(--accent-soft);border:1px dashed rgba(224,163,70,.4);border-radius:12px}
+  .correction b{color:var(--accent)}
+
+  /* ---------------- tree figure ---------------- */
+  .figure{max-width:900px;margin:8px auto 0;padding:0 8px}
+  .tree-svg{display:block;width:100%;height:auto;overflow:visible}
+  .legend{font-family:var(--mono);font-size:12px;color:var(--ink-faint);text-align:center;margin:2px auto 0;max-width:640px;line-height:1.6}
+  .legend b{color:var(--ink-dim)}
+
+  /* svg type */
+  text.k{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.01em}
+  text.crown{font-family:var(--serif);font-style:italic;font-size:32px;fill:var(--l4)}
+  text.k,text.crown{paint-order:stroke fill;stroke:var(--bg);stroke-width:7px;stroke-linejoin:round;stroke-opacity:.95}
+  text.soil{font-family:var(--mono);font-size:14px;fill:var(--ink-dim);letter-spacing:.02em}
+
+  /* animation */
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1s ease forwards;animation-delay:var(--d,0s)}
+  .leaf{opacity:0;animation:fade .55s ease forwards;animation-delay:var(--d,0s)}
+  .lbl{opacity:0;animation:rise .6s ease forwards;animation-delay:var(--d,0s)}
+  @media(prefers-reduced-motion:reduce){
+    .draw{stroke-dashoffset:0;animation:none}.leaf,.lbl{opacity:1;animation:none}
+  }
+
+  /* ---------------- layers ---------------- */
+  .layers{padding:36px 0 12px}
+  .layer{position:relative;padding:30px 0 30px 30px;border-top:1px solid var(--line)}
+  .layer:before{content:"";position:absolute;left:0;top:-1px;bottom:0;width:3px;background:var(--c)}
+  .layer.l1{--c:var(--l1)} .layer.l2{--c:var(--l2)} .layer.l3{--c:var(--l3)} .layer.l4{--c:var(--l4)}
+  .lhead{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+  .lnum{font-family:var(--mono);font-size:34px;font-weight:600;color:var(--c);line-height:1;flex:0 0 auto;letter-spacing:.02em}
+  .lhead h2{font-family:var(--serif);font-size:25px;font-weight:500;line-height:1.22;margin:0 0 4px;color:var(--ink)}
+  .less{font-family:var(--sans);font-size:14.5px;color:var(--ink-dim);margin:0}
+  .layer p{max-width:760px;margin:0 0 14px;color:var(--ink-dim)}
+  .layer p strong{color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 16px}
+  .chip{font-family:var(--mono);font-size:12px;line-height:1;padding:7px 11px;border:1px solid var(--line);
+    border-radius:999px;background:var(--bg-card);color:var(--ink-dim);white-space:nowrap}
+  .chip.lead{border-color:var(--c);color:var(--c);font-weight:500;background:transparent}
+  .verdict{font-family:var(--sans);font-size:14.5px;line-height:1.62;color:var(--ink-dim);max-width:760px;
+    padding-left:15px;border-left:2px solid var(--c)}
+  .verdict b{color:var(--ink)}
+  .expand{display:inline-block;margin-top:16px;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:8px 16px}
+  .expand:hover{background:var(--c);color:var(--bg);text-decoration:none}
+
+  /* ---------------- synthesis ---------------- */
+  .synth{margin:30px 0 24px;padding:32px 32px;background:linear-gradient(180deg,#181d25,#13171d);border:1px solid rgba(224,163,70,.28);border-radius:18px;box-shadow:0 18px 48px rgba(0,0,0,.4)}
+  .synth h2{font-family:var(--serif);font-size:23px;font-weight:500;color:var(--ink);margin:0 0 18px}
+  .synth ul{margin:0;padding:0;list-style:none}
+  .synth li{position:relative;padding-left:20px;margin:13px 0;font-size:15px;line-height:1.66;color:var(--ink-dim)}
+  .synth li:before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .synth li b{color:var(--ink)}
+  .synth .punch{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--serif);font-size:19px;line-height:1.5;color:var(--ink);font-style:italic}
+  .foot{font-family:var(--mono);font-size:12px;color:var(--ink-faint);text-align:center;padding:0 0 60px;max-width:680px;margin:0 auto;line-height:1.6}
+
+  @media(max-width:760px){
+    :root{--pad:18px}
+    header{padding:30px 0 12px}
+    .layer{padding-left:22px}
+    .lhead{gap:12px}.lnum{font-size:28px}
+    .synth{padding:24px 20px}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap top-wrap">
+  <a class="backbtn" href="../" title="返回上级 · Agentic Payment 研究" aria-label="返回上级">←</a>
+</div>
+
+<div class="wrap">
+  <header>
+    <p class="kick">Agentic Payment · 想法树 · 自底向上</p>
+    <h1>一棵<span class="it">向上长</span>的树</h1>
+    <p class="thesis">真问题不是“把旧的钱付得更安全”，而是顺着交易场景往上长——每高一层，买卖逻辑被重构得越多，agent 掌握得越多，价值与野心也越大。</p>
+    <p class="correction"><b>一处仍有争议的判断</b>：有人认为履约和退款在支付里已不是核心问题——电商对意图与关联销售的 AI 预判已相当成熟；也有人认为“可审计留痕 / 责任”恰恰是 agent 支付的特色刚需。两种判断都先留在树上，等场景去验证。</p>
+  </header>
+</div>
+
+<div class="figure">
+  <svg class="tree-svg" viewBox="0 0 1000 1200" role="img" aria-label="Agentic Payment 四层框架的生长树">
+    <defs>
+      <linearGradient id="trunkG" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="#5c5142"/>
+        <stop offset="0.5" stop-color="#73654f"/>
+        <stop offset="1" stop-color="#8a7860"/>
+      </linearGradient>
+      <filter id="canopyBlur" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="16"/>
+      </filter>
+    </defs>
+
+    <!-- canopy blobs — behind everything -->
+    <g id="canopy" filter="url(#canopyBlur)"></g>
+
+    <!-- ground -->
+    <line class="draw" style="--d:.1s" x1="150" y1="1000" x2="850" y2="1000" stroke="var(--ink-faint)" stroke-width="1.5"/>
+
+    <!-- roots -->
+    <g fill="none" stroke="var(--earth)" stroke-linecap="round">
+      <path class="draw" style="--d:0s"   d="M500,1002 C470,1055 440,1100 405,1166" stroke-width="6" pathLength="1"/>
+      <path class="draw" style="--d:.05s" d="M500,1002 C535,1052 566,1100 602,1168" stroke-width="6" pathLength="1"/>
+      <path class="draw" style="--d:.1s"  d="M500,1004 C500,1060 502,1112 500,1172" stroke-width="5" pathLength="1"/>
+      <path class="draw" style="--d:.15s" d="M500,1004 C486,1044 456,1074 416,1096" stroke-width="3.5" pathLength="1"/>
+      <path class="draw" style="--d:.15s" d="M500,1004 C520,1044 552,1074 592,1100" stroke-width="3.5" pathLength="1"/>
+    </g>
+
+    <!-- trunk -->
+    <g fill="none" stroke="url(#trunkG)" stroke-linecap="round">
+      <path class="draw" style="--d:.3s" d="M500,1000 C495,915 506,855 500,792" stroke-width="24" pathLength="1"/>
+      <path class="draw" style="--d:.5s" d="M500,792 C498,724 503,652 500,582" stroke-width="16" pathLength="1"/>
+      <path class="draw" style="--d:.7s" d="M500,582 C499,520 501,445 500,368" stroke-width="10" pathLength="1"/>
+    </g>
+
+    <!-- L1 branches -->
+    <g class="boughs" data-lv="1" fill="none" stroke="var(--l1)" stroke-linecap="round">
+      <path class="draw" style="--d:.55s" d="M500,858 C448,852 380,852 326,820" stroke-width="11" pathLength="1"/>
+      <path class="draw" style="--d:.55s" d="M500,852 C560,848 628,842 676,806" stroke-width="11" pathLength="1"/>
+      <path class="draw" style="--d:.75s" d="M326,820 C300,812 285,800 270,786" stroke-width="5" pathLength="1"/>
+      <path class="draw" style="--d:.75s" d="M326,820 C312,832 302,846 288,860" stroke-width="5" pathLength="1"/>
+      <path class="draw" style="--d:.75s" d="M676,806 C702,798 716,786 730,772" stroke-width="5" pathLength="1"/>
+      <path class="draw" style="--d:.75s" d="M676,806 C690,820 700,834 712,848" stroke-width="5" pathLength="1"/>
+    </g>
+
+    <!-- L2 branches -->
+    <g class="boughs" data-lv="2" fill="none" stroke="var(--l2)" stroke-linecap="round">
+      <path class="draw" style="--d:.95s" d="M500,704 C412,684 312,654 256,604" stroke-width="9" pathLength="1"/>
+      <path class="draw" style="--d:.95s" d="M500,699 C588,679 688,646 744,594" stroke-width="9" pathLength="1"/>
+      <path class="draw" style="--d:1.15s" d="M256,604 C232,592 214,576 198,556" stroke-width="4" pathLength="1"/>
+      <path class="draw" style="--d:1.15s" d="M256,604 C246,622 238,642 232,664" stroke-width="4" pathLength="1"/>
+      <path class="draw" style="--d:1.15s" d="M744,594 C768,582 786,566 800,548" stroke-width="4" pathLength="1"/>
+      <path class="draw" style="--d:1.15s" d="M744,594 C754,612 762,632 768,654" stroke-width="4" pathLength="1"/>
+    </g>
+
+    <!-- L3 branches -->
+    <g class="boughs" data-lv="3" fill="none" stroke="var(--l3)" stroke-linecap="round">
+      <path class="draw" style="--d:1.35s" d="M500,524 C432,506 362,458 320,410" stroke-width="7" pathLength="1"/>
+      <path class="draw" style="--d:1.35s" d="M500,519 C566,501 642,452 688,400" stroke-width="7" pathLength="1"/>
+      <path class="draw" style="--d:1.5s" d="M320,410 C300,396 286,378 278,356" stroke-width="3.5" pathLength="1"/>
+      <path class="draw" style="--d:1.5s" d="M688,400 C708,386 720,368 728,346" stroke-width="3.5" pathLength="1"/>
+    </g>
+
+    <!-- L4 crown -->
+    <g class="boughs" data-lv="4" fill="none" stroke="var(--l4)" stroke-linecap="round">
+      <path class="draw" style="--d:1.65s" d="M500,368 C500,300 498,236 500,178" stroke-width="6" pathLength="1"/>
+      <path class="draw" style="--d:1.65s" d="M500,360 C470,300 446,262 434,232" stroke-width="4.5" pathLength="1"/>
+      <path class="draw" style="--d:1.65s" d="M500,360 C530,300 556,262 568,228" stroke-width="4.5" pathLength="1"/>
+      <path class="draw" style="--d:1.8s" d="M500,300 C486,256 470,224 460,198" stroke-width="3" pathLength="1"/>
+      <path class="draw" style="--d:1.8s" d="M500,300 C516,256 532,224 542,198" stroke-width="3" pathLength="1"/>
+    </g>
+
+
+    <!-- node dots -->
+    <g class="lbl" style="--d:2s">
+      <circle cx="270" cy="786" r="5" fill="var(--l1)"/>
+      <circle cx="730" cy="772" r="5" fill="var(--l1)"/>
+      <circle cx="198" cy="556" r="5" fill="var(--l2)"/>
+      <circle cx="800" cy="548" r="5" fill="var(--l2)"/>
+      <circle cx="278" cy="356" r="4.5" fill="var(--l3)"/>
+      <circle cx="728" cy="346" r="4.5" fill="var(--l3)"/>
+    </g>
+
+    <!-- keyword labels -->
+    <g class="lbl" style="--d:2.15s">
+      <text class="k" x="252" y="782" text-anchor="end" fill="var(--l1)">用量对账 · 订阅→按次</text>
+      <text class="k" x="748" y="768" text-anchor="start" fill="var(--l1)">流动性聚合 · 支付防护</text>
+      <text class="k" x="180" y="552" text-anchor="end" fill="var(--l2)">个人 CFO · 可编程</text>
+      <text class="k" x="818" y="544" text-anchor="start" fill="var(--l2)">买方做市商 · 反向拍卖</text>
+      <text class="k" x="260" y="352" text-anchor="end" fill="var(--l3)">穷人的代理人 · 集体行动</text>
+      <text class="k" x="746" y="342" text-anchor="start" fill="var(--l3)">信用沉淀 · 村社统管</text>
+      <text class="crown" x="500" y="120" text-anchor="middle">独立经济主体</text>
+    </g>
+
+    <!-- soil label -->
+    <text class="soil lbl" style="--d:.4s" x="500" y="1052" text-anchor="middle">地基 · 不做 marketplace · 收敛到管钱 / 用量 / 信用 · 先做深「代理买家 · 个人」</text>
+  </svg>
+  <p class="legend">越往上 = <b>买卖逻辑被重构得越深、野心越大</b>；不同枝桠 = 不同方向；之前脑暴的想法，挂在它们真正所属的高度。</p>
+</div>
+
+<div class="wrap">
+  <div class="layers">
+
+    <section class="layer l1">
+      <div class="lhead">
+        <div class="lnum">01</div>
+        <div>
+          <h2>代理付款 · 换个执行者</h2>
+          <p class="less">买卖逻辑不变，agent 只替买家个人把钱付掉</p>
+        </div>
+      </div>
+      <p>今天绝大多数讨论（包括 Visa）都停在这里——agent 替 Tony 付一笔 ElevenLabs 月费。它把“人点确认”换成“agent 点确认”，支付的<strong>结构没有动</strong>。我们之前脑暴里那批“管钱”和“防出错”的点子，本质都长在这一层。</p>
+      <div class="chips">
+        <span class="chip">用量费用对账（+TEE attest）</span>
+        <span class="chip">订阅 → 按次计费</span>
+        <span class="chip">SaaS 支出管理</span>
+        <span class="chip">资产 / 流动性聚合</span>
+        <span class="chip">Prompt Injection 防护</span>
+        <span class="chip">可审计留痕 → 责任 / 退款补救</span>
+      </div>
+      <p class="verdict"><b>判断</b>：只换执行者、支付结构没动，增量相对有限；这一层真正能拉开差距的，是把“安全、留痕、责任 / 退款补救”做扎实——是不是核心痛点仍有争议，但都留在树上，不急着砍。</p>
+      <a class="expand" href="layer-1.html">展开这一层 · 6 个方向 →</a>
+    </section>
+
+    <section class="layer l2">
+      <div class="lhead">
+        <div class="lnum">02</div>
+        <div>
+          <h2>双边 agent · 买卖逻辑被重构</h2>
+          <p class="less">卖家也变成 agent，静态货架变成两个 agent 间的动态议价</p>
+        </div>
+      </div>
+      <p>卖家不再是平台或公司，而是替<strong>农民、手艺人、工程师</strong>卖服务的 agent。当两端都是 agent，“摆货架 → 下单 → 结账”的静态流程，被不停比价、循环、可编程的支出取代。这时你的 agent 更像一个<strong>个人 CFO</strong>——掌握你真实的财务与意图；卖方 agent 则要透传真实库存和每件商品的利润。信息不对称第一次被双向打开。</p>
+      <div class="chips">
+        <span class="chip lead">可编程支付（硬 + 软条件）</span>
+        <span class="chip lead">个人 CFO</span>
+        <span class="chip">卖方 agent 透传库存 / 利润</span>
+        <span class="chip">买方做市商 / 意图流动性</span>
+        <span class="chip">注意力反向拍卖</span>
+        <span class="chip">Agent-Ready 商户改造</span>
+      </div>
+      <p class="verdict"><b>判断</b>：这是第一个真正长出新价值的高度——够新、又够得着，<b>最适合落第一个产品</b>。张力在于它最像 marketplace，而硬约束是“不做 marketplace”，所以要做的是<strong>协议与 CFO 工具</strong>，而不是自己当市场。</p>
+      <a class="expand" href="layer-2.html">展开这一层 · 6 个脑洞 →</a>
+    </section>
+
+    <section class="layer l3">
+      <div class="lhead">
+        <div class="lnum">03</div>
+        <div>
+          <h2>信用与金融</h2>
+          <p class="less">支付的本质是信用在时间上的挪移，最终都沉淀成信用</p>
+        </div>
+      </div>
+      <p>再往上，问题从“怎么付”变成“信用怎么积累、怎么被善用”。大量 unbanked 人群之所以穷，是因为财务行为不稳定、走不出漩涡。设想 agent 成为<strong>“穷人的代理人”</strong>：用户逐步把财权交给一个替很多人、甚至一整个村子统一打理的 agent；当它掌握真实财务状况，就能系统性地改善每个人的财务。</p>
+      <div class="chips">
+        <span class="chip lead">穷人的代理人 / 村社统管</span>
+        <span class="chip">信用沉淀</span>
+        <span class="chip">条件性集体行动</span>
+      </div>
+      <p class="verdict"><b>判断</b>：这一层把“省钱”升维成“改命”，价值最大；代价是撞上金融牌照、监管与信任的硬墙。值得注意——13 个脑暴想法里几乎没有长到这么高的（只有“条件性集体行动”勉强够边），说明<b>我们之前想得偏低</b>。</p>
+      <a class="expand" href="layer-3.html">展开这一层 · 6 个脑洞 →</a>
+    </section>
+
+    <section class="layer l4">
+      <div class="lhead">
+        <div class="lnum">04</div>
+        <div>
+          <h2>agent 拥有身份</h2>
+          <p class="less">从“程序”变成参与社会分工的独立主体</p>
+        </div>
+      </div>
+      <p>树冠，也是哲学与法律的边界——agent 拥有真正的 ID，不再只是“我的工具”，而是经济体里的一个<strong>主体</strong>，独立参与分工与价值创造。今天无法落地，但它定义了下面三层的终局：如果 agent 终将拥有身份，那么 L2 的双边、L3 的信用，都是在为“agent 成为主体”铺路。</p>
+      <div class="chips">
+        <span class="chip">agent ID / 身份</span>
+        <span class="chip">独立参与社会分工</span>
+        <span class="chip">agent ↔ agent 经济</span>
+      </div>
+      <p class="verdict"><b>判断</b>：当愿景与方向感，不当路线图。它的用处是帮你判断前三层的每一步，是不是在朝这个终局积累。</p>
+      <a class="expand" href="layer-4.html">展开这一层 · 4 个脑洞 + 北极星 →</a>
+    </section>
+
+  </div>
+
+  <div class="synth">
+    <h2>一条贯穿的主线</h2>
+    <ul>
+      <li>每升一层，agent 多知道一点、多掌管一点：<b>L1 替你付一笔 → L2 懂你的意图与财务（CFO）→ L3 打理你的信用与一生的钱 → L4 自己成为经济主体</b>。</li>
+      <li>脑暴落点：13 个想法几乎全挤在 L1–L2，只有一个够到 L3，没有 L4——之前我们想得偏“工具”，<b>野心可以再往上抬一层</b>。</li>
+      <li>约束的张力：两条硬约束（不做 marketplace、收敛到管钱 / 用量 / 信用）其实把落点按在 L1+L3；而最有新意的 L2 恰恰最像 marketplace。<b>选第一个产品，本质就是选在这棵树的哪个高度落脚。</b></li>
+      <li>履约 / 退款 / 责任这条<b>留着</b>：是不是 agent 支付的核心问题还有争议——电商的意图预判已成熟，但“可审计留痕”可能正是特色刚需。先挂在树上靠场景验证，不预先砍。</li>
+    </ul>
+    <p class="punch">真正的问题不是“怎么付得更安全”，而是——我们愿意把多少财权、以及多少“我是谁”，交给 agent。</p>
+  </div>
+
+  <p class="foot">想法源自 msgs.txt 与本轮讨论；分层与判断是融会贯通后的综合，非原文照搬。可继续调整：增删枝桠、改某条想法的高度、或重定第一个产品的落点。</p>
+</div>
+
+<script>
+(function(){
+  var svg=document.querySelector('.tree-svg'); if(!svg) return;
+  var NS='http://www.w3.org/2000/svg';
+  var canopy=svg.querySelector('#canopy'); if(!canopy) return;
+  var _s=20240625>>>0;
+  function rnd(){_s=_s+0x6D2B79F5>>>0;var t=Math.imul(_s^_s>>>15,1|_s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}
+  function rr(a,b){return a+(b-a)*rnd();}
+  // HSL approx of --l1..l4 (clay / good / slate / accent)
+  var PAL={1:[19,57,57],2:[150,39,55],3:[213,52,63],4:[36,71,58]};
+  function hslFill(lv){
+    var p=PAL[lv]||PAL[2];
+    var a=rr(0.20,0.38);
+    return 'hsl('+((p[0]+rr(-10,10))|0)+' '+((p[1]+rr(-4,4))|0)+'% '+((p[2]+rr(-6,6))|0)+'% / '+a.toFixed(2)+')';
+  }
+  function blob(cx,cy,rx,ry,lv,n,delay){
+    for(var i=0;i<n;i++){
+      var ang=rr(0,6.2832), rad=Math.pow(rnd(),0.55);
+      var x=cx+Math.cos(ang)*rx*rad, y=cy+Math.sin(ang)*ry*rad;
+      var r=rr(28,58)*(1-rad*0.22);
+      var c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x.toFixed(1));
+      c.setAttribute('cy',y.toFixed(1));
+      c.setAttribute('r',r.toFixed(1));
+      c.setAttribute('fill',hslFill(lv));
+      c.setAttribute('class','leaf');
+      c.style.setProperty('--d',(delay+rr(0,0.35)).toFixed(2)+'s');
+      canopy.appendChild(c);
+    }
+  }
+  // [cx, cy, rx, ry, layer, count, delayBase]
+  var masses=[
+    [280, 818, 118, 90, 1, 30, 1.40],
+    [720, 806, 118, 90, 1, 30, 1.45],
+    [218, 590, 124, 98, 2, 34, 1.70],
+    [780, 578, 124, 98, 2, 34, 1.75],
+    [295, 382, 112, 88, 3, 26, 2.00],
+    [714, 372, 112, 88, 3, 26, 2.05],
+    [500, 428, 135, 82, 3, 22, 2.00],
+    [500, 224, 188, 158, 4, 66, 2.20]
+  ];
+  masses.forEach(function(m){blob(m[0],m[1],m[2],m[3],m[4],m[5],m[6]);});
+})();
+</script>
+</body>
+</html>

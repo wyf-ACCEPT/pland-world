@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>第二层 · 双边 agent — Agentic Payment 脑洞</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --good:#5fb98c; --slate:#6f9bd1; --clay:#cf7a52; --bad:#d9776b;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+    /* 四层语义色 */
+    --l1:var(--clay); --l2:var(--good); --l3:var(--slate); --l4:var(--accent);
+    --lc:var(--l2);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.68;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 80% -10%, rgba(224,163,70,.07), transparent 60%),
+      radial-gradient(900px 520px at 8% 4%, rgba(111,155,209,.05), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  strong,b{font-weight:600}
+
+  .top{border-bottom:1px solid var(--line);background:var(--bg-raised)}
+  .top .wrap{padding-top:24px;padding-bottom:40px}
+  .back{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink-dim);display:inline-block;margin-bottom:22px}
+  .back:hover{color:var(--accent);text-decoration:none}
+  .kick{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--lc);font-weight:500;margin:0 0 14px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(30px,4.6vw,44px);line-height:1.12;letter-spacing:-.01em;margin:0 0 16px;color:var(--ink)}
+  .essence{font-size:clamp(16px,2vw,19px);line-height:1.6;color:var(--ink-dim);max-width:720px;margin:0 0 18px}
+  .context{font-size:14px;line-height:1.66;color:var(--ink-dim);max-width:760px;padding:15px 17px;background:var(--bg-card);border:1px solid var(--line);border-left:3px solid var(--lc);border-radius:0 12px 12px 0}
+  .context b{color:var(--ink)}
+
+  main .wrap{padding-top:34px;padding-bottom:16px}
+  .count{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--ink-faint);margin:0 0 18px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .idea{position:relative;background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 20px 23px;overflow:hidden}
+  .idea:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lc)}
+  .idea .num{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--lc);letter-spacing:.08em}
+  .idea h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:5px 0 9px;line-height:1.3;color:var(--ink)}
+  .idea .desc{font-size:15px;color:var(--ink-dim);line-height:1.62;margin:0 0 14px}
+  .idea .desc b,.idea .desc i{color:var(--ink)}
+  .star{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.02em;color:var(--lc);border:1px solid var(--lc);border-radius:999px;padding:3px 9px;margin-left:8px;white-space:nowrap;vertical-align:middle;display:inline-block}
+  .star.warn{color:var(--clay);border-color:var(--clay)}
+  .idea.flag:before{background:var(--clay)}
+  .cav{font-family:var(--sans);font-size:13px;line-height:1.58;color:var(--clay);margin-top:11px}
+  .eg{display:flex;gap:10px;font-family:var(--sans);font-size:13.5px;line-height:1.62;color:var(--ink-dim);background:var(--bg-card-2);border:1px solid var(--line-soft);border-radius:9px;padding:11px 13px}
+  .eg .tag{flex:0 0 auto;font-family:var(--mono);font-weight:500;font-size:12px;color:var(--lc);letter-spacing:.04em}
+  .xlink{font-family:var(--sans);font-size:12.5px;line-height:1.55;color:var(--ink-faint);margin-top:11px}
+  .xlink b{color:var(--lc);font-weight:600}
+
+  .idea.fruit{grid-column:1/-1;background:linear-gradient(180deg,#181d25,#13171d);border-color:rgba(224,163,70,.42);box-shadow:0 0 0 1px rgba(224,163,70,.06),0 18px 48px rgba(0,0,0,.4)}
+  .idea.fruit:before{background:var(--accent)}
+  .idea.fruit .num,.idea.fruit h3{color:var(--ink)}
+  .idea.fruit .desc{color:var(--ink-dim)}
+  .idea.fruit .star{color:var(--accent);border-color:var(--accent)}
+  .idea.fruit .eg{background:rgba(224,163,70,.1);border-color:rgba(224,163,70,.2);color:var(--ink-dim)}
+  .idea.fruit .eg .tag{color:var(--accent)}
+  .idea.fruit .xlink{color:var(--ink-faint)}
+  .idea.fruit .xlink b{color:var(--accent)}
+
+  .pagenav{border-top:1px solid var(--line)}
+  .pagenav .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-top:22px;padding-bottom:52px;font-family:var(--mono);font-size:13px}
+  .pagenav a{color:var(--ink-dim)}
+  .pagenav a:hover{color:var(--accent);text-decoration:none}
+  .pagenav .home{color:var(--accent);font-weight:500}
+
+  @media(max-width:720px){
+    .wrap{padding:0 18px}
+    .grid{grid-template-columns:1fr}
+    .idea.fruit{grid-column:auto}
+    .pagenav .wrap{flex-wrap:wrap;gap:10px}
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="wrap">
+      <a class="back" href="index.html">← 返回想法树</a>
+      <p class="kick">第二层 · 脑洞子页</p>
+      <h1>双边 agent · 买卖逻辑被重构</h1>
+      <p class="essence">母题：把“一次性成交”，变成两个 agent 之间持续、可编程的关系。</p>
+      <div class="context"><b>这一层在说什么：</b>卖家也变成 agent——不再是平台或公司，而是替农民、手艺人、工程师卖服务的 agent。两端都是 agent 后，“摆货架 → 下单 → 结账”的静态流程，被不停比价、循环、可编程的支出取代；买方 agent 像个人 CFO，卖方 agent 透传真实库存与利润。<b>这一层最适合落第一个产品：够新、又够得着。</b></div>
+    </div>
+  </div>
+
+  <main>
+    <div class="wrap">
+      <p class="count">已筛过 · 6 条 · ★★ 最该先做 / ★ 可做 / ⚠ 有硬伤（多半卡在“谁来判定”）</p>
+      <div class="grid">
+
+        <article class="idea">
+          <div class="num">01</div>
+          <h3>CFO 主动消费治理<span class="star">★★ 最该先做</span></h3>
+          <p class="desc">agent 不只是付钱，而是像基金经理一样主动打理你的“支出组合”：砍重复、挑时机。今天的数据和接口就够做。</p>
+          <div class="eg"><span class="tag">例</span><p>它发现你同时开着三个视频会员、过去三个月只看了一个，自动把另外两个降成“要用再开”。</p></div>
+        </article>
+
+        <article class="idea">
+          <div class="num">02</div>
+          <h3>效用比价<span class="star">★★ 最该先做</span></h3>
+          <p class="desc">比的不再是标价，而是“按你真实用量折算的单位成本”。个性化定价第一次从卖方武器变成买方武器。</p>
+          <div class="eg"><span class="tag">例</span><p>你某协作软件买了 20 个席位、常年只用 3 个，agent 拿这个事实谈“按 3 个活跃席位计费，否则换竞品”，年费砍掉一半。</p></div>
+        </article>
+
+        <article class="idea">
+          <div class="num">03</div>
+          <h3>公平分账（诚实版）<span class="star">★ 可做</span></h3>
+          <p class="desc"><b>得分两半看，别混在一起：</b>用<b>多家竞标</b>把价压到公允——这半是<b>硬的</b>，跟谁的身份都无关。但“多付的钱真进了独立花农的口袋”这半<b>证不了</b>：回执只能证明钱到了某个账户，证不了那账户是真花农、还是商家的托。</p>
+          <div class="eg"><span class="tag">例</span><p>订花，5 家 agent 竞标把价压到 ¥120——这步实打实省了钱。至于多付的 ¥20 给花农，得靠一个像“公平贸易认证”的可信第三方去实地核、发证、违规罚没；回执只是“防篡改的记录”，不等于“证明了他是真花农”。</p></div>
+          <p class="cav">根因（和“真实成本”同一堵墙）：可验证层只能证明“钱的流动”和“计算正确”，证不了“现实身份 / 现实事实”。所以“分给谁”要靠认证 + 审计 + 押金，不是密码学。</p>
+        </article>
+
+        <article class="idea">
+          <div class="num">04</div>
+          <h3>活价格<span class="star">★ 可做</span></h3>
+          <p class="desc">买卖双方 agent 维持长连接，价格随库存、需求、你的忠诚度滚动重谈，“一口价”消失，变成一条价格曲线。</p>
+          <div class="eg"><span class="tag">例</span><p>健身房不再卖年卡，而是按你每月实际去的次数结算，淡季它主动降价留你。</p></div>
+        </article>
+
+        <article class="idea flag">
+          <div class="num">05</div>
+          <h3>里程碑托管（装修）<span class="star warn">⚠ 有硬伤</span></h3>
+          <p class="desc">钱进托管，按验收节点分段放款，中途不满意按完成度结算——把“按效果付费”做成 agent 间可编程的支付流。</p>
+          <div class="eg"><span class="tag">例</span><p>请 agent 找的装修师傅：水电通电测试通过自动放 30%、贴砖拍照交验房师确认放 30%、你最终满意付尾款。</p></div>
+          <p class="cav">⚠ 卡在哪：“验收 / 满意 / 完成度”是主观的物理判断，没法 trustless 自动裁。能做的是“客观里程碑自动 + 主观部分接人类监理当裁判”，纯自动做不到。</p>
+        </article>
+
+        <article class="idea flag">
+          <div class="num">06</div>
+          <h3>拼单 / 需求期货<span class="star warn">⚠ 有硬伤</span></h3>
+          <p class="desc">agent 自发把同款需求拼成一单压价；或把你稳定的未来需求提前锁给生产者换成本价。</p>
+          <div class="eg"><span class="tag">例</span><p>你的 agent 发现小区这周有 8 户都要买同款空调，临时拼成一单去压价，成交后各付各的。</p></div>
+          <p class="cav">⚠ 卡在哪：像个小市场，碰“不做 marketplace”的红线，定位要先想清（做工具，不做平台）。</p>
+          <p class="xlink">↗ 跨层：把“稳定的未来需求”锁成订单后，可在 <b>第三层</b> 当生产性信贷的抵押物。</p>
+        </article>
+
+      </div>
+      <p class="count" style="margin-top:20px">已收起（需要可恢复）：声誉即信用额度（≈ 现有信用分，新意有限）、agent 间易货多边清算（太远）、卖方 TEE 诚实证明（garbage-in，已并入“公平分账”的说明）、隐私阶梯。</p>
+    </div>
+  </main>
+
+  <nav class="pagenav">
+    <div class="wrap">
+      <a href="layer-1.html">← 第一层 · 代理付款</a>
+      <a class="home" href="index.html">想法树</a>
+      <a href="layer-3.html">第三层 · 信用与金融 →</a>
+    </div>
+  </nav>
+</body>
+</html>
