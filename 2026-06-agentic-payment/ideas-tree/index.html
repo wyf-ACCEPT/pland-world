@@ -127,7 +127,7 @@
     <p class="kick">Agentic Payment · 想法树 · 自底向上</p>
     <h1>一棵<span class="it">向上长</span>的树</h1>
     <p class="thesis">真问题是<strong>顺着交易场景往上长</strong>——每高一层，买卖逻辑被重构得越多，agent 掌握得越多，价值与野心也越大。</p>
-    <p class="correction"><b>一处仍有争议的判断</b>：有人认为履约和退款在支付里已不是核心问题——电商对意图与关联销售的 AI 预判已相当成熟；也有人认为“可审计留痕 / 责任”恰恰是 agent 支付的特色刚需。两种判断都先留在树上，等场景去验证。</p>
+    <p class="correction"><b>一处仍有争议的判断</b>：有人认为履约和退款在支付里已不是核心问题——电商对意图与关联销售的 AI 预判已相当成熟；也有人认为“可审计留痕 / 责任”恰恰是 agent 支付的特色刚需。<b>6/25 复盘暂时押后者</b>——把它提为 L1 主线，靠场景继续验证。</p>
   </header>
 </div>
 
@@ -251,7 +251,7 @@
         <span class="chip">Prompt Injection 防护</span>
         <span class="chip">可审计留痕 → 责任 / 退款补救</span>
       </div>
-      <p class="verdict"><b>判断</b>：只换执行者、支付结构没动，增量相对有限；这一层真正能拉开差距的，是把“安全、留痕、责任 / 退款补救”做扎实——是不是核心痛点仍有争议，但都留在树上，不急着砍。</p>
+      <p class="verdict"><b>判断</b>：四层里<b>最落地</b>的一层——今天的数据和接口就够做。复盘后六个方向收敛成三条主线加一个降级：<strong>可审计留痕 / 对账</strong>（出问题凭证据链快速定责，这层最有抓手）、<strong>订阅转售 · 按次</strong>（个人按次 = 企业 SaaS 支出）、<strong>Prompt 支付防护</strong>（独立保留）；资产 / 流动性聚合更像 solver、降为副产品。增量不惊人，但<b>确定性最高</b>。</p>
       <a class="expand" href="layer-1.html">展开这一层 · 6 个方向 →</a>
     </section>
 
@@ -265,14 +265,14 @@
       </div>
       <p>卖家不再是平台或公司，而是替<strong>农民、手艺人、工程师</strong>卖服务的 agent。当两端都是 agent，“摆货架 → 下单 → 结账”的静态流程，被不停比价、循环、可编程的支出取代。这时你的 agent 更像一个<strong>个人 CFO</strong>——掌握你真实的财务与意图；卖方 agent 则要透传真实库存和每件商品的利润。信息不对称第一次被双向打开。</p>
       <div class="chips">
-        <span class="chip lead">可编程支付（硬 + 软条件）</span>
-        <span class="chip lead">个人 CFO</span>
+        <span class="chip">可编程支付（硬 + 软条件）</span>
+        <span class="chip">个人 CFO</span>
         <span class="chip">卖方 agent 透传库存 / 利润</span>
         <span class="chip">买方做市商 / 意图流动性</span>
         <span class="chip">注意力反向拍卖</span>
         <span class="chip">Agent-Ready 商户改造</span>
       </div>
-      <p class="verdict"><b>判断</b>：这是第一个真正长出新价值的高度——够新、又够得着，<b>最适合落第一个产品</b>。张力在于它最像 marketplace，而硬约束是“不做 marketplace”，所以要做的就是<strong>协议与 CFO 工具</strong>。</p>
+      <p class="verdict"><b>判断</b>：本来看着<b>最适合落第一个产品</b>，复盘后发现<strong>整层基本有硬伤</strong>——逐条多偏「卖货 / marketplace / 价格歧视」，离 agent 支付本身远：效用比价除非卖方肯拆模块、否则只能折回转售；活价格是经典价格歧视、跟 agent 无关；里程碑托管做不到 trustless；拼单期货撞「不做 marketplace」红线。真正留下来探索的，是<strong>公平分账</strong>（跟 agent 关系不大、但挪给 isometry——本国稳定币直转）和两个<strong>商户侧接入</strong>场景。</p>
       <a class="expand" href="layer-2.html">展开这一层 · 6 个脑洞 →</a>
     </section>
 
@@ -286,11 +286,11 @@
       </div>
       <p>再往上，问题从“怎么付”变成“信用怎么积累、怎么被善用”。大量 unbanked 人群之所以穷，是因为财务行为不稳定、走不出漩涡。设想 agent 成为<strong>“穷人的代理人”</strong>：用户逐步把财权交给一个替很多人、甚至一整个村子统一打理的 agent；当它掌握真实财务状况，就能系统性地改善每个人的财务。</p>
       <div class="chips">
-        <span class="chip lead">穷人的代理人 / 村社统管</span>
+        <span class="chip">穷人的代理人 / 村社统管</span>
         <span class="chip">信用沉淀</span>
         <span class="chip">条件性集体行动</span>
       </div>
-      <p class="verdict"><b>判断</b>：这一层把“省钱”升维成“改命”，价值最大；代价是撞上金融牌照、监管与信任的硬墙。值得注意——13 个脑暴想法里几乎没有长到这么高的（只有“条件性集体行动”勉强够边），说明<b>我们之前想得偏低</b>。</p>
+      <p class="verdict"><b>判断</b>：大半是「<strong>感觉 / 幻觉</strong>」，逐条排除；唯一站得住的是<strong>行为流水即信用（thin-file）</strong>——非洲 unbanked 靠支付公司流水建信用，有真实场景（M-Pesa / Tala 已跑通），但仍需先<b>调研真实需求</b>。其余（现金流平滑 / 反高利贷 / ROSCA / 目标授权理财 / 生产性信贷）近期不碰。</p>
       <a class="expand" href="layer-3.html">展开这一层 · 6 个脑洞 →</a>
     </section>
 
@@ -308,7 +308,7 @@
         <span class="chip">独立参与社会分工</span>
         <span class="chip">agent ↔ agent 经济</span>
       </div>
-      <p class="verdict"><b>判断</b>：把它当<strong>愿景与方向感</strong>——用处是帮你判断前三层的每一步，是不是在朝这个终局积累。</p>
+      <p class="verdict"><b>判断</b>：<strong>整层先搁置</strong>。前置是先在团队内部把 <b>agent identity</b> 彻底聊清、达成共识——前三层的 agent 都跟人绑定（agent 的钱 = 你的钱），只有这一层跳出该逻辑、让 agent 成为独立主体，而目前大家对「identity 到底是什么」还没共识。当愿景和方向感留着，但不在共识达成前动手。</p>
       <a class="expand" href="layer-4.html">展开这一层 · 4 个脑洞 + 北极星 →</a>
     </section>
 
@@ -317,15 +317,15 @@
   <div class="synth">
     <h2>一条贯穿的主线</h2>
     <ul>
-      <li>每升一层，agent 多知道一点、多掌管一点：<b>L1 替你付一笔 → L2 懂你的意图与财务（CFO）→ L3 打理你的信用与一生的钱 → L4 自己成为经济主体</b>。</li>
-      <li>脑暴落点：13 个想法几乎全挤在 L1–L2，只有一个够到 L3，没有 L4——之前我们想得偏“工具”，<b>野心可以再往上抬一层</b>。</li>
-      <li>约束的张力：两条硬约束（不做 marketplace、收敛到管钱 / 用量 / 信用）其实把落点按在 L1+L3；而最有新意的 L2 恰恰最像 marketplace。<b>选第一个产品，本质就是选在这棵树的哪个高度落脚。</b></li>
-      <li>履约 / 退款 / 责任这条<b>留着</b>：是不是 agent 支付的核心问题还有争议——电商的意图预判已成熟，但“可审计留痕”可能正是特色刚需。先挂在树上靠场景验证，不预先砍。</li>
+      <li>每升一层，agent 多知道一点、多掌管一点：<b>L1 替你付一笔 → L2 懂你的意图与财务 → L3 打理你的信用与一生的钱 → L4 自己成为经济主体</b>。野心越往上越大。</li>
+      <li>但 6/25 复盘把野心<b>往下压</b>：<b>越往上越站不住</b>——L2 整层基本有硬伤（多偏 marketplace / 价格歧视），L3 大半是幻觉、只剩 thin-file 一条真场景，L4 整层搁置。真正确定能做的，反而是<b>最底下的 L1</b>。</li>
+      <li>约束的张力：两条硬约束（<b>不做 marketplace</b>、收敛到管钱 / 用量 / 信用）把落点按在 L1；而最像新价值的 L2，恰恰最像 marketplace。<b>选第一个产品，本质是选在这棵树的哪个高度落脚——目前的答案是先把 L1 做深。</b></li>
+      <li><b>可审计留痕 / 责任</b>被提为 L1 主线：出问题能凭证据链快速定责、按预先规则先行退款，可能正是 agent 支付区别于普通支付的<b>特色刚需</b>。</li>
     </ul>
     <p class="punch">真正的问题是——<strong>我们愿意把多少财权、以及多少“我是谁”，交给 agent</strong>。</p>
   </div>
 
-  <p class="foot">想法源自 msgs.txt 与本轮讨论；分层与判断是融会贯通后的综合，非原文照搬。可继续调整：增删枝桠、改某条想法的高度、或重定第一个产品的落点。</p>
+  <p class="foot">想法源自历轮脑暴；分层与判断融合了脑暴与 <b>6/25 团队复盘</b>，非原文照搬。可继续调整：增删枝桠、改某条想法的高度、或重定第一个产品的落点。</p>
 </div>
 
 <script>
