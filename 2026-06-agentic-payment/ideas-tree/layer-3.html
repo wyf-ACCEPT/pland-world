@@ -56,9 +56,6 @@
   .idea h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:5px 0 9px;line-height:1.3;color:var(--ink)}
   .idea .desc{font-size:15px;color:var(--ink-dim);line-height:1.62;margin:0 0 14px}
   .idea .desc b,.idea .desc i{color:var(--ink)}
-  .star{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.02em;color:var(--lc);border:1px solid var(--lc);border-radius:999px;padding:3px 9px;margin-left:8px;white-space:nowrap;vertical-align:middle;display:inline-block}
-  .star.warn{color:var(--bad);border-color:var(--bad)}
-  .idea.flag:before{background:var(--bad)}
   .cav{font-family:var(--sans);font-size:13px;line-height:1.58;color:var(--bad);margin-top:11px}
   .eg{display:flex;gap:10px;font-family:var(--sans);font-size:13.5px;line-height:1.62;color:var(--ink-dim);background:var(--bg-card-2);border:1px solid var(--line-soft);border-radius:9px;padding:11px 13px}
   .eg .tag{flex:0 0 auto;font-family:var(--mono);font-weight:500;font-size:12px;color:var(--lc);letter-spacing:.04em}
@@ -69,7 +66,6 @@
   .idea.fruit:before{background:var(--accent)}
   .idea.fruit .num,.idea.fruit h3{color:var(--ink)}
   .idea.fruit .desc{color:var(--ink-dim)}
-  .idea.fruit .star{color:var(--accent);border-color:var(--accent)}
   .idea.fruit .eg{background:rgba(224,163,70,.1);border-color:rgba(224,163,70,.2);color:var(--ink-dim)}
   .idea.fruit .eg .tag{color:var(--accent)}
   .idea.fruit .xlink{color:var(--ink-faint)}
@@ -87,6 +83,36 @@
     .idea.fruit{grid-column:auto}
     .pagenav .wrap{flex-wrap:wrap;gap:10px}
   }
+  /* 6/25 团队复盘标注 */
+  .lnote{margin:2px 0 22px;padding:13px 16px;border-radius:12px;background:var(--accent-soft);border:1px solid rgba(224,163,70,.32);font-size:13.5px;line-height:1.62;color:var(--ink-dim)}
+  .lnote b{color:var(--accent)}
+  .lnote.cold{background:rgba(217,119,107,.1);border-color:rgba(217,119,107,.34)}
+  .lnote.cold b{color:var(--bad)}
+  .review{display:flex;align-items:flex-start;gap:10px;margin:12px 0 2px;padding:9px 12px;border-radius:10px;background:var(--bg-card-2);border:1px solid var(--line-soft)}
+  .review .rv{flex:none;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.02em;padding:3px 9px;border-radius:999px;line-height:1.35;white-space:nowrap}
+  .review .rv-txt{font-size:13px;line-height:1.55;color:var(--ink-dim)}
+  .review .rv-txt b{color:var(--ink)}
+  .review .rv-date{flex:none;margin-left:auto;align-self:center;font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--ink-faint)}
+  .review.keep{border-color:rgba(95,185,140,.38)} .review.keep .rv{color:var(--good);border:1px solid var(--good)}
+  .review.cut{border-color:rgba(217,119,107,.38)} .review.cut .rv{color:var(--bad);border:1px solid var(--bad)}
+  .review.down{border-color:rgba(224,163,70,.38)} .review.down .rv{color:var(--accent);border:1px solid var(--accent)}
+  .review.explore{border-color:rgba(111,155,209,.4)} .review.explore .rv{color:var(--slate);border:1px solid var(--slate)}
+  .review.hold .rv{color:var(--ink-faint);border:1px solid var(--ink-faint)}
+  /* 排除 / 有硬伤 卡片 — 强化「已否决」视觉 */
+  .idea.cut{border-style:dashed;border-color:rgba(217,119,107,.5);background:linear-gradient(180deg,rgba(217,119,107,.075),rgba(217,119,107,.025)),var(--bg-card)}
+  .idea.cut:before{width:4px;background:var(--bad)}
+  .idea.cut h3{color:var(--ink-dim)}
+  .idea.cut .desc,.idea.cut .eg{opacity:.58}
+  .idea.cut .star{opacity:.4;filter:grayscale(.5)}
+  .idea.cut.out h3{text-decoration:line-through;text-decoration-color:rgba(217,119,107,.62);text-decoration-thickness:1.5px;text-underline-offset:2px}
+  .idea.cut.out h3 .star{text-decoration:none}
+  /* 复盘横幅 — 多行结构 */
+  .lnote .ln-h{margin:0 0 2px}
+  .lnote p{margin:6px 0 0}
+  .lnote .ln-list{margin:8px 0 0;padding-left:15px;list-style:none}
+  .lnote .ln-list li{position:relative;margin-top:6px}
+  .lnote .ln-list li:before{content:"–";position:absolute;left:-13px;color:var(--ink-faint)}
+  .lnote .ln-list b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -102,55 +128,69 @@
 
   <main>
     <div class="wrap">
-      <p class="count">已筛过 · 6 条 · ★★ 最该先做 / ★ 可做 · 已重写成“管已有现金流”</p>
+      <p class="count">6 个方向 · 主题：管好已有的现金流 · ★★ 最该先做 / ★ 可做</p>
+      <div class="lnote cold">
+        <div class="ln-h"><b>团队复盘 · 6/25：这层大半是「感觉 / 幻觉」。</b></div>
+        <p>多数点是“规划储蓄 / 还债 / 投资路径并执行”这类听着美、却不知道怎么卖、也离落地远的设想，基本排除。唯一站得住的是一条有真实场景支撑的：</p>
+        <ul class="ln-list">
+          <li><b>行为流水即信用（thin-file）· 唯一保留</b>：非洲 unbanked 靠支付公司流水做信用，有真实感（M-Pesa / Tala / Branch 已跑通）；舞台是有 mobile money 的新兴市场，中国 / 印度移动支付绑银行反而不成立。仍需先调研真实需求。</li>
+          <li><b>其余排除</b>：现金流平滑 / 反高利贷 / ROSCA 标会 / 目标授权理财 / 生产性信贷——要么是个人支出管理太 fancy、要么偏感觉，近期不碰。</li>
+        </ul>
+      </div>
       <div class="grid">
 
-        <article class="idea">
+        <article class="idea cut out">
           <div class="num">01</div>
-          <h3>现金流平滑（<strong>卖稳定、不放贷</strong>）<span class="star">★★ 最该先做</span></h3>
+          <h3>现金流平滑（<strong>卖稳定、不放贷</strong>）</h3>
+          <div class="review cut"><span class="rv">排除</span><span class="rv-txt">个人支出管理 / 太 fancy，且不知道怎么卖。</span><span class="rv-date">6/25</span></div>
           <p class="desc">穷困的本质常是<strong>“波动”</strong>——收入未必低，却忽高忽低、走不出锯齿。agent 丰月替你留、歉月补上。这是 L3 门槛最低的入口。</p>
           <div class="eg"><span class="tag">例</span><p>外卖骑手旺季月入过万、淡季两三千。agent 旺季替他自动留一笔、淡季补上，房租水电再不断档——<strong>卖的是“每月都稳”</strong>，补淡季用的是他旺季自己留下的钱。</p></div>
         </article>
 
         <article class="idea">
           <div class="num">02</div>
-          <h3>行为流水即信用（thin-file）<span class="star">★★ 最该先做</span></h3>
+          <h3>行为流水即信用（thin-file）</h3>
+          <div class="review keep"><span class="rv">保留（唯一）· 需调研</span><span class="rv-txt">非洲 unbanked 靠支付公司流水做信用，有真实感；但要先调研真实需求。</span><span class="rv-date">6/25</span></div>
           <p class="desc">没有银行流水的人，其真实小额流水被 agent 整理成可验证的“信用人格”（隐私保护）。关键点：他们不是没有记录，而是<b>记录不在银行、在电信运营商手里</b>。</p>
           <div class="eg"><span class="tag">例</span><p>在肯尼亚，一个用 M-Pesa 收款十年、却从没有银行账户的小贩，手机里的交易流水被 agent 整理成一张可验证的“信用名片”，第一次凭它租到设备、赊到货。</p></div>
           <p class="xlink">↗ 不是设想：<b>M-Pesa</b>（电信公司运营、不靠银行，撒哈拉以南非洲数亿人在用）+ M-Shwari / Tala / Branch（直接拿手机流水放贷）已经把这条跑通。<b>舞台是有 mobile money 的新兴市场（非洲为主）；中国 / 印度移动支付绑银行，反而不成立。</b></p>
         </article>
 
-        <article class="idea">
+        <article class="idea cut out">
           <div class="num">03</div>
-          <h3>反高利贷“最后一公里”狙击<span class="star">★ 可做</span></h3>
+          <h3>反高利贷“最后一公里”狙击</h3>
+          <div class="review cut"><span class="rv">排除</span><span class="rv-txt">感觉 / 幻觉，离落地远。</span><span class="rv-date">6/25</span></div>
           <p class="desc">在你掉进掠夺性借贷之前，用更优方案实时拦截替换。穷人代理人最直接、最有共情的价值。</p>
           <div class="eg"><span class="tag">例</span><p>你手指正要点那个“7 天到账”的发薪日贷，agent 弹出：“别点，这年化 600%；我帮你从互助池 3 天 0 息周转”，一键替换。</p></div>
         </article>
 
-        <article class="idea">
+        <article class="idea cut out">
           <div class="num">04</div>
-          <h3>ROSCA 自动化（标会）<span class="star">★ 可做</span></h3>
+          <h3>ROSCA 自动化（标会）</h3>
+          <div class="review cut"><span class="rv">排除</span><span class="rv-txt">「循环信贷、每月」——存疑、偏扯。</span><span class="rv-date">6/25</span></div>
           <p class="desc">把民间“标会 / 互助会”自动化、可信化。<i>ROSCA＝轮转储蓄信贷会</i>：一群人每月各凑固定一笔进一个池，每月轮一人把整池拿走，一圈下来人人都拿过一次——没银行的社区超常见。</p>
           <div class="eg"><span class="tag">例</span><p>村里 12 户每月各存 500 进池、每月轮一家拿 6000 办大事；agent 自动记账排序、用各家真实流水预警谁可能还不上，不再需要一个管账先生，也没人能做假账或跑路。</p></div>
         </article>
 
-        <article class="idea">
+        <article class="idea cut out">
           <div class="num">05</div>
-          <h3>目标授权理财<span class="star">★ 可做</span></h3>
+          <h3>目标授权理财</h3>
+          <div class="review cut"><span class="rv">排除</span><span class="rv-txt">「规划储蓄 / 还债 / 投资路径并执行」——全是感觉。</span><span class="rv-date">6/25</span></div>
           <p class="desc">你只说目标，agent 反推储蓄 / 还债 / 投资路径并执行，按<strong>“目标达成度”</strong>收费。</p>
           <div class="eg"><span class="tag">例</span><p>你只对它说“两年后给孩子凑 6 万学费”，它算出每月该存多少、顺手先把你高息卡债还掉，按“完成了几成”收费。</p></div>
         </article>
 
-        <article class="idea">
+        <article class="idea cut out">
           <div class="num">06</div>
-          <h3>生产性信贷（用需求期货抵押）<span class="star">★ 桥</span></h3>
+          <h3>生产性信贷（用需求期货抵押）</h3>
+          <div class="review cut"><span class="rv">排除</span><span class="rv-txt">「半年牛奶订单」式需求期货抵押——没什么意义。</span><span class="rv-date">6/25</span></div>
           <p class="desc">把第二层的“需求确定性”，变成第三层的“生产信用”——这是连接 L2、L3 的一条暗线，价值大但偏重，可缓做。</p>
           <div class="eg"><span class="tag">例</span><p>农民 agent 拿着第二层里小区家庭锁定的“半年牛奶订单”当抵押，贷到买饲料的钱——因为这笔未来收入是可信的。</p></div>
           <p class="xlink">↘ 跨层：抵押物来自 <b>第二层</b> 的拼单 / 需求期货。</p>
         </article>
 
       </div>
-      <p class="count" style="margin-top:20px">已收起（需要可恢复）：信用的社群/代际转移、生活成本宏观对冲、财务自动驾驶 L0–L5（偏远景或与“目标授权”重叠）。</p>
+      <p class="count" style="margin-top:20px">也讨论过、先不展开：信用的社群 / 代际转移、生活成本宏观对冲、财务自动驾驶 L0–L5（偏远景，或与“目标授权”重叠）。</p>
     </div>
   </main>
 

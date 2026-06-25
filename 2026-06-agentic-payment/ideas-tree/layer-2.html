@@ -56,9 +56,6 @@
   .idea h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:5px 0 9px;line-height:1.3;color:var(--ink)}
   .idea .desc{font-size:15px;color:var(--ink-dim);line-height:1.62;margin:0 0 14px}
   .idea .desc b,.idea .desc i{color:var(--ink)}
-  .star{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.02em;color:var(--lc);border:1px solid var(--lc);border-radius:999px;padding:3px 9px;margin-left:8px;white-space:nowrap;vertical-align:middle;display:inline-block}
-  .star.warn{color:var(--bad);border-color:var(--bad)}
-  .idea.flag:before{background:var(--bad)}
   .cav{font-family:var(--sans);font-size:13px;line-height:1.58;color:var(--bad);margin-top:11px}
   .eg{display:flex;gap:10px;font-family:var(--sans);font-size:13.5px;line-height:1.62;color:var(--ink-dim);background:var(--bg-card-2);border:1px solid var(--line-soft);border-radius:9px;padding:11px 13px}
   .eg .tag{flex:0 0 auto;font-family:var(--mono);font-weight:500;font-size:12px;color:var(--lc);letter-spacing:.04em}
@@ -69,7 +66,6 @@
   .idea.fruit:before{background:var(--accent)}
   .idea.fruit .num,.idea.fruit h3{color:var(--ink)}
   .idea.fruit .desc{color:var(--ink-dim)}
-  .idea.fruit .star{color:var(--accent);border-color:var(--accent)}
   .idea.fruit .eg{background:rgba(224,163,70,.1);border-color:rgba(224,163,70,.2);color:var(--ink-dim)}
   .idea.fruit .eg .tag{color:var(--accent)}
   .idea.fruit .xlink{color:var(--ink-faint)}
@@ -87,6 +83,36 @@
     .idea.fruit{grid-column:auto}
     .pagenav .wrap{flex-wrap:wrap;gap:10px}
   }
+  /* 6/25 团队复盘标注 */
+  .lnote{margin:2px 0 22px;padding:13px 16px;border-radius:12px;background:var(--accent-soft);border:1px solid rgba(224,163,70,.32);font-size:13.5px;line-height:1.62;color:var(--ink-dim)}
+  .lnote b{color:var(--accent)}
+  .lnote.cold{background:rgba(217,119,107,.1);border-color:rgba(217,119,107,.34)}
+  .lnote.cold b{color:var(--bad)}
+  .review{display:flex;align-items:flex-start;gap:10px;margin:12px 0 2px;padding:9px 12px;border-radius:10px;background:var(--bg-card-2);border:1px solid var(--line-soft)}
+  .review .rv{flex:none;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.02em;padding:3px 9px;border-radius:999px;line-height:1.35;white-space:nowrap}
+  .review .rv-txt{font-size:13px;line-height:1.55;color:var(--ink-dim)}
+  .review .rv-txt b{color:var(--ink)}
+  .review .rv-date{flex:none;margin-left:auto;align-self:center;font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--ink-faint)}
+  .review.keep{border-color:rgba(95,185,140,.38)} .review.keep .rv{color:var(--good);border:1px solid var(--good)}
+  .review.cut{border-color:rgba(217,119,107,.38)} .review.cut .rv{color:var(--bad);border:1px solid var(--bad)}
+  .review.down{border-color:rgba(224,163,70,.38)} .review.down .rv{color:var(--accent);border:1px solid var(--accent)}
+  .review.explore{border-color:rgba(111,155,209,.4)} .review.explore .rv{color:var(--slate);border:1px solid var(--slate)}
+  .review.hold .rv{color:var(--ink-faint);border:1px solid var(--ink-faint)}
+  /* 排除 / 有硬伤 卡片 — 强化「已否决」视觉 */
+  .idea.cut{border-style:dashed;border-color:rgba(217,119,107,.5);background:linear-gradient(180deg,rgba(217,119,107,.075),rgba(217,119,107,.025)),var(--bg-card)}
+  .idea.cut:before{width:4px;background:var(--bad)}
+  .idea.cut h3{color:var(--ink-dim)}
+  .idea.cut .desc,.idea.cut .eg{opacity:.58}
+  .idea.cut .star{opacity:.4;filter:grayscale(.5)}
+  .idea.cut.out h3{text-decoration:line-through;text-decoration-color:rgba(217,119,107,.62);text-decoration-thickness:1.5px;text-underline-offset:2px}
+  .idea.cut.out h3 .star{text-decoration:none}
+  /* 复盘横幅 — 多行结构 */
+  .lnote .ln-h{margin:0 0 2px}
+  .lnote p{margin:6px 0 0}
+  .lnote .ln-list{margin:8px 0 0;padding-left:15px;list-style:none}
+  .lnote .ln-list li{position:relative;margin-top:6px}
+  .lnote .ln-list li:before{content:"–";position:absolute;left:-13px;color:var(--ink-faint)}
+  .lnote .ln-list b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -102,58 +128,90 @@
 
   <main>
     <div class="wrap">
-      <p class="count">已筛过 · 6 条 · ★★ 最该先做 / ★ 可做 / ⚠ 有硬伤（多半卡在“谁来判定”）</p>
+      <p class="count">6 个方向 · ★★ 最该先做 / ★ 可做 / ⚠ 有硬伤（多半卡在“谁来判定”）</p>
+      <div class="lnote cold">
+        <div class="ln-h"><b>团队复盘 · 6/25：整层基本有硬伤。</b></div>
+        <p>逐条多数要排除或降级——本质大多偏「卖货 / marketplace / 价格歧视」，离 agent 支付本身远；这层原本看着最适合落产品，反而最经不起推敲：</p>
+        <ul class="ln-list">
+          <li><b>效用比价 / 活价格</b>：效用比价除非卖方肯把包月拆成子模块否则没法谈，只能折回「转售」；活价格则是经典价格歧视，agent 出现前就有人做，和 agent 支付无关。</li>
+          <li><b>里程碑托管 / 拼单期货</b>：前者卡在「验收 / 满意度是主观判断、做不到 trustless」，后者本质是 marketplace——碰我们「不做 marketplace」的红线。</li>
+          <li><b>公平分账</b>：和 agent 关系不大，但跟 isometry（本国稳定币直转）有关，挪用保留，参考 Rain 的 dbt-local-stablecoin 报告。</li>
+          <li><b>两个商户侧场景</b>（小商家接入 / 可读性改造）值得另探——但小商户信任分天生低，接口通了 agent 比价照样把它过滤掉，信任问题没解。</li>
+        </ul>
+      </div>
       <div class="grid">
 
-        <article class="idea">
+        <article class="idea cut out">
           <div class="num">01</div>
-          <h3>CFO 主动消费治理<span class="star">★★ 最该先做</span></h3>
+          <h3>CFO 主动消费治理</h3>
+          <div class="review cut"><span class="rv">排除</span><span class="rv-txt">和第一层 SaaS 支出管理重复。</span><span class="rv-date">6/25</span></div>
           <p class="desc">agent 不只是付钱，而是像基金经理一样主动打理你的“支出组合”：砍重复、挑时机。今天的数据和接口就够做。</p>
           <div class="eg"><span class="tag">例</span><p>它发现你同时开着三个视频会员、过去三个月只看了一个，自动把另外两个降成“要用再开”。</p></div>
         </article>
 
-        <article class="idea">
+        <article class="idea cut">
           <div class="num">02</div>
-          <h3>效用比价<span class="star">★★ 最该先做</span></h3>
+          <h3>效用比价</h3>
+          <div class="review cut"><span class="rv">有硬伤</span><span class="rv-txt">除非卖方肯把包月拆成子模块，否则没法谈；只能折回「转售」。</span><span class="rv-date">6/25</span></div>
           <p class="desc">比的不再是标价，而是“按你真实用量折算的单位成本”。个性化定价第一次从卖方武器变成买方武器。</p>
           <div class="eg"><span class="tag">例</span><p>你某协作软件买了 20 个席位、常年只用 3 个，agent 拿这个事实谈“按 3 个活跃席位计费，否则换竞品”，年费砍掉一半。</p></div>
         </article>
 
-        <article class="idea">
+        <article class="idea cut out">
           <div class="num">03</div>
-          <h3>活价格<span class="star">★ 可做</span></h3>
+          <h3>活价格</h3>
+          <div class="review cut"><span class="rv">排除</span><span class="rv-txt">经典价格歧视，agent 出现前就有人做；和 agent 支付没关系。</span><span class="rv-date">6/25</span></div>
           <p class="desc">买卖双方 agent 维持长连接，价格随库存、需求、你的忠诚度滚动重谈，“一口价”消失，变成一条价格曲线。</p>
           <div class="eg"><span class="tag">例</span><p>健身房不再卖年卡，而是按你每月实际去的次数结算，淡季它主动降价留你。</p></div>
         </article>
 
-        <article class="idea flag">
+        <article class="idea">
           <div class="num">04</div>
-          <h3>公平分账（诚实版）<span class="star warn">⚠ 有硬伤</span></h3>
+          <h3>公平分账（诚实版）</h3>
+          <div class="review explore"><span class="rv">待探索</span><span class="rv-txt">跟 agent 关系不大，但跟 isometry 有关（本国稳定币直转）。参考 Rain 的 dbt-local-stablecoin 报告。</span><span class="rv-date">6/25</span></div>
           <p class="desc">让 agent 在成交时多管一件事——<b>分配公不公</b>：不止把价压到公允，还盯着多付的钱有没有真落到独立生产者（如花农）手里。它要紧，是因为双边市场里“压价”谁都会做，“让生产者也拿到公平回报”才是难做、也最稀缺的那部分价值。</p>
           <div class="eg"><span class="tag">例</span><p>订花，5 家 agent 竞标把价压到 ¥120——这步实打实省了钱。至于多付的 ¥20 给花农，得靠一个像“公平贸易认证”的可信第三方去实地核、发证、违规罚没；回执只是“防篡改的记录”，不等于“证明了他是真花农”。</p></div>
           <p class="cav"><b>得分两半看，别混在一起：</b>用<b>多家竞标</b>把价压到公允——这半是<b>硬的</b>，跟谁的身份都无关。但“多付的钱真进了独立花农的口袋”这半<b>证不了</b>：回执只能证明钱到了某个账户，证不了那账户是真花农、还是商家的托。</p>
           <p class="cav">根因（和“真实成本”同一堵墙）：可验证层只能证明“钱的流动”和“计算正确”，证不了“现实身份 / 现实事实”。所以“分给谁”要靠认证 + 审计 + 押金，不是密码学。</p>
         </article>
 
-        <article class="idea flag">
+        <article class="idea cut">
           <div class="num">05</div>
-          <h3>里程碑托管（装修）<span class="star warn">⚠ 有硬伤</span></h3>
+          <h3>里程碑托管（装修）</h3>
+          <div class="review cut"><span class="rv">有硬伤</span><span class="rv-txt">「验收 / 满意度」是主观判断，做不到 trustless，否则区块链早做了。</span><span class="rv-date">6/25</span></div>
           <p class="desc">钱进托管，按验收节点分段放款，中途不满意按完成度结算——把“按效果付费”做成 agent 间可编程的支付流。</p>
           <div class="eg"><span class="tag">例</span><p>请 agent 找的装修师傅：水电通电测试通过自动放 30%、贴砖拍照交验房师确认放 30%、你最终满意付尾款。</p></div>
           <p class="cav">⚠ 卡在哪：“验收 / 满意 / 完成度”是主观的物理判断，没法 trustless 自动裁。能做的是“客观里程碑自动 + 主观部分接人类监理当裁判”，纯自动做不到。</p>
         </article>
 
-        <article class="idea flag">
+        <article class="idea cut">
           <div class="num">06</div>
-          <h3>拼单 / 需求期货<span class="star warn">⚠ 有硬伤</span></h3>
+          <h3>拼单 / 需求期货</h3>
+          <div class="review cut"><span class="rv">有硬伤</span><span class="rv-txt">本质是 marketplace——而我们不做 marketplace。</span><span class="rv-date">6/25</span></div>
           <p class="desc">agent 自发把同款需求拼成一单压价；或把你稳定的未来需求提前锁给生产者换成本价。</p>
           <div class="eg"><span class="tag">例</span><p>你的 agent 发现小区这周有 8 户都要买同款空调，临时拼成一单去压价，成交后各付各的。</p></div>
           <p class="cav">⚠ 卡在哪：像个小市场，碰“不做 marketplace”的红线，定位要先想清——<strong>自己做工具层</strong>。</p>
           <p class="xlink">↗ 跨层：把“稳定的未来需求”锁成订单后，可在 <b>第三层</b> 当生产性信贷的抵押物。</p>
         </article>
 
+        <article class="idea">
+          <div class="num">07</div>
+          <h3>小商家无法对接 Agent 协议</h3>
+          <div class="review explore"><span class="rv">待探索</span><span class="rv-txt"><b>硬伤</b>：小商户天生信任分低，agent 比价时照样把它过滤掉——接口通了，信任问题没解。</span><span class="rv-date">6/25</span></div>
+          <p class="desc">Agent 购物（ChatGPT Shopping / Perplexity Buy）走 AP2 / ACP / x402，需要结构化商品数据与机读支付入口。大平台早接好，小商家完全没能力接——流量于是系统性流向大平台。把这套接入打包成服务卖给小商家。</p>
+          <div class="eg"><span class="tag">例</span><p>一个人在跑独立站，看不懂 AP2 / x402；我们把「让 agent 能发现并购买你的服务」这套接入外包掉。</p></div>
+        </article>
+
+        <article class="idea">
+          <div class="num">08</div>
+          <h3>商户侧 Agent 可读性改造工具</h3>
+          <div class="review explore"><span class="rv">待探索 · 偏第二层</span><span class="rv-txt">本质还是「list 一份子服务清单、让 agent 来买」——和本层一脉相承，可外包来做。</span><span class="rv-date">6/25</span></div>
+          <p class="desc">现有电商页面是给人眼看的（图片、营销话术）；agent 读不懂「是否防水 / 7 天退 / 兼容性」。做一个把商品信息自动转成结构化、机读格式的工具（类似 SEO，但目标是 agent），SaaS 按商品数 / GMV 收费。</p>
+          <div class="eg"><span class="tag">例</span><p>我有个「文章 → 小说 → 电影」的服务，只想做好服务、不想管收款对账；把「让 agent 能感知、调用我并付费」这套外包出去。</p></div>
+        </article>
+
       </div>
-      <p class="count" style="margin-top:20px">已收起（需要可恢复）：声誉即信用额度（≈ 现有信用分，新意有限）、agent 间易货多边清算（太远）、卖方 TEE 诚实证明（garbage-in，已并入“公平分账”的说明）、隐私阶梯。</p>
+      <p class="count" style="margin-top:20px">也讨论过、先不展开：声誉即信用额度（≈ 现有信用分，新意有限）、agent 间易货多边清算（太远）、卖方 TEE 诚实证明（garbage-in）、隐私阶梯。</p>
     </div>
   </main>
 
