@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="color-scheme" content="dark" />
-<title>Agentic Payment：一棵向上长的树</title>
+<title>Agentic Payment：从代付到独立主体</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
@@ -46,11 +46,16 @@
   header{padding:40px 0 18px;text-align:center}
   .kick{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 20px}
   h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,5.4vw,56px);line-height:1.08;letter-spacing:-.02em;margin:0 0 20px;color:var(--ink)}
-  h1 .it{font-style:italic;font-weight:400}
   .thesis{font-size:clamp(17px,2.1vw,20px);line-height:1.6;color:var(--ink-dim);max-width:680px;margin:0 auto}
   .correction{max-width:640px;margin:26px auto 0;padding:15px 18px;font-size:14px;line-height:1.62;
     color:var(--ink-dim);background:var(--accent-soft);border:1px dashed rgba(224,163,70,.4);border-radius:12px}
   .correction b{color:var(--accent)}
+  .premise{max-width:780px;margin:0 auto 8px;padding:15px 18px;font-size:14px;line-height:1.64;
+    color:var(--ink-dim);background:var(--bg-card);border:1px solid var(--line);
+    border-left:3px solid var(--earth);border-radius:0 12px 12px 0}
+  .premise b{color:var(--ink)}
+  .premise .pk{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:#a98e74;display:block;margin-bottom:5px}
 
   /* ---------------- tree figure ---------------- */
   .figure{max-width:900px;margin:8px auto 0;padding:0 8px}
@@ -125,7 +130,7 @@
 <div class="wrap">
   <header>
     <p class="kick">Agentic Payment · 想法树 · 自底向上</p>
-    <h1>一棵<span class="it">向上长</span>的树</h1>
+    <h1>从代付到独立主体</h1>
     <p class="thesis">真问题是<strong>顺着交易场景往上长</strong>——每高一层，买卖逻辑被重构得越多，agent 掌握得越多，价值与野心也越大。</p>
     <p class="correction"><b>一处仍有争议的判断</b>：有人认为履约和退款在支付里已不是核心问题——电商对意图与关联销售的 AI 预判已相当成熟；也有人认为“可审计留痕 / 责任”恰恰是 agent 支付的特色刚需。<b>6/25 复盘暂时押后者</b>——把它提为 L1 主线，靠场景继续验证。</p>
   </header>
@@ -232,6 +237,10 @@
 </div>
 
 <div class="wrap">
+  <div class="premise">
+    <span class="pk">全树的地基 · 一个共识前提</span>
+    前三层都站在同一个前提上：<b>agent 跟人绑定，agent 的钱就是你的钱</b>（你充值 / 提款，它只是替你花）——这也是今天几乎所有产品的默认做法。只有<b>第四层</b>让 agent 跳出这个逻辑、成为独立主体；而迈出那一步的前提，是先在团队内部就「<b>agent identity 到底是什么</b>」达成共识。所以 identity 这道坎<b>只卡第四层，不影响 L1–L3 继续往下做</b>。
+  </div>
   <div class="layers">
 
     <section class="layer l1">
