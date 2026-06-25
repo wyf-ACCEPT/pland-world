@@ -75,6 +75,18 @@
   .entry .go{margin-top:18px;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(224,163,70,.42);border-radius:999px;padding:8px 14px;transition:background .16s ease,border-color .16s ease}
   .entry:hover .go{background:rgba(224,163,70,.2);border-color:var(--accent)}
 
+  /* 想法树入口 */
+  .tree-entry{display:flex;align-items:center;gap:18px;margin-top:14px;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:16px;background:var(--bg-card);padding:20px 22px;transition:border-color .16s ease,transform .16s ease,background .16s ease}
+  .tree-entry:hover{border-color:var(--accent);transform:translateY(-2px);background:var(--bg-card-2)}
+  .tree-entry .te-ico{font-size:24px;width:50px;height:50px;display:grid;place-items:center;border:1px solid var(--line);border-radius:13px;background:var(--bg-raised);flex:none}
+  .tree-entry .te-tx{flex:1;min-width:0}
+  .tree-entry .te-lab{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .tree-entry .te-tx h3{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)}
+  .tree-entry .te-tx p{margin:0;color:var(--ink-dim);font-size:13.5px;line-height:1.55}
+  .tree-entry .te-arrow{font-size:20px;color:var(--ink-faint);flex:none;transition:color .16s ease,transform .16s ease}
+  .tree-entry:hover .te-arrow{color:var(--accent);transform:translateX(3px)}
+  @media(max-width:560px){.tree-entry{gap:14px;padding:16px 18px}.tree-entry .te-tx h3{font-size:19px}}
+
   /* 合成 / 收敛区块 */
   .synth{margin-top:18px;border:1px solid var(--line);border-radius:20px;background:var(--bg-raised);padding:30px 30px 28px;overflow:hidden}
   .synth-premises{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -159,10 +171,20 @@
         <a class="entry" href="yingmiao-no-stablecoin.html">
           <div class="entry-top"><span class="emoji">⚔️</span><span class="who">应淼<small>反方 · rail</small></span><span class="arrow">→</span></div>
           <h3>赢家不需要稳定币</h3>
-          <p>用尽全力证明稳定币不是必需——杀不死，我们才挣到"必须用稳定币"的信念。</p>
+          <p>用尽全力证明稳定币不是必需——杀不死，我们才挣到“必须用稳定币”的信念。</p>
           <span class="go">打开页面 →</span>
         </a>
       </div>
+
+      <a class="tree-entry" href="sipeng-ideas-tree/">
+        <span class="te-ico">🌳</span>
+        <span class="te-tx">
+          <b class="te-lab">Appendix · 思芃</b>
+          <h3>想法树：自底向上的四层框架</h3>
+          <p>把这一轮所有脑洞按“买卖逻辑被重构得多深”挂上一棵树——L1 代付 → L2 双边重构 → L3 信用 → L4 身份。点进去看哪个想法长在哪一层。</p>
+        </span>
+        <span class="te-arrow">→</span>
+      </a>
     </section>
 
     <section class="section">
