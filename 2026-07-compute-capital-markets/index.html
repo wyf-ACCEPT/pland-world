@@ -36,7 +36,7 @@ body{
   color:var(--ink); font-family:var(--sans); font-size:14px; line-height:1.55;
   -webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:1180px; margin:0 auto; padding:0 32px 90px; position:relative; overflow-x:clip}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px 90px; position:relative}
 a{color:inherit}
 
 /* language toggle */
@@ -196,17 +196,21 @@ details.qa .a{padding:2px 16px 15px 16px;color:var(--ink-dim);font-size:13.5px;l
 details.qa .a b{color:var(--ink);font-weight:600}
 details.qa .a .hl{color:var(--accent)}
 
-/* inline glossary terms — gold dashed, hover/tap for a small card */
+/* inline glossary terms — gold dashed; the real tooltip renders in a body-level
+   portal (.ftip, position:fixed) so it's always on top, never clipped or trapped
+   by a stacking context. The inline .tip only holds the content. */
 .term{color:var(--accent);border-bottom:1px dashed rgba(224,163,70,.55);cursor:help;position:relative;font-weight:500;outline:none}
-.term .tip{position:absolute;left:0;bottom:calc(100% + 9px);width:290px;max-width:calc(100vw - 24px);background:var(--bg-raised);border:1px solid rgba(224,163,70,.42);border-radius:11px;padding:13px 15px;font-size:12.5px;line-height:1.58;color:var(--ink-dim);font-weight:400;box-shadow:0 10px 34px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .15s,transform .15s;z-index:60;pointer-events:auto;white-space:normal}
-.term:hover .tip,.term:focus .tip,.term:focus-within .tip{opacity:1;visibility:visible;transform:translateY(0)}
-.term .tip::before{content:"";position:absolute;left:0;right:0;top:100%;height:11px}
+.term .tip{display:none}
 .sku .name .term{color:inherit;border-bottom-color:rgba(224,163,70,.4)}
 .tipl{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(224,163,70,.4)}
 .tipl:hover{border-bottom-color:var(--accent)}
-.term .tip .tt{display:block;color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.05em;margin-bottom:6px;font-weight:600}
-.term .tip b{color:var(--ink);font-weight:600}
-.term .tip::after{content:"";position:absolute;left:var(--ax,16px);top:100%;border:6px solid transparent;border-top-color:rgba(224,163,70,.42)}
+.ftip{position:fixed;left:0;top:0;z-index:9999;width:290px;max-width:calc(100vw - 20px);background:var(--bg-raised);border:1px solid rgba(224,163,70,.42);border-radius:11px;padding:13px 15px;font-size:12.5px;line-height:1.58;color:var(--ink-dim);box-shadow:0 12px 38px rgba(0,0,0,.6);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(4px);transition:opacity .13s,transform .13s;white-space:normal}
+.ftip.on{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.ftip .tt{display:block;color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.05em;margin-bottom:6px;font-weight:600}
+.ftip b{color:var(--ink);font-weight:600}
+.ftip .hl{color:var(--accent)}
+.ftip::after{content:"";position:absolute;left:var(--ax,16px);top:100%;border:6px solid transparent;border-top-color:rgba(224,163,70,.42)}
+.ftip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:rgba(224,163,70,.42)}
 
 footer{border-top:1px solid var(--line-soft);margin-top:80px;padding:24px 0;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-align:center}
 .disc{font-family:var(--mono);font-size:11px;color:var(--ink-faint);max-width:80ch;margin:14px auto 0;line-height:1.6;text-align:center;opacity:.85}
@@ -469,12 +473,11 @@ const QA={
    ['Why does "no credible index" mean "no liquid derivatives"?','A derivative pays out against a reference price at expiry. If that price is thin or gameable, there\'s nothing to settle against, it can be manipulated, and it won\'t track anyone\'s real cost — so nobody trades. The index is the <span class="hl">gate</span> the whole market waits behind.'],
    ['How do index providers actually make money?','Two big legs: <b>data subscriptions</b> (sell the feed) and <b>settlement licensing</b> (every futures contract that settles on your index pays you a fee — the S&amp;P 500 model). Becoming the standard is a network-effect prize.'],
    ['Does a specific machine\'s price equal the index?','No. The index is a normalized "generic basket." A real machine trades at <span class="hl">index ± basis</span>, where the basis captures region, interconnect, term and SLA — exactly the details the index deliberately smooths away.'],
-   ['How are these indices probably constructed?','Best guess: scraped public list prices + direct transaction feeds from some neoclouds and their own marketplaces + availability signals, run through proprietary normalization and <b>robust weighting</b> (median / trimmed-mean / volume-weighted — not naive averaging). They can\'t see hyperscalers\' true utilization, so that tier leans on list price. What they most want to advertise is "we have real prints" — because that\'s what makes the index un-manipulable.']
+   ['How does an index provider most likely compute these?','Best guess: scraped public list prices + direct transaction feeds from some neoclouds and their own marketplaces + availability signals, run through proprietary normalization and <b>robust weighting</b> (median / trimmed-mean / volume-weighted — not naive averaging). They can\'t see hyperscalers\' true utilization, so that tier leans on list price. What they most want to advertise is "we have real prints" — because that\'s what makes the index un-manipulable.']
   ]},
   {g:'Trading mechanics',items:[
    ['What does a CME compute future actually trade?','A cash-settled contract that settles against the H100 <b>rental price index</b> (SDH100RT-type) — not the SiliconMark performance benchmark, and no physical GPU is delivered. Long if you think rental rises, short if it falls.'],
    ['Kalshi vs Polymarket — and which index do they use?','Kalshi is US-regulated and fiat; Polymarket is crypto and was long barred for US users. On compute: <b>Kalshi settles on Ornn\'s OCPI</b>; Polymarket has used both Ornn and Silicon Data\'s SDH100RT depending on the market.'],
-   ['The Kalshi market says "$2.55/hr" — of what, exactly?','Not any one machine — the <b>normalized index value</b> for H100 SXM. It doesn\'t list region/term because the index has already fixed the chip + form-factor and averaged the rest away. A real box would be that number <span class="hl">± basis</span>.'],
    ['Where\'s a forward contract\'s price history on the curve?','The forward curve is one slice of a surface (fix "today", sweep tenor). A single contract\'s history is the other slice (fix tenor, sweep calendar). Silicon Data\'s trial only shows today\'s slice; history is paywalled.']
   ]},
   {g:'Supply structure',items:[
@@ -482,16 +485,16 @@ const QA={
    ['Is Vast.ai / RunPod a "neocloud"?','Supply is a spectrum: hyperscaler → owned-fleet neocloud (CoreWeave) → aggregator → <b>P2P marketplace</b> (Vast.ai) → DePIN (Akash). RunPod is a hybrid — a managed "Secure Cloud" plus a P2P "Community Cloud." The index lumps all the non-hyperscalers into "neocloud," which is why that line is noisier.']
   ]},
   {g:'The hardware',items:[
-   ['What is a "SKU" here? And SXM vs PCIe?','SKU = a distinctly-priced compute config. Coarse axis = chip model; fine axes = form-factor, interconnect, region, term. <b>SXM</b> bolts onto the server board (700W, full NVLink, training clusters); <b>PCIe</b> is a slot-in card (cheaper, slower). Same chip, different SKU.'],
+   ['What are SKU, SXM and PCIe?','SKU = a distinctly-priced compute config. Coarse axis = chip model; fine axes = form-factor, interconnect, region, term. <b>SXM</b> bolts onto the server board (700W, full NVLink, training clusters); <b>PCIe</b> is a slot-in card (cheaper, slower). Same chip, different SKU.'],
    ['Ampere / Hopper / Blackwell — who names these?','Nvidia\'s architecture codenames, each a scientist (like Apple\'s macOS place-names). Ampere (A100) → Hopper (H100/H200) → Blackwell (B200/B300) → Rubin (next). Each generation is a large jump.'],
-   ['Is HBM memory a Micron monopoly?','The opposite — Micron is the smallest of three. It\'s an oligopoly: <b>SK Hynix</b> (leader) → Samsung → Micron, all sold out to Nvidia.'],
-   ['FP8 / FP4 — and doesn\'t it lose precision?','Fewer bits = faster + less memory but coarser. FP4 is a <b>trade-off tool</b>, applied selectively (mixed precision). The real feat is "compress a lot with almost no quality loss" (like JPEG) plus dedicated narrow-width silicon — not a free lunch, but not self-deception either.'],
+   ['HBM memory — what\'s the supply picture?','A three-way oligopoly, all sold out to Nvidia: <b>SK Hynix</b> (leader) → Samsung → Micron. Micron is the smallest of the three.'],
+   ['FP8 / FP4 — what are they, and is low precision cheating?','Fewer bits = faster + less memory but coarser. FP4 is a <b>trade-off tool</b>, applied selectively (mixed precision). The real feat is "compress a lot with almost no quality loss" (like JPEG) plus dedicated narrow-width silicon — not a free lunch, but not self-deception either.'],
    ['What is a Transformer Engine?','Nvidia\'s per-layer precision scheduler (since Hopper) that decides which layers run FP8 vs FP16. The deeper moat is the quantization science (much of it open) wrapped into hardware + CUDA.']
   ]},
   {g:'Benchmark analogues',items:[
    ['Is the S&amp;P 500 defined by an exchange?','No — by an independent company (S&amp;P Dow Jones Indices). The <b>Nasdaq</b> indices are the exchange\'s own. S&amp;P won on method (cap-weighting), a credible committee, an adoption flywheel (index funds, pensions), and derivatives built on top.'],
-   ['How was LIBOR manipulated — and what\'s SOFR?','LIBOR was <b>self-reported</b> by banks; traders nudged the submission to favor their huge positions. SOFR replaced it, built on <b>real overnight repo trades</b> — un-gameable. This is the template every compute index is copying.'],
-   ['Which region\'s oil does WTI deliver — and why does it matter?','A specific grade (light sweet) at a specific place (Cushing, OK). Other crudes quote as "benchmark ± differential." Perfectly analogous to compute: pin a standard SKU, push everything else into the basis.']
+   ['LIBOR and SOFR — what are they?','LIBOR was <b>self-reported</b> by banks; traders nudged the submission to favor their huge positions. SOFR replaced it, built on <b>real overnight repo trades</b> — un-gameable. This is the template every compute index is copying.'],
+   ['Which region\'s oil does WTI deliver?','A specific grade (light sweet) at a specific place (Cushing, OK). Other crudes quote as "benchmark ± differential." Perfectly analogous to compute: pin a standard SKU, push everything else into the basis.']
   ]},
   {g:'AI, briefly',items:[
    ['Was there chat in the BERT / GPT-2 era?','No. That era was task-specific NLP — understanding and text completion. Conversational assistants arrived after 2022 with instruction-tuning / RLHF.']
@@ -502,12 +505,11 @@ const QA={
    ['为什么"没有可信指数"就等于"没有流动性衍生品"？','衍生品到期按一个参考价赔付。若这个价很薄或可被操纵，就没有可结算的对象、可被操纵、也追不上任何人的真实成本——于是没人交易。指数是整个市场等待的那道<span class="hl">闸门</span>。'],
    ['指数商到底靠什么赚钱？','两条大腿：<b>数据订阅</b>（卖 feed）和<b>结算授权费</b>（每一张在你指数上结算的期货都付你一笔——标普500 模式）。成为标准是一份网络效应的大奖。'],
    ['某台具体机器的价等于指数吗？','不。指数是一个归一化的"通用篮子"。真实机器成交价是<span class="hl">指数 ± basis</span>，basis 捕捉地区、互联、租期和 SLA——正是指数刻意抹平的那些细节。'],
-   ['这些指数大概是怎么编出来的？','最佳猜测：爬来的公开挂牌价 + 部分 neocloud 和自家交易场的直连成交 + 可用性信号，经专有归一化和<b>稳健加权</b>（中位数 / 去尾均值 / 量加权——不是天真平均）。他们看不到 hyperscaler 的真实利用率，所以那一档靠挂牌价。他们最想强调的是"我们有真实成交"——因为那才让指数不可操纵。']
+   ['这些指数在指数商那边最可能是怎么算出来的？','最佳猜测：爬来的公开挂牌价 + 部分 neocloud 和自家交易场的直连成交 + 可用性信号，经专有归一化和<b>稳健加权</b>（中位数 / 去尾均值 / 量加权——不是天真平均）。他们看不到 hyperscaler 的真实利用率，所以那一档靠挂牌价。他们最想强调的是"我们有真实成交"——因为那才让指数不可操纵。']
   ]},
   {g:'交易机制',items:[
    ['CME 的算力期货到底交易什么？','一张现金结算的合约，结算参考 H100 <b>租金价格指数</b>（SDH100RT 类）——不是 SiliconMark 性能基准，也不交割实体 GPU。看涨租金做多、看跌做空。'],
    ['Kalshi vs Polymarket——用的是哪家指数？','Kalshi 美国合规、法币；Polymarket 加密，长期禁美国用户。算力上：<b>Kalshi 结算在 Ornn 的 OCPI</b>；Polymarket 视市场用过 Ornn 和 Silicon Data 的 SDH100RT。'],
-   ['Kalshi 那个"$2.55/hr"到底是什么的价？','不是任何一台机器——是 H100 SXM 的<b>归一化指数值</b>。它不写地区/租期，因为指数已经固定了芯片 + 形态、把其余抹平。真实一台机器会是那个数<span class="hl">± basis</span>。'],
    ['某个远期合约的历史价在曲线的哪里？','远期曲线是曲面的一刀（固定"今天"、扫期限）。某个合约的历史是另一刀（固定期限、扫日历）。Silicon Data 的试用只给今天那一刀；历史被付费墙挡着。']
   ]},
   {g:'供给结构',items:[
@@ -515,16 +517,16 @@ const QA={
    ['Vast.ai / RunPod 算"neocloud"吗？','供给是一条光谱：hyperscaler → 自有机队 neocloud（CoreWeave）→ 聚合器 → <b>P2P 市场</b>（Vast.ai）→ DePIN（Akash）。RunPod 是混血——托管的"Secure Cloud"加上 P2P 的"Community Cloud"。指数把所有非-hyperscaler 一股脑塞进"neocloud"，这就是那条线更抖的原因。']
   ]},
   {g:'硬件',items:[
-   ['这里的"SKU"是什么？SXM vs PCIe？','SKU = 一个可区分定价的算力配置。粗轴 = 芯片型号；细轴 = 形态、互联、地区、租期。<b>SXM</b> 焊在服务器主板上（700W、全速 NVLink、训练集群）；<b>PCIe</b> 是插槽卡（更便宜、更慢）。同款芯片、不同 SKU。'],
+   ['SKU、SXM 和 PCIe 分别是什么？','SKU = 一个可区分定价的算力配置。粗轴 = 芯片型号；细轴 = 形态、互联、地区、租期。<b>SXM</b> 焊在服务器主板上（700W、全速 NVLink、训练集群）；<b>PCIe</b> 是插槽卡（更便宜、更慢）。同款芯片、不同 SKU。'],
    ['Ampere / Hopper / Blackwell——谁起的名？','Nvidia 的架构代号，每个是一位科学家（像 Apple 的 macOS 地名）。Ampere（A100）→ Hopper（H100/H200）→ Blackwell（B200/B300）→ Rubin（下一代）。每一代都是一次大跳。'],
-   ['HBM 显存是美光垄断吗？','恰恰相反——美光是三家里最小的。这是寡头：<b>SK 海力士</b>（龙头）→ 三星 → 美光，全被 Nvidia 包销。'],
-   ['FP8 / FP4——难道不掉精度吗？','位数越少 = 越快、越省显存，但越糙。FP4 是个<b>权衡工具</b>，选择性使用（混合精度）。真本事是"压缩很多却几乎不掉质量"（像 JPEG）加上专用的窄位宽硅片——不是免费午餐，但也不是自欺欺人。'],
+   ['HBM 显存目前的供应格局？','三家寡头、全被 Nvidia 包销：<b>SK 海力士</b>（龙头）→ 三星 → 美光；美光是其中最小的一家。'],
+   ['FP8、FP4 是什么？低精度靠谱吗？','位数越少 = 越快、越省显存，但越糙。FP4 是个<b>权衡工具</b>，选择性使用（混合精度）。真本事是"压缩很多却几乎不掉质量"（像 JPEG）加上专用的窄位宽硅片——不是免费午餐，但也不是自欺欺人。'],
    ['什么是 Transformer Engine？','Nvidia 的逐层精度调度器（自 Hopper 起），决定哪些层跑 FP8、哪些跑 FP16。更深的护城河是量化科学（大多公开）被封装进硬件 + CUDA。']
   ]},
   {g:'基准类比',items:[
    ['标普500 是交易所定的吗？','不是——是一家独立公司（S&amp;P Dow Jones Indices）。<b>纳斯达克</b>指数才是交易所自己的。标普赢在方法（市值加权）、可信的委员会、采纳飞轮（指数基金、养老金），以及建在其上的衍生品。'],
-   ['LIBOR 是怎么被操纵的——SOFR 又是什么？','LIBOR 由银行<b>自报</b>；交易员把报数往有利于自己巨额头寸的方向"抹"。SOFR 取代了它，建立在<b>真实的隔夜回购成交</b>上——无法操纵。这正是每一个算力指数都在抄的模板。'],
-   ['WTI 交割哪个地区的油——为什么重要？','特定油品（轻质低硫）在特定地点（俄克拉荷马州 Cushing）。别的原油报成"基准 ± 差价"。与算力完全同构：钉死一个标准 SKU，把其余全部推进 basis。']
+   ['LIBOR 和 SOFR 分别是什么？','LIBOR 由银行<b>自报</b>；交易员把报数往有利于自己巨额头寸的方向"抹"。SOFR 取代了它，建立在<b>真实的隔夜回购成交</b>上——无法操纵。这正是每一个算力指数都在抄的模板。'],
+   ['WTI 交割哪个地区的油？','特定油品（轻质低硫）在特定地点（俄克拉荷马州 Cushing）。别的原油报成"基准 ± 差价"。与算力完全同构：钉死一个标准 SKU，把其余全部推进 basis。']
   ]},
   {g:'AI 速览',items:[
    ['BERT / GPT-2 时代有 chat 吗？','没有。那个时代是任务型 NLP——理解和文本续写。对话助手是 2022 年之后随指令微调 / RLHF 才出现的。']
@@ -707,19 +709,30 @@ document.querySelectorAll('#langtoggle button').forEach(b=>b.addEventListener('c
 let initLang='zh'; try{initLang=localStorage.getItem('ccm-lang')||'zh'}catch(e){}
 applyLang(initLang);
 
-// keep glossary tooltips inside the content column (avoid right-edge clipping / overflow)
-const _wrap=document.querySelector('.wrap');
-function placeTip(term){
- const tip=term.querySelector('.tip'); if(!tip) return;
- const tr=term.getBoundingClientRect(), wr=_wrap.getBoundingClientRect(), tipW=tip.offsetWidth;
- const minL=wr.left+8, maxL=wr.right-8-tipW;
- const target=Math.max(minL, Math.min(tr.left, maxL));
- tip.style.left=(target-tr.left)+'px';
- const ax=(tr.left+tr.width/2)-target;
- tip.style.setProperty('--ax', Math.max(12, Math.min(tipW-12, ax))+'px');
+// glossary tooltip portal — one body-level fixed element, always top layer, never clipped
+const ftip=document.createElement('div'); ftip.className='ftip'; ftip.setAttribute('role','tooltip'); document.body.appendChild(ftip);
+let curTerm=null, ftipT;
+function showTip(term){
+ const src=term.querySelector('.tip'); if(!src) return;
+ clearTimeout(ftipT); curTerm=term;
+ ftip.innerHTML=src.innerHTML;
+ const tw=ftip.offsetWidth, th=ftip.offsetHeight, tr=term.getBoundingClientRect();
+ const left=Math.max(10, Math.min(tr.left, innerWidth-10-tw));
+ let below=false, top=tr.top-th-11;
+ if(top<8){ top=tr.bottom+11; below=true; }
+ ftip.style.left=Math.round(left)+'px'; ftip.style.top=Math.round(top)+'px';
+ ftip.classList.toggle('below',below);
+ ftip.style.setProperty('--ax', Math.max(12, Math.min(tw-12, (tr.left+tr.width/2)-left))+'px');
+ ftip.classList.add('on');
 }
-document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('.term'); if(t) placeTip(t);});
-document.addEventListener('focusin',e=>{const t=e.target.closest&&e.target.closest('.term'); if(t) placeTip(t);});
+function hideTip(){ clearTimeout(ftipT); ftipT=setTimeout(()=>{ ftip.classList.remove('on'); curTerm=null; }, 130); }
+document.addEventListener('mouseover',e=>{ const t=e.target.closest&&e.target.closest('.term'); if(t){ if(t!==curTerm) showTip(t); else clearTimeout(ftipT); } });
+document.addEventListener('mouseout',e=>{ const t=e.target.closest&&e.target.closest('.term'); if(t) hideTip(); });
+ftip.addEventListener('mouseenter',()=>clearTimeout(ftipT));
+ftip.addEventListener('mouseleave',hideTip);
+document.addEventListener('focusin',e=>{ const t=e.target.closest&&e.target.closest('.term'); if(t) showTip(t); });
+document.addEventListener('focusout',e=>{ const t=e.target.closest&&e.target.closest('.term'); if(t) hideTip(); });
+window.addEventListener('scroll',()=>{ if(curTerm){ ftip.classList.remove('on'); curTerm=null; } }, {passive:true});
 
 window.addEventListener('resize',()=>{document.querySelectorAll('.chart').forEach(c=>{const i=echarts.getInstanceByDom(c);if(i)i.resize();});});
 </script>
