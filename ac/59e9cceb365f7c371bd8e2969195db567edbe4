@@ -1,0 +1,19 @@
+2026-07-compute-capital-markets/index.html
+  s_8990bd6ffd9380::t_7f29884a6d9abf 39,100-112,242,246,249,255,304,309,318,336,560-561,563-564,585,654,702
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ac59e9cceb365f7c371bd8e2969195db567edbe4",
+  "prompts": {},
+  "sessions": {
+    "s_8990bd6ffd9380": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "65c93190-8fc6-4a72-8119-8b40354f723f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
