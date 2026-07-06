@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Compute Capital Markets — Field Notes</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjMGUxMTE2Ii8+PHJlY3QgeD0iMC42IiB5PSIwLjYiIHdpZHRoPSIzMC44IiBoZWlnaHQ9IjMwLjgiIHJ4PSI2LjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJhMzEzYyIgc3Ryb2tlLXdpZHRoPSIxLjIiLz48dGV4dCB4PSI5LjUiIHk9IjIzLjIiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjIxIiBmb250LXdlaWdodD0iNjAwIiBmaWxsPSIjZThlY2YxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5wPC90ZXh0PjxjaXJjbGUgY3g9IjIyIiBjeT0iMjEiIHI9IjMiIGZpbGw9IiNlMGEzNDYiLz48L3N2Zz4=" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+:root{
+  --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029;
+  --line:#2a313c; --line-soft:#20262f;
+  --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+  --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+  --up:#4cc38a; --down:#e0556b; --up-soft:rgba(76,195,138,.12); --down-soft:rgba(224,85,107,.12);
+  --teal:#3fc7c2;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --sans:"IBM Plex Sans",system-ui,sans-serif;
+  --serif:"Fraunces",Georgia,serif;
+}
+/* Chinese mode swaps in Noto SC so CJK renders cleanly */
+html[lang="zh"]{--sans:"Noto Sans SC","IBM Plex Sans",system-ui,sans-serif; --serif:"Noto Serif SC","Fraunces",serif;}
+html[lang="zh"] .stat .value,html[lang="zh"] .tbl .px,html[lang="zh"] .tbl .c,html[lang="zh"] .sku .spec{font-family:"IBM Plex Mono",monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(1100px 600px at 80% -8%, rgba(224,163,70,.06), transparent 60%),
+    radial-gradient(circle at 8% 4%, rgba(63,199,194,.035), transparent 40%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink); font-family:var(--sans); font-size:14px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px 90px; position:relative}
+a{color:inherit}
+
+/* language toggle */
+/* sits at the top-right of the content column and scrolls with the page (not pinned to the window) */
+.langtoggle{position:absolute; top:24px; right:32px; z-index:50; display:flex; gap:2px; background:var(--bg-raised); border:1px solid var(--line); border-radius:999px; padding:3px; font-family:var(--mono)}
+.langtoggle button{border:0; background:transparent; color:var(--ink-faint); font-family:var(--mono); font-size:12px; letter-spacing:.04em; padding:5px 12px; border-radius:999px; cursor:pointer; transition:color .15s,background .15s}
+.langtoggle button:hover{color:var(--ink-dim)}
+.langtoggle button.active{color:#0e1116; background:var(--accent); font-weight:600}
+
+/* ambient gold orbs */
+.aurora{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; filter:blur(55px) saturate(115%)}
+.aurora .orb{position:absolute; border-radius:50%; mix-blend-mode:screen; will-change:transform}
+.aurora .o1{width:42vw;height:42vw;left:-8vw;top:-10vw;opacity:.42;background:radial-gradient(circle,rgba(224,163,70,.5),transparent 70%);animation:d1 13s ease-in-out infinite}
+.aurora .o2{width:36vw;height:36vw;right:-6vw;top:6vw;opacity:.36;background:radial-gradient(circle,rgba(214,150,58,.46),transparent 70%);animation:d2 17s ease-in-out infinite}
+.aurora .o3{width:40vw;height:40vw;left:24vw;bottom:-22vw;opacity:.3;background:radial-gradient(circle,rgba(232,178,92,.4),transparent 70%);animation:d3 20s ease-in-out infinite}
+@keyframes d1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,4vw) scale(1.12)}}
+@keyframes d2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-5vw,7vw) scale(1.08)}}
+@keyframes d3{0%,100%{transform:translate(0,0) scale(1.04)}50%{transform:translate(4vw,-6vw) scale(.92)}}
+@media (prefers-reduced-motion:reduce){.aurora .orb{animation:none}}
+
+.backlink{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);text-decoration:none;margin:26px 0 0;transition:color .16s}
+.backlink:hover{color:var(--accent)}
+
+header.masthead{border-bottom:1px solid var(--line);padding:30px 0 30px;margin-bottom:34px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0 0 16px;display:flex;align-items:center;gap:14px}
+.eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+h1.title{font-family:var(--serif);font-weight:500;font-size:clamp(34px,5vw,60px);line-height:1.03;letter-spacing:-.02em;margin:0 0 18px;max-width:20ch}
+h1.title .g{color:var(--accent)}
+.subline{display:flex;flex-wrap:wrap;gap:9px 20px;color:var(--ink-dim);font-size:13px;font-family:var(--mono)}
+.subline b{color:var(--ink);font-weight:500}
+.subline .sep{color:var(--line)}
+.lede{margin-top:22px;color:var(--ink-dim);font-size:15.5px;line-height:1.65}
+.lede b{color:var(--ink);font-weight:600}
+.lede .hl{color:var(--accent);font-weight:600}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:34px 0 8px}
+.stat{background:var(--bg-card);padding:20px 22px 18px;position:relative}
+.stat .label{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:11px}
+.stat .value{font-family:var(--mono);font-weight:500;font-size:30px;letter-spacing:-.01em;color:var(--ink)}
+.stat .value .u{font-size:14px;color:var(--ink-faint);margin-left:2px}
+.stat .chg{margin-top:8px;font-family:var(--mono);font-size:12px;display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:5px}
+.stat .chg.up{color:var(--up);background:var(--up-soft)}
+.stat .chg.down{color:var(--down);background:var(--down-soft)}
+.stat .sub{margin-top:7px;font-size:11.5px;color:var(--ink-faint)}
+.snap-note{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin:0 0 6px}
+
+section{margin-top:64px;scroll-margin-top:20px}
+.section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.section-head .num{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500}
+.section-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(24px,3vw,33px);letter-spacing:-.01em;color:var(--ink)}
+.section-head .hint{font-family:var(--mono);font-size:12px;color:var(--ink-faint)}
+.section-rule{height:1px;background:linear-gradient(90deg,var(--line),transparent);margin:0 0 26px}
+.prose{color:var(--ink-dim);font-size:14.5px;line-height:1.75;margin-bottom:22px}
+.prose b{color:var(--ink);font-weight:600}
+.prose .hl{color:var(--accent);font-weight:600}
+
+.panel{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.panel .cap{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-faint);margin-top:10px;line-height:1.5}
+.chart{width:100%;height:360px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:820px){.grid-2{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.chart{height:300px}}
+
+.lanes{display:grid;gap:12px}
+.lane{display:grid;grid-template-columns:290px 44px 300px auto 1fr;align-items:center;gap:14px;background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;transition:border-color .16s}
+.lane:hover{border-color:var(--accent)}
+.lane .prov .n{font-family:var(--serif);font-size:19px;color:var(--ink)}
+.lane .prov .d{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:3px;white-space:nowrap}
+.lane .arw{color:var(--accent);font-size:20px;justify-self:center}
+.lane .venue .n{font-family:var(--serif);font-size:18px;color:var(--ink);font-weight:500}
+.lane .venue .d{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:3px}
+.lane .prov .n a,.lane .venue .n a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(224,163,70,.35);transition:border-color .15s}
+.lane .prov .n a:hover,.lane .venue .n a:hover{border-bottom-color:var(--accent)}
+.lane .badge{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;padding:4px 9px;border-radius:6px;text-align:center;white-space:nowrap}
+.badge.pend{color:var(--accent);background:var(--accent-soft);border:1px solid rgba(224,163,70,.3)}
+@media(max-width:820px){.lane{grid-template-columns:1fr auto;row-gap:8px}.lane .arw{display:none}}
+
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line-soft)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .nm{color:var(--ink);font-weight:500}
+.tbl .tk{font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+.tbl .px{font-family:var(--mono);color:var(--ink);text-align:right;font-size:14px}
+.tbl .c{font-family:var(--mono);text-align:right;font-size:12.5px}
+.tbl .c.up{color:var(--up)} .tbl .c.down{color:var(--down)}
+.tbl tr.tier2 td{background:rgba(255,255,255,.015)}
+
+.callout{border:1px solid rgba(224,163,70,.34);background:linear-gradient(180deg,rgba(224,163,70,.07),rgba(224,163,70,.02));border-radius:12px;padding:20px 22px;margin-top:16px}
+.callout .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+.callout p{color:var(--ink-dim);font-size:14px;line-height:1.65}
+.callout b{color:var(--ink)}
+.oracle{margin-top:14px;border:1px solid var(--line);background:var(--bg-card);border-radius:12px;padding:18px 20px}
+.oracle .oh{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:13px}
+.oracle-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.oracle-grid{grid-template-columns:1fr}}
+.ocard{display:block;text-decoration:none;background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;padding:13px 15px;transition:border-color .15s,transform .15s}
+.ocard:hover{border-color:var(--accent);transform:translateY(-1px)}
+.ocard .on{font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.ocard .ox{font-size:12px;color:var(--ink-faint)}
+.ocard .od{font-size:12.5px;line-height:1.55;color:var(--ink-dim)}
+.ocard .od b{color:var(--ink);font-weight:600}
+.srcl{font-family:var(--mono);font-size:10.5px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(224,163,70,.3);white-space:nowrap}
+.srcl:hover{border-bottom-color:var(--accent)}
+
+.sku-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+@media(max-width:900px){.sku-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.sku-grid{grid-template-columns:1fr}}
+.sku{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:16px 17px;transition:border-color .16s,transform .16s}
+.sku:hover{border-color:var(--accent);transform:translateY(-1px)}
+.sku.fwd{border-color:rgba(224,163,70,.4);background:linear-gradient(180deg,rgba(224,163,70,.05),transparent)}
+.sku .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.sku .name{font-family:var(--serif);font-size:18px;color:var(--ink)}
+.sku .arch{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:2px}
+.sku .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.tag.rel{color:var(--up);background:var(--up-soft)}
+.tag.soon{color:var(--accent);background:var(--accent-soft);border:1px solid rgba(224,163,70,.3)}
+.sku .specs{margin-top:13px;display:grid;gap:7px}
+.sku .spec{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;gap:8px}
+.sku .spec .l{color:var(--ink-faint)} .sku .spec .v{color:var(--ink);text-align:right}
+
+.q-group{margin-top:22px}
+.q-group > .gh{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;display:flex;align-items:center;gap:10px}
+.q-group > .gh::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.qa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:9px;align-items:start}
+.qchip{text-align:left;background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:12px 15px;display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.4;color:var(--ink);font-weight:500;font-family:inherit;cursor:pointer;transition:border-color .15s,background .15s}
+.qchip:hover{border-color:rgba(224,163,70,.4)}
+.qchip.active{border-color:var(--accent);background:#1d2430}
+.qchip .q{flex:1}
+.qchip .tw{font-family:var(--serif);color:var(--accent);font-size:16px;line-height:1;flex:0 0 auto;transition:transform .18s}
+.qchip.active .tw{transform:rotate(45deg)}
+.qa-answer{margin-top:11px;background:var(--bg-card);border:1px solid rgba(224,163,70,.38);border-radius:11px;padding:16px 19px;color:var(--ink-dim);font-size:13.8px;line-height:1.68}
+.qa-answer b{color:var(--ink);font-weight:600}
+.qa-answer .hl{color:var(--accent)}
+details.qa{background:var(--bg-card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+details.qa[open]{border-color:rgba(224,163,70,.35);grid-column:1/-1}
+details.qa summary{list-style:none;cursor:pointer;padding:12px 15px;display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.4;color:var(--ink);font-weight:500}
+details.qa summary::-webkit-details-marker{display:none}
+details.qa summary .q{flex:1}
+details.qa summary .tw{font-family:var(--serif);color:var(--accent);font-size:16px;line-height:1;transition:transform .18s;flex:0 0 auto}
+details.qa[open] summary .tw{transform:rotate(45deg)}
+details.qa .a{padding:2px 16px 15px 16px;color:var(--ink-dim);font-size:13.5px;line-height:1.66;max-width:82ch}
+details.qa .a b{color:var(--ink);font-weight:600}
+details.qa .a .hl{color:var(--accent)}
+
+/* inline glossary terms — gold dashed, hover/tap for a small card */
+.term{color:var(--accent);border-bottom:1px dashed rgba(224,163,70,.55);cursor:help;position:relative;font-weight:500;outline:none}
+.term .tip{position:absolute;left:0;bottom:calc(100% + 9px);width:290px;max-width:78vw;background:var(--bg-raised);border:1px solid rgba(224,163,70,.42);border-radius:11px;padding:13px 15px;font-size:12.5px;line-height:1.58;color:var(--ink-dim);font-weight:400;box-shadow:0 10px 34px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .15s,transform .15s;z-index:60;pointer-events:auto;white-space:normal}
+.term:hover .tip,.term:focus .tip,.term:focus-within .tip{opacity:1;visibility:visible;transform:translateY(0)}
+.term .tip::before{content:"";position:absolute;left:0;right:0;top:100%;height:11px}
+.sku .name .term{color:inherit;border-bottom-color:rgba(224,163,70,.4)}
+.tipl{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:11px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(224,163,70,.4)}
+.tipl:hover{border-bottom-color:var(--accent)}
+.term .tip .tt{display:block;color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.05em;margin-bottom:6px;font-weight:600}
+.term .tip b{color:var(--ink);font-weight:600}
+.term .tip::after{content:"";position:absolute;left:16px;top:100%;border:6px solid transparent;border-top-color:rgba(224,163,70,.42)}
+
+footer{border-top:1px solid var(--line-soft);margin-top:80px;padding:24px 0;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-align:center}
+.disc{font-family:var(--mono);font-size:11px;color:var(--ink-faint);max-width:80ch;margin:14px auto 0;line-height:1.6;text-align:center;opacity:.85}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
+<div class="wrap">
+  <div class="langtoggle" id="langtoggle"><button data-lang="en" class="active">EN</button><button data-lang="zh">中文</button></div>
+  <a class="backlink" href="/">← pland.world</a>
+
+  <header class="masthead">
+    <div class="eyebrow" data-i18n="eyebrow">Compute Capital Markets · Field Notes</div>
+    <h1 class="title" data-i18n="title">Turning GPU hours into a <span class="g">tradable commodity</span></h1>
+    <div class="subline" data-i18n="subline">
+      <span>By <b>PlanD</b></span><span class="sep">/</span>
+      <span>Tabula</span><span class="sep">/</span>
+      <span>Snapshot <b>2026-07-05</b></span><span class="sep">/</span>
+      <span>Origin: a thread by <b>@0xfishylosopher</b> (Jay Yu)</span>
+    </div>
+    <p class="lede" data-i18n="lede">Compute behaves less like corn or gold and more like <b>electricity</b> — temporal, non-fungible, priced by the hour. A thread argued that before compute futures could exist, someone had to build a <span class="hl">credible price index</span>. This is a field study of that market as it actually stands in mid-2026: three index providers racing to become the benchmark, live GPU-rental prices, a working spot marketplace, and a running collection of the questions that came up along the way.</p>
+  </header>
+
+  <p class="snap-note" data-i18n="snap">Live Silicon&nbsp;Data readings · captured 2026-07-05</p>
+  <div class="stats">
+    <div class="stat"><div class="label">H100 · Neocloud</div><div class="value">$2.71<span class="u">/hr</span></div><div class="chg down">▼ 2.9% · 30d</div><div class="sub" data-i18n="stat1">SDH100RT · the working benchmark</div></div>
+    <div class="stat"><div class="label">H100 · Hyperscaler</div><div class="value">$7.24<span class="u">/hr</span></div><div class="chg down">▼ 3.1% · 30d</div><div class="sub" data-i18n="stat2">~2.7× the neocloud price</div></div>
+    <div class="stat"><div class="label">B200 · Neocloud</div><div class="value">$5.73<span class="u">/hr</span></div><div class="chg up">▲ 5.3% · 30d</div><div class="sub" data-i18n="stat3">new gen rising as H100 falls</div></div>
+    <div class="stat"><div class="label">A100 · Neocloud</div><div class="value">$1.64<span class="u">/hr</span></div><div class="chg up">▲ 1.9% · 30d</div><div class="sub" data-i18n="stat4">older-gen floor, quietly firming</div></div>
+  </div>
+
+  <!-- 01 -->
+  <section id="structure">
+    <div class="section-head"><span class="num">01</span><h2 data-i18n="s1h">The race to become the benchmark</h2><span class="hint" data-i18n="s1hint">three index providers · racing for venues</span></div>
+    <div class="section-rule"></div>
+    <p class="prose" data-i18n="s1p">A cash-settled future needs one number everyone trusts at expiry. Whoever owns that number owns the market — the way S&amp;P owns "the S&amp;P 500" and licenses it to every exchange and ETF. Three players are racing to be that index; the two furthest along each pair with a venue to settle contracts — Silicon Data with CME, Ornn with ICE (plus Architect and Kalshi). Ornn's OCPI already prints on the Bloomberg Terminal.</p>
+    <div class="lanes">
+      <div class="lane">
+        <div class="prov"><div class="n"><a href="https://www.silicondata.com/" target="_blank" rel="noopener">Silicon Data</a></div><div class="d" data-i18n="lane1d">GPU rental indices · CME's benchmark</div></div>
+        <div class="arw">→</div>
+        <div class="venue"><div class="n"><a href="https://www.cmegroup.com/" target="_blank" rel="noopener">CME Group</a></div><div class="d" data-i18n="lane1v">first exchange-listed compute futures</div></div>
+        <div class="badge pend" data-i18n="lane1b">Announced · pending CFTC</div>
+      </div>
+      <div class="lane">
+        <div class="prov"><div class="n"><a href="https://ornn.com/" target="_blank" rel="noopener">Ornn</a></div><div class="d" data-i18n="lane2d">a16z-led · $33M · OCPI index</div></div>
+        <div class="arw">→</div>
+        <div class="venue"><div class="n"><a href="https://www.theice.com/" target="_blank" rel="noopener">ICE</a></div><div class="d" data-i18n="lane2v">+ Architect/AX perps · Kalshi</div></div>
+        <div class="badge pend" data-i18n="lane2b">Announced · multi-venue</div>
+      </div>
+      <div class="lane">
+        <div class="prov"><div class="n"><a href="https://www.compute-desk.com/" target="_blank" rel="noopener">Compute Desk</a></div><div class="d" data-i18n="lane3d">data + instruments + brokerage stack</div></div>
+        <div class="arw">→</div>
+        <div class="venue"><div class="n">OTC brokerage</div><div class="d" data-i18n="lane3v">compute pricing · hedging · financing</div></div>
+        <div class="badge pend" data-i18n="lane3b">Earliest stage</div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="k" data-i18n="c1k">Why the index is the choke point</div>
+      <p data-i18n="c1p">No trusted, manipulation-resistant reference price → no settlement, easy manipulation, useless hedges. Liquidity can't form until the index exists and is believed. That's why all three obsess over <b>transaction-based</b> methodology — it's the exact lesson of <b>LIBOR → SOFR</b>: move off self-reported surveys onto real prints, or the whole edifice is gameable.</p>
+    </div>
+    <div class="oracle">
+      <div class="oh" data-i18n="orak">Already live as oracles — with real volume</div>
+      <div class="oracle-grid">
+        <a class="ocard" href="https://polymarket.com/event/what-will-gpu-rental-prices-h100-hit-by-april-30-967" target="_blank" rel="noopener">
+          <div class="on">Polymarket <span class="ox">↗</span></div>
+          <div class="od" data-i18n="orak1">H100 rental markets settle on Silicon Data's <b>SDH100RT</b> chart. One market cleared <b>$545K</b> in volume.</div>
+        </a>
+        <a class="ocard" href="https://kalshi.com/markets/kxb200mon/b200-monthly-price" target="_blank" rel="noopener">
+          <div class="on">Kalshi <span class="ox">↗</span></div>
+          <div class="od" data-i18n="orak2">GPU-price contracts settle on Ornn's <b>OCPI</b> (CNBC, Jun 2026). Live B200 &amp; H100 monthly markets.</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section id="index">
+    <div class="section-head"><span class="num">02</span><h2 data-i18n="s2h">What the index actually shows</h2><span class="hint" data-i18n="s2hint">Silicon Data portal · 2026-07-05</span></div>
+    <div class="section-rule"></div>
+    <p class="prose" data-i18n="s2p">The index deliberately <b>abstracts away</b> region, provider and rental term to produce one representative number per chip — the "generic basket." A specific machine (a region, an interconnect, a 3-month reserve) trades at <span class="hl">index ± basis</span>. Note the two-tier split: <b>hyperscaler</b> H100 sits near $7 (largely on-demand list price from AWS/GCP/Azure), while <b>neocloud</b> H100 sits near $2.70 (competitive spot across CoreWeave, Lambda, RunPod, Vast.ai…). That ~2.7× gap <em>is</em> a basis — and the reason neoclouds exist.</p>
+    <div class="grid-2">
+      <div class="panel"><div id="chTiers" class="chart"></div><div class="cap" data-i18n="capTiers">Same chip, different world: on-demand rental $/hr by tier. The H100 hyperscaler-vs-neocloud gap is the headline basis.</div></div>
+      <div class="panel"><div id="chFwd" class="chart"></div><div class="cap" data-i18n="capFwd">H100 forward curve (neocloud), traced from the portal's 36-month view. Downward slope = <b>backwardation</b>: the market prices longer commitments cheaper — it expects H100 to keep getting cheaper. <a class="srcl" href="https://portal.silicondata.com/forward-curve" target="_blank" rel="noopener">Live on the Silicon Data portal ↗</a></div></div>
+    </div>
+    <div class="callout">
+      <div class="k" data-i18n="c2k">A forward curve is one slice of a surface</div>
+      <p data-i18n="c2p">Price is a function of <b>two</b> time axes — calendar date <em>and</em> contract tenor. The forward curve fixes "today" and sweeps tenor (one row). To see a single contract's <b>history</b> you fix the tenor and sweep the calendar (one column). Silicon Data's trial shows only today's row; the historical dates sit behind the paid tier.</p>
+    </div>
+
+    <div style="height:1px;background:linear-gradient(90deg,var(--line),transparent);margin:38px 0 22px"></div>
+    <p class="prose" data-i18n="cmpLead"><b>The full year, straight from the feed.</b> Pulled from Silicon Data's own live archive — one year of daily prints for every index (2025-07 → 2026-07). Two things the headline number hides: H100 neocloud actually <b>rose ~28%</b> off a $1.96 trough, and the newest silicon (B200) is by far the most volatile. Data archived in <code style="color:var(--ink-dim);font-family:var(--mono);font-size:12px">/data</code>.</p>
+    <div class="grid-2">
+      <div class="panel"><div id="chYear" class="chart" style="height:400px"></div><div class="cap" data-i18n="capYear">Every index, one year of daily prints (weekly-sampled). Newer chips (H200, B200) start partway through — that's when their index went live.</div></div>
+      <div class="panel"><div id="chSpread" class="chart" style="height:400px"></div><div class="cap" data-i18n="capSpread">Both H100 tiers — hyperscaler (gold) and neocloud (teal) — with the <b>basis</b> shaded between them. As neocloud H100 rallied, the gap quietly <b>compressed</b> from ~$5.0 to ~$4.5.</div></div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <table class="tbl">
+        <thead><tr><th data-i18n="ct1">Index</th><th data-i18n="ct2" style="text-align:right">Current</th><th data-i18n="ct3" style="text-align:right">1Y Low</th><th data-i18n="ct4" style="text-align:right">1Y High</th><th data-i18n="ct5" style="text-align:right">1Y Δ</th><th data-i18n="ct6" style="text-align:right">Volatility</th></tr></thead>
+        <tbody id="cmpBody"></tbody>
+      </table>
+      <div class="cap" data-i18n="cmpCap">Volatility = annualized stdev of daily returns. Computed from the archived daily series. B200's 25% vol vs H100-hyper's 6% is the whole story: bleeding-edge supply is priced far more nervously than mature capacity.</div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="marketplace">
+    <div class="section-head"><span class="num">03</span><h2 data-i18n="s3h">The spot market, made concrete</h2><span class="hint" data-i18n="s3hint">Compute Exchange · 19 live pools</span></div>
+    <div class="section-rule"></div>
+    <p class="prose" data-i18n="s3p">If the index is the abstraction, <b>Compute Exchange</b> is the ground truth: an auction marketplace where every listing is a fully-specified <span class="hl">SKU</span> — model × form-factor × memory × interconnect × NIC × DPU. It's the best picture of what "a unit of compute" really means. Two things jump out: the sheer generational spread (Ampere → Rubin), and that <b>next-gen silicon is already sold as a forward</b> — Rubin chips that don't exist yet are listed "Expected Jul 2026 · Submit Interest." That is the thread's "capacity forward" in the wild.</p>
+    <div class="grid-2">
+      <div class="panel"><div id="chFlops" class="chart"></div><div class="cap" data-i18n="capFlops">Dense FP4 throughput per GPU (PFLOPS), by marketplace pool. Blackwell → Blackwell Ultra → Rubin roughly doubles again — the generational leap that keeps the index a moving target.</div></div>
+      <div class="panel"><div id="chMem" class="chart"></div><div class="cap" data-i18n="capMem">HBM memory per GPU (GB). More/faster memory is why newer chips win at LLM inference regardless of raw FLOPS.</div></div>
+    </div>
+    <p class="prose" style="margin-top:26px" data-i18n="s3p2"><b>The catalog as a SKU taxonomy.</b> A sample of the pools — note the gold card: a capacity forward on hardware that hasn't shipped. <a class="srcl" href="https://app.compute.exchange/" target="_blank" rel="noopener">Browse Compute Exchange ↗</a></p>
+    <div class="sku-grid" id="skuGrid"></div>
+    <div class="callout">
+      <div class="k" data-i18n="c3k">The thread, made real</div>
+      <p data-i18n="c3p">"Reservations / capacity forwards are almost always bilateral OTC trades on particular SKUs." Here it is on-screen: <b>Vera Rubin NVL</b> — 288GB HBM, 22 TB/s, 35 PFLOPS FP4, NVLink 6 — offered for reservation months before the silicon exists. Whether these forwards ever standardize enough to hedge on an exchange is the open question of the whole space.</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section id="vision">
+    <div class="section-head"><span class="num">04</span><h2 data-i18n="s4h">Will there be one "compute price"?</h2><span class="hint" data-i18n="s4hint">a comment on the thread's vision</span></div>
+    <div class="section-rule"></div>
+    <p class="prose" data-i18n="s4p">The thread imagined dealers hedging specific SKUs against a "generalized basket exchange (e.g. an H200 basket)." Read literally, the basket is <b>per-chip</b> — and that already exists (SDH100RT, OCPI-H100). In that sense the vision has shipped: CME↔Silicon Data and ICE↔Ornn are building futures on exactly those per-chip baskets. But the tempting bigger idea — a single, cross-chip <em>general compute price</em> — runs into three walls:</p>
+    <div class="grid-2" style="grid-template-columns:1fr 1fr 1fr;gap:14px">
+      <div class="panel"><div style="font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:8px" data-i18n="w1t">No fungible unit</div><div style="color:var(--ink-dim);font-size:13px;line-height:1.6" data-i18n="w1d">An H100-hour and a B200-hour do wildly different work. "Compute" has no agreed physical measure the way a barrel of oil has energy content. You'd have to normalize by performance — which precision? which workload?</div></div>
+      <div class="panel"><div style="font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:8px" data-i18n="w2t">Obsoletes too fast</div><div style="color:var(--ink-dim);font-size:13px;line-height:1.6" data-i18n="w2d">The mix turns over every ~18 months (Hopper→Blackwell→Rubin). A fixed basket needs constant re-weighting; its drift makes it a poor settlement anchor — you'd be hedging a moving target.</div></div>
+      <div class="panel"><div style="font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:8px" data-i18n="w3t">Basis explodes</div><div style="color:var(--ink-dim);font-size:13px;line-height:1.6" data-i18n="w3d">The coarser the index, the larger its gap to any real SKU — the worse it hedges. Per-chip looks like the sweet spot the market has already voted for.</div></div>
+    </div>
+    <div class="callout">
+      <div class="k" data-i18n="c4k">Comment</div>
+      <p data-i18n="c4p">A single "general compute index" is likely to emerge as a <b>macro barometer</b> (a CPI-for-AI-compute) rather than the core hedging benchmark. And the truly universal unit may not live at the GPU layer at all — it may be <b>$/token</b>. Ornn's Token Price Index and Silicon Data's LLM Token Index already price the useful output directly, abstracting the hardware away entirely. Tokens are more fungible than GPU-hours — so if one number ever comes to mean "the price of compute," it might be measured in tokens, not hours.</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section id="questions">
+    <div class="section-head"><span class="num">05</span><h2 data-i18n="s5h">Field notes — the questions</h2><span class="hint" data-i18n="s5hint">a running collection · click to expand</span></div>
+    <div class="section-rule"></div>
+    <p class="prose" data-i18n="s5p">This project was built by asking, in order, whatever didn't make sense. Grouped by theme, here's the collection — the compute- and market-structure-specific ones worth keeping.</p>
+    <div id="qaWrap"></div>
+  </section>
+
+  <p class="disc" data-i18n="disc">Field notes, not investment advice. Prices are point-in-time readings from third-party portals (Silicon Data, Compute Exchange) captured 2026-07-05 and move constantly; forward-curve and time-series charts trace on-screen shapes and are illustrative. Company details from public reporting. Direction-2 (the index layer) is the focus here; the "will the market form" and dealer/basis strands remain open.</p>
+  <footer>© 2026 pland.world · PlanD · Tabula</footer>
+</div>
+
+<script>
+const AX={line:'#2a313c',soft:'#20262f',ink:'#9aa6b4',faint:'#6b7787',accent:'#e0a346',up:'#4cc38a',down:'#e0556b',teal:'#3fc7c2'};
+const F={mono:'IBM Plex Mono, monospace'};
+function grid(l){return{left:l||46,right:18,top:24,bottom:34}}
+function axLabel(){return{color:AX.faint,fontFamily:F.mono,fontSize:11}}
+function splitLine(){return{lineStyle:{color:AX.soft}}}
+function axLine(){return{lineStyle:{color:AX.line}}}
+
+
+// charts
+const tierData=[{n:'A100 neo',v:1.64},{n:'MI300X',v:2.43},{n:'H100 neo',v:2.71},{n:'A100 hyper',v:3.71},{n:'B200 neo',v:5.73},{n:'H100 hyper',v:7.24}];
+echarts.init(document.getElementById('chTiers')).setOption({
+ grid:grid(70),tooltip:{trigger:'axis',axisPointer:{type:'shadow'},backgroundColor:'#161b22',borderColor:AX.line,textStyle:{color:'#e8ecf1',fontFamily:F.mono},valueFormatter:v=>'$'+v.toFixed(2)+'/hr'},
+ xAxis:{type:'value',axisLabel:{...axLabel(),formatter:'${value}'},splitLine:splitLine(),axisLine:axLine()},
+ yAxis:{type:'category',data:tierData.map(d=>d.n),axisLabel:{...axLabel(),lineHeight:13,formatter:v=>v.replace(' ','\n')},axisLine:axLine(),axisTick:{show:false}},
+ series:[{type:'bar',data:tierData.map(d=>({value:d.v,itemStyle:{color:d.n.includes('hyper')?AX.accent:AX.teal,borderRadius:[0,4,4,0]}})),barWidth:'58%',label:{show:true,position:'right',color:AX.ink,fontFamily:F.mono,fontSize:11,formatter:p=>'$'+p.value.toFixed(2)}}]});
+const fwdT=[0,3,6,9,12,15,18,21,24,27,30,33,36],fwdV=[2.70,2.63,2.605,2.58,2.52,2.44,2.375,2.33,2.30,2.275,2.26,2.25,2.25];
+echarts.init(document.getElementById('chFwd')).setOption({
+ grid:grid(48),tooltip:{trigger:'axis',backgroundColor:'#161b22',borderColor:AX.line,textStyle:{color:'#e8ecf1',fontFamily:F.mono},valueFormatter:v=>'$'+v.toFixed(3)+'/hr'},
+ xAxis:{type:'category',data:fwdT,axisLabel:axLabel(),axisLine:axLine(),splitLine:{show:false}},
+ yAxis:{type:'value',min:0,axisLabel:{...axLabel(),formatter:'${value}'},splitLine:splitLine(),axisLine:axLine()},
+ series:[{type:'line',data:fwdV,smooth:true,symbol:'circle',symbolSize:5,lineStyle:{color:AX.accent,width:2.5},itemStyle:{color:AX.accent},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(224,163,70,.22)'},{offset:1,color:'rgba(224,163,70,0)'}])}}]});
+
+// ---- comprehensive: 1-year daily archive from Silicon Data (see /data) ----
+const EMBED={"weekDates":["07-05","07-12","07-19","07-26","08-02","08-09","08-16","08-23","08-30","09-06","09-13","09-20","09-27","10-04","10-11","10-18","10-25","11-01","11-08","11-15","11-22","11-29","12-06","12-13","12-20","12-27","01-03","01-10","01-17","01-24","01-31","02-07","02-14","02-21","02-28","03-07","03-14","03-21","03-28","04-04","04-11","04-18","04-25","05-02","05-09","05-16","05-23","05-30","06-06","06-13","06-20","06-27","07-04","07-05"],"series":{"H100 neo":[2.12,2.09,2.08,2.09,2.1,2.09,2.08,2.08,2.08,2.05,2.03,2.03,2.02,2.03,2.04,1.99,1.99,1.99,1.98,1.99,1.99,1.96,1.98,2.02,2.11,2.16,2.2,2.21,2.24,2.29,2.3,2.33,2.4,2.41,2.43,2.44,2.45,2.46,2.61,2.64,2.5,2.5,2.56,2.54,2.6,2.63,2.61,2.76,2.79,2.77,2.69,2.63,2.7,2.71],"H100 hyper":[7.08,7.09,7.08,7.06,6.98,7.01,6.93,6.94,6.97,6.96,6.97,6.99,7.0,7.01,7.02,7.04,7.08,7.12,6.91,6.96,6.96,7.02,7.01,7.24,7.23,7.34,7.26,7.32,7.29,7.3,7.32,7.35,7.31,7.44,7.45,7.43,7.43,7.41,7.51,7.46,7.4,7.43,7.48,7.52,7.51,7.48,7.45,7.52,7.47,7.49,7.23,7.29,7.24,7.24],"A100 neo":[1.51,1.49,1.46,1.43,1.42,1.42,1.41,1.4,1.4,1.38,1.39,1.4,1.39,1.4,1.39,1.38,1.38,1.38,1.38,1.37,1.37,1.38,1.38,1.38,1.35,1.35,1.36,1.35,1.35,1.35,1.38,1.37,1.37,1.39,1.39,1.39,1.4,1.4,1.48,1.41,1.42,1.43,1.45,1.47,1.49,1.53,1.55,1.61,1.63,1.63,1.63,1.64,1.65,1.64],"A100 hyper":[3.54,3.54,3.51,3.55,3.53,3.53,3.55,3.53,3.55,3.56,3.56,3.56,3.56,3.57,3.58,3.58,3.58,3.58,3.6,3.58,3.59,3.59,3.61,3.62,3.63,3.64,3.63,3.64,3.65,3.64,3.65,3.64,3.67,3.68,3.7,3.69,3.67,3.67,3.66,3.67,3.69,3.69,3.7,3.68,3.69,3.69,3.7,3.71,3.69,3.7,3.71,3.7,3.71,3.71],"B200 neo":[null,null,null,null,5.31,5.19,5.17,5.25,5.26,5.29,5.31,5.3,5.02,5.04,5.0,4.8,4.81,4.76,4.69,4.63,4.77,4.6,4.57,4.49,4.63,4.41,4.42,4.3,4.46,4.39,4.43,4.41,4.64,4.66,4.43,4.57,4.89,5.11,6.08,5.17,5.14,5.1,5.19,5.18,5.14,5.12,5.26,5.37,5.43,5.26,5.3,5.31,5.63,5.73],"H200 neo":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,2.68,2.76,2.85,2.83,2.92,2.8,2.82,2.89,2.93,2.94],"MI300X":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,2.46,2.42,2.43,2.43,2.43,2.43,2.43,2.43,2.45,2.45,2.45,2.45,2.51,2.5,2.39,2.38,2.4,2.39,2.53,2.52,2.49,2.47,2.46,2.45,2.45,2.44,2.43,2.43]},"stats":{"H100 neo":{"cur":2.71,"hi":2.79,"lo":1.96,"chg":27.8,"vol":13.1},"H100 hyper":{"cur":7.24,"hi":7.55,"lo":6.91,"chg":2.3,"vol":5.8},"A100 neo":{"cur":1.64,"hi":1.65,"lo":1.34,"chg":8.6,"vol":10.2},"A100 hyper":{"cur":3.71,"hi":3.71,"lo":3.51,"chg":4.8,"vol":2.9},"B200 neo":{"cur":5.73,"hi":6.11,"lo":4.29,"chg":7.9,"vol":25.4},"H200 neo":{"cur":2.94,"hi":2.97,"lo":2.68,"chg":8.9,"vol":18.8},"MI300X":{"cur":2.43,"hi":2.55,"lo":2.38,"chg":-1.2,"vol":10.4}},"h100spread":[4.96,5.0,5.0,4.97,4.88,4.92,4.85,4.86,4.89,4.91,4.94,4.96,4.98,4.98,4.98,5.05,5.09,5.13,4.93,4.97,4.97,5.06,5.03,5.22,5.12,5.18,5.06,5.11,5.05,5.01,5.02,5.02,4.91,5.03,5.02,4.99,4.98,4.95,4.9,4.82,4.9,4.93,4.92,4.98,4.91,4.85,4.84,4.76,4.68,4.72,4.54,4.66,4.54,4.53]};
+const YCOL={'H100 neo':'#e0a346','H100 hyper':'#f0c479','A100 neo':'#3fc7c2','A100 hyper':'#6fd8d3','B200 neo':'#7c8cff','H200 neo':'#c08cff','MI300X':'#e0556b'};
+const yNames=Object.keys(EMBED.series);
+echarts.init(document.getElementById('chYear')).setOption({
+ grid:{left:44,right:16,top:40,bottom:40},
+ legend:{data:yNames,textStyle:{color:AX.ink,fontFamily:F.mono,fontSize:10},top:2,itemWidth:16,itemHeight:8,itemGap:12},
+ tooltip:{trigger:'axis',backgroundColor:'#161b22',borderColor:AX.line,textStyle:{color:'#e8ecf1',fontFamily:F.mono,fontSize:11},valueFormatter:v=>v==null?'—':'$'+(+v).toFixed(2)},
+ xAxis:{type:'category',data:EMBED.weekDates,axisLabel:{...axLabel(),interval:8},axisLine:axLine(),splitLine:{show:false}},
+ yAxis:{type:'value',min:0,axisLabel:{...axLabel(),formatter:'${value}'},splitLine:splitLine(),axisLine:axLine()},
+ series:yNames.map(n=>({name:n,type:'line',data:EMBED.series[n],smooth:true,showSymbol:false,connectNulls:false,lineStyle:{width:1.8,color:YCOL[n]},itemStyle:{color:YCOL[n]}}))});
+const h100neo=EMBED.series['H100 neo'], h100hyper=EMBED.series['H100 hyper'];
+const h100diff=h100hyper.map((h,i)=>+(h-h100neo[i]).toFixed(2));
+echarts.init(document.getElementById('chSpread')).setOption({
+ grid:{left:44,right:16,top:34,bottom:40},
+ legend:{data:['H100 hyperscaler','H100 neocloud'],textStyle:{color:AX.ink,fontFamily:F.mono,fontSize:10},top:2,itemWidth:16,itemHeight:8,itemGap:14},
+ tooltip:{trigger:'axis',backgroundColor:'#161b22',borderColor:AX.line,textStyle:{color:'#e8ecf1',fontFamily:F.mono,fontSize:11},
+  formatter:function(p){const a=p.find(x=>x.seriesName==='H100 neocloud'),b=p.find(x=>x.seriesName==='H100 hyperscaler');if(!a||!b)return '';const neo=a.value,hyper=+(neo+b.value).toFixed(2);return a.axisValue+'<br/>H100 hyperscaler  $'+hyper.toFixed(2)+'<br/>H100 neocloud  $'+neo.toFixed(2)+'<br/><span style="color:'+AX.accent+'">basis  $'+b.value.toFixed(2)+'</span>';}},
+ xAxis:{type:'category',data:EMBED.weekDates,axisLabel:{...axLabel(),interval:8},axisLine:axLine(),splitLine:{show:false}},
+ yAxis:{type:'value',min:0,axisLabel:{...axLabel(),formatter:'${value}'},splitLine:splitLine(),axisLine:axLine()},
+ series:[
+  {name:'H100 neocloud',type:'line',data:h100neo,stack:'sp',smooth:true,showSymbol:false,symbol:'none',lineStyle:{color:AX.teal,width:2},itemStyle:{color:AX.teal},areaStyle:{color:'transparent'},z:3},
+  {name:'H100 hyperscaler',type:'line',data:h100diff,stack:'sp',smooth:true,showSymbol:false,symbol:'none',lineStyle:{color:AX.accent,width:2},itemStyle:{color:AX.accent},areaStyle:{color:'rgba(224,163,70,.16)'},z:2}
+ ]});
+// comprehensive table body is built by renderCmp(lang) (language-aware, with glossary terms on chip names)
+
+// Compute Exchange pools
+const POOLS=[
+ {n:'GB300 NVL72',arch:'Blackwell Ultra',mem:288,bw:'8.0 TB/s',fp4:15.0,link:'NVLink 5',st:'Available',stZh:'可租用',fwd:false,
+  intro:'Grace CPU + Blackwell Ultra (B300) in a 72-GPU NVLink 5 rack — 288GB HBM3e per GPU. The current top shipping configuration for frontier training and inference.',
+  introZh:'Grace CPU + Blackwell Ultra（B300）组成的 72 卡 NVLink 5 机架——每卡 288GB HBM3e。当前已上市的顶配，用于前沿训练与推理。'},
+ {n:'B300 SXM',arch:'Blackwell Ultra',mem:288,bw:'8.0 TB/s',fp4:13.5,link:'NVLink 5',st:'Released Jul 2025',stZh:'已上市 2025-07',fwd:false,
+  intro:'The Blackwell Ultra GPU as a single SXM module — 288GB HBM3e, the mid-2025 memory-and-FP4 refresh of B200. The building block of GB300 racks.',
+  introZh:'Blackwell Ultra GPU 的单卡 SXM 模组——288GB HBM3e，是 B200 在 2025 年中的显存与 FP4 刷新版。GB300 机架的基本单元。'},
+ {n:'GB200 NVL72',arch:'Blackwell',mem:186,bw:'8.0 TB/s',fp4:10.0,link:'NVLink 5',st:'Released Mar 2025',stZh:'已上市 2025-03',fwd:false,
+  intro:'Grace CPU + Blackwell (B200), 72 GPUs in one NVLink 5 domain — the 2025 flagship rack that scaled up cluster training.',
+  introZh:'Grace CPU + Blackwell（B200），72 卡组成一个 NVLink 5 域——2025 年把集群训练规模化的旗舰机架。'},
+ {n:'B200 SXM',arch:'Blackwell',mem:180,bw:'7.7 TB/s',fp4:9.0,link:'NVLink 5',st:'Released',stZh:'已上市',fwd:false,
+  intro:'The Blackwell GPU as an SXM module — ~180GB HBM3e, large FP4/FP8 throughput. The building block of GB200 systems and the volume workhorse above H100.',
+  introZh:'Blackwell GPU 的 SXM 模组——约 180GB HBM3e，FP4/FP8 吞吐巨大。GB200 系统的基本单元，也是 H100 之上的走量主力。'},
+ {n:'Vera Rubin NVL',arch:'Rubin',mem:288,bw:'22.0 TB/s',fp4:35.0,link:'NVLink 6',st:'Expected Jul 2026',stZh:'预计 2026-07',fwd:true,
+  intro:'Nvidia\'s post-Blackwell generation (H2 2026): a Vera Rubin Superchip = 1 Vera CPU + 2 Rubin R200 GPUs, 288GB HBM4, NVLink 6. Listed as a <b>capacity forward</b> — sold months before the silicon ships.',
+  introZh:'Nvidia 继 Blackwell 之后的一代（2026 下半年）：一个 Vera Rubin 超级芯片 = 1 颗 Vera CPU + 2 颗 Rubin R200 GPU，288GB HBM4，NVLink 6。挂的是<b>容量远期</b>——芯片出货前数月就在卖。'},
+ {n:'Rubin NVL8',arch:'Rubin',mem:288,bw:'22.0 TB/s',fp4:35.0,link:'NVLink 6',st:'Expected Jul 2026',stZh:'预计 2026-07',fwd:true,
+  intro:'A smaller 8-GPU Rubin NVLink system (vs the full 144-GPU rack), same next-gen R200 silicon. Also listed as a <b>forward</b>, ahead of availability.',
+  introZh:'更小的 8 卡 Rubin NVLink 系统（相对 144 卡整机架），同为下一代 R200 硅片。同样作为<b>远期</b>挂出，早于上市。'},
+];
+const cePools=[...POOLS].sort((a,b)=>a.fp4-b.fp4);
+echarts.init(document.getElementById('chFlops')).setOption({
+ grid:grid(100),tooltip:{trigger:'axis',axisPointer:{type:'shadow'},backgroundColor:'#161b22',borderColor:AX.line,textStyle:{color:'#e8ecf1',fontFamily:F.mono},valueFormatter:v=>v+' PFLOPS'},
+ xAxis:{type:'value',axisLabel:axLabel(),splitLine:splitLine(),axisLine:axLine()},
+ yAxis:{type:'category',data:cePools.map(p=>p.n),axisLabel:axLabel(),axisLine:axLine(),axisTick:{show:false}},
+ series:[{type:'bar',data:cePools.map(p=>({value:p.fp4,itemStyle:{color:p.fwd?AX.accent:AX.teal,borderRadius:[0,4,4,0]}})),barWidth:'56%',label:{show:true,position:'right',color:AX.ink,fontFamily:F.mono,fontSize:11}}]});
+echarts.init(document.getElementById('chMem')).setOption({
+ grid:grid(100),tooltip:{trigger:'axis',axisPointer:{type:'shadow'},backgroundColor:'#161b22',borderColor:AX.line,textStyle:{color:'#e8ecf1',fontFamily:F.mono},valueFormatter:v=>v+' GB'},
+ xAxis:{type:'value',axisLabel:axLabel(),splitLine:splitLine(),axisLine:axLine()},
+ yAxis:{type:'category',data:cePools.map(p=>p.n),axisLabel:axLabel(),axisLine:axLine(),axisTick:{show:false}},
+ series:[{type:'bar',data:cePools.map(p=>({value:p.mem,itemStyle:{color:p.fwd?AX.accent:'#5a6675',borderRadius:[0,4,4,0]}})),barWidth:'56%',label:{show:true,position:'right',color:AX.ink,fontFamily:F.mono,fontSize:11}}]});
+
+// ---------- i18n ----------
+const LBL={
+ en:{memory:'Memory',bw:'Bandwidth',fp4:'FP4 dense',inter:'Interconnect',status:'Status',fwd:'⏳ Forward',live:'● Live'},
+ zh:{memory:'显存',bw:'带宽',fp4:'FP4 稠密',inter:'互联',status:'状态',fwd:'⏳ 远期',live:'● 在售'}
+};
+function renderSku(lang){
+ const L=LBL[lang];
+ document.getElementById('skuGrid').innerHTML=POOLS.map(p=>`
+  <div class="sku ${p.fwd?'fwd':''}">
+    <div class="top"><div><div class="name"><span class="term" tabindex="0">${p.n}<span class="tip"><b class="tt">${p.n} · ${p.arch}</b>${lang==='zh'?p.introZh:p.intro}</span></span></div><div class="arch">${p.arch}</div></div>
+    <div class="tag ${p.fwd?'soon':'rel'}">${p.fwd?L.fwd:L.live}</div></div>
+    <div class="specs">
+      <div class="spec"><span class="l">${L.memory}</span><span class="v">${p.mem} GB HBM</span></div>
+      <div class="spec"><span class="l">${L.bw}</span><span class="v">${p.bw}</span></div>
+      <div class="spec"><span class="l">${L.fp4}</span><span class="v">${p.fp4} PFLOPS</span></div>
+      <div class="spec"><span class="l">${L.inter}</span><span class="v">${p.link}</span></div>
+      <div class="spec"><span class="l">${L.status}</span><span class="v">${lang==='zh'?p.stZh:p.st}</span></div>
+    </div>
+  </div>`).join('');
+}
+
+// Q&A content (both languages, with inline markup preserved)
+const QA={
+ en:[
+  {g:'Indices & market structure',items:[
+   ['Why does "no credible index" mean "no liquid derivatives"?','A derivative pays out against a reference price at expiry. If that price is thin or gameable, there\'s nothing to settle against, it can be manipulated, and it won\'t track anyone\'s real cost — so nobody trades. The index is the <span class="hl">gate</span> the whole market waits behind.'],
+   ['How do index providers actually make money?','Two big legs: <b>data subscriptions</b> (sell the feed) and <b>settlement licensing</b> (every futures contract that settles on your index pays you a fee — the S&amp;P 500 model). Becoming the standard is a network-effect prize.'],
+   ['Does a specific machine\'s price equal the index?','No. The index is a normalized "generic basket." A real machine trades at <span class="hl">index ± basis</span>, where the basis captures region, interconnect, term and SLA — exactly the details the index deliberately smooths away.'],
+   ['How are these indices probably constructed?','Best guess: scraped public list prices + direct transaction feeds from some neoclouds and their own marketplaces + availability signals, run through proprietary normalization and <b>robust weighting</b> (median / trimmed-mean / volume-weighted — not naive averaging). They can\'t see hyperscalers\' true utilization, so that tier leans on list price. What they most want to advertise is "we have real prints" — because that\'s what makes the index un-manipulable.']
+  ]},
+  {g:'Trading mechanics',items:[
+   ['What does a CME compute future actually trade?','A cash-settled contract that settles against the H100 <b>rental price index</b> (SDH100RT-type) — not the SiliconMark performance benchmark, and no physical GPU is delivered. Long if you think rental rises, short if it falls.'],
+   ['Kalshi vs Polymarket — and which index do they use?','Kalshi is US-regulated and fiat; Polymarket is crypto and was long barred for US users. On compute: <b>Kalshi settles on Ornn\'s OCPI</b>; Polymarket has used both Ornn and Silicon Data\'s SDH100RT depending on the market.'],
+   ['The Kalshi market says "$2.55/hr" — of what, exactly?','Not any one machine — the <b>normalized index value</b> for H100 SXM. It doesn\'t list region/term because the index has already fixed the chip + form-factor and averaged the rest away. A real box would be that number <span class="hl">± basis</span>.'],
+   ['Where\'s a forward contract\'s price history on the curve?','The forward curve is one slice of a surface (fix "today", sweep tenor). A single contract\'s history is the other slice (fix tenor, sweep calendar). Silicon Data\'s trial only shows today\'s slice; history is paywalled.']
+  ]},
+  {g:'Supply structure',items:[
+   ['Why is hyperscaler H100 ~3× the neocloud price?','They\'re not the same product. Hyperscalers sell "GPU + full enterprise cloud" and the quoted number is on-demand <b>list price</b> (few big customers pay it). Neoclouds sell closer to bare metal at competitive spot rates. The gap is a basis — and the reason neoclouds exist.'],
+   ['Is Vast.ai / RunPod a "neocloud"?','Supply is a spectrum: hyperscaler → owned-fleet neocloud (CoreWeave) → aggregator → <b>P2P marketplace</b> (Vast.ai) → DePIN (Akash). RunPod is a hybrid — a managed "Secure Cloud" plus a P2P "Community Cloud." The index lumps all the non-hyperscalers into "neocloud," which is why that line is noisier.']
+  ]},
+  {g:'The hardware',items:[
+   ['What is a "SKU" here? And SXM vs PCIe?','SKU = a distinctly-priced compute config. Coarse axis = chip model; fine axes = form-factor, interconnect, region, term. <b>SXM</b> bolts onto the server board (700W, full NVLink, training clusters); <b>PCIe</b> is a slot-in card (cheaper, slower). Same chip, different SKU.'],
+   ['Ampere / Hopper / Blackwell — who names these?','Nvidia\'s architecture codenames, each a scientist (like Apple\'s macOS place-names). Ampere (A100) → Hopper (H100/H200) → Blackwell (B200/B300) → Rubin (next). Each generation is a large jump.'],
+   ['Is HBM memory a Micron monopoly?','The opposite — Micron is the smallest of three. It\'s an oligopoly: <b>SK Hynix</b> (leader) → Samsung → Micron, all sold out to Nvidia.'],
+   ['FP8 / FP4 — and doesn\'t it lose precision?','Fewer bits = faster + less memory but coarser. FP4 is a <b>trade-off tool</b>, applied selectively (mixed precision). The real feat is "compress a lot with almost no quality loss" (like JPEG) plus dedicated narrow-width silicon — not a free lunch, but not self-deception either.'],
+   ['What is a Transformer Engine?','Nvidia\'s per-layer precision scheduler (since Hopper) that decides which layers run FP8 vs FP16. The deeper moat is the quantization science (much of it open) wrapped into hardware + CUDA.']
+  ]},
+  {g:'Benchmark analogues',items:[
+   ['Is the S&amp;P 500 defined by an exchange?','No — by an independent company (S&amp;P Dow Jones Indices). The <b>Nasdaq</b> indices are the exchange\'s own. S&amp;P won on method (cap-weighting), a credible committee, an adoption flywheel (index funds, pensions), and derivatives built on top.'],
+   ['How was LIBOR manipulated — and what\'s SOFR?','LIBOR was <b>self-reported</b> by banks; traders nudged the submission to favor their huge positions. SOFR replaced it, built on <b>real overnight repo trades</b> — un-gameable. This is the template every compute index is copying.'],
+   ['Which region\'s oil does WTI deliver — and why does it matter?','A specific grade (light sweet) at a specific place (Cushing, OK). Other crudes quote as "benchmark ± differential." Perfectly analogous to compute: pin a standard SKU, push everything else into the basis.']
+  ]},
+  {g:'AI, briefly',items:[
+   ['Was there chat in the BERT / GPT-2 era?','No. That era was task-specific NLP — understanding and text completion. Conversational assistants arrived after 2022 with instruction-tuning / RLHF.']
+  ]}
+ ],
+ zh:[
+  {g:'指数与市场结构',items:[
+   ['为什么"没有可信指数"就等于"没有流动性衍生品"？','衍生品到期按一个参考价赔付。若这个价很薄或可被操纵，就没有可结算的对象、可被操纵、也追不上任何人的真实成本——于是没人交易。指数是整个市场等待的那道<span class="hl">闸门</span>。'],
+   ['指数商到底靠什么赚钱？','两条大腿：<b>数据订阅</b>（卖 feed）和<b>结算授权费</b>（每一张在你指数上结算的期货都付你一笔——标普500 模式）。成为标准是一份网络效应的大奖。'],
+   ['某台具体机器的价等于指数吗？','不。指数是一个归一化的"通用篮子"。真实机器成交价是<span class="hl">指数 ± basis</span>，basis 捕捉地区、互联、租期和 SLA——正是指数刻意抹平的那些细节。'],
+   ['这些指数大概是怎么编出来的？','最佳猜测：爬来的公开挂牌价 + 部分 neocloud 和自家交易场的直连成交 + 可用性信号，经专有归一化和<b>稳健加权</b>（中位数 / 去尾均值 / 量加权——不是天真平均）。他们看不到 hyperscaler 的真实利用率，所以那一档靠挂牌价。他们最想强调的是"我们有真实成交"——因为那才让指数不可操纵。']
+  ]},
+  {g:'交易机制',items:[
+   ['CME 的算力期货到底交易什么？','一张现金结算的合约，结算参考 H100 <b>租金价格指数</b>（SDH100RT 类）——不是 SiliconMark 性能基准，也不交割实体 GPU。看涨租金做多、看跌做空。'],
+   ['Kalshi vs Polymarket——用的是哪家指数？','Kalshi 美国合规、法币；Polymarket 加密，长期禁美国用户。算力上：<b>Kalshi 结算在 Ornn 的 OCPI</b>；Polymarket 视市场用过 Ornn 和 Silicon Data 的 SDH100RT。'],
+   ['Kalshi 那个"$2.55/hr"到底是什么的价？','不是任何一台机器——是 H100 SXM 的<b>归一化指数值</b>。它不写地区/租期，因为指数已经固定了芯片 + 形态、把其余抹平。真实一台机器会是那个数<span class="hl">± basis</span>。'],
+   ['某个远期合约的历史价在曲线的哪里？','远期曲线是曲面的一刀（固定"今天"、扫期限）。某个合约的历史是另一刀（固定期限、扫日历）。Silicon Data 的试用只给今天那一刀；历史被付费墙挡着。']
+  ]},
+  {g:'供给结构',items:[
+   ['为什么 hyperscaler 的 H100 约是 neocloud 的 3 倍？','它们不是同一个东西。hyperscaler 卖"GPU + 整套企业云"，报的还是按需<b>挂牌价</b>（没几个大客户真按它付）。neocloud 卖的更接近裸机、走竞争性现货价。差价是一个 basis——也是 neocloud 存在的理由。'],
+   ['Vast.ai / RunPod 算"neocloud"吗？','供给是一条光谱：hyperscaler → 自有机队 neocloud（CoreWeave）→ 聚合器 → <b>P2P 市场</b>（Vast.ai）→ DePIN（Akash）。RunPod 是混血——托管的"Secure Cloud"加上 P2P 的"Community Cloud"。指数把所有非-hyperscaler 一股脑塞进"neocloud"，这就是那条线更抖的原因。']
+  ]},
+  {g:'硬件',items:[
+   ['这里的"SKU"是什么？SXM vs PCIe？','SKU = 一个可区分定价的算力配置。粗轴 = 芯片型号；细轴 = 形态、互联、地区、租期。<b>SXM</b> 焊在服务器主板上（700W、全速 NVLink、训练集群）；<b>PCIe</b> 是插槽卡（更便宜、更慢）。同款芯片、不同 SKU。'],
+   ['Ampere / Hopper / Blackwell——谁起的名？','Nvidia 的架构代号，每个是一位科学家（像 Apple 的 macOS 地名）。Ampere（A100）→ Hopper（H100/H200）→ Blackwell（B200/B300）→ Rubin（下一代）。每一代都是一次大跳。'],
+   ['HBM 显存是美光垄断吗？','恰恰相反——美光是三家里最小的。这是寡头：<b>SK 海力士</b>（龙头）→ 三星 → 美光，全被 Nvidia 包销。'],
+   ['FP8 / FP4——难道不掉精度吗？','位数越少 = 越快、越省显存，但越糙。FP4 是个<b>权衡工具</b>，选择性使用（混合精度）。真本事是"压缩很多却几乎不掉质量"（像 JPEG）加上专用的窄位宽硅片——不是免费午餐，但也不是自欺欺人。'],
+   ['什么是 Transformer Engine？','Nvidia 的逐层精度调度器（自 Hopper 起），决定哪些层跑 FP8、哪些跑 FP16。更深的护城河是量化科学（大多公开）被封装进硬件 + CUDA。']
+  ]},
+  {g:'基准类比',items:[
+   ['标普500 是交易所定的吗？','不是——是一家独立公司（S&amp;P Dow Jones Indices）。<b>纳斯达克</b>指数才是交易所自己的。标普赢在方法（市值加权）、可信的委员会、采纳飞轮（指数基金、养老金），以及建在其上的衍生品。'],
+   ['LIBOR 是怎么被操纵的——SOFR 又是什么？','LIBOR 由银行<b>自报</b>；交易员把报数往有利于自己巨额头寸的方向"抹"。SOFR 取代了它，建立在<b>真实的隔夜回购成交</b>上——无法操纵。这正是每一个算力指数都在抄的模板。'],
+   ['WTI 交割哪个地区的油——为什么重要？','特定油品（轻质低硫）在特定地点（俄克拉荷马州 Cushing）。别的原油报成"基准 ± 差价"。与算力完全同构：钉死一个标准 SKU，把其余全部推进 basis。']
+  ]},
+  {g:'AI 速览',items:[
+   ['BERT / GPT-2 时代有 chat 吗？','没有。那个时代是任务型 NLP——理解和文本续写。对话助手是 2022 年之后随指令微调 / RLHF 才出现的。']
+  ]}
+ ]
+};
+function renderQA(lang){
+ document.getElementById('qaWrap').innerHTML=QA[lang].map((grp,gi)=>`
+  <div class="q-group"><div class="gh">${grp.g}</div>
+   <div class="qa-grid">${grp.items.map((it,ii)=>`<button class="qchip" data-g="${gi}" data-i="${ii}"><span class="q">${it[0]}</span><span class="tw">+</span></button>`).join('')}</div>
+   <div class="qa-answer" id="ans-${gi}" hidden></div>
+  </div>`).join('');
+}
+// exclusive-open per group; answer always shows in the group's bottom panel (stable position)
+document.getElementById('qaWrap').addEventListener('click',function(e){
+ const chip=e.target.closest('.qchip'); if(!chip)return;
+ const gi=+chip.dataset.g, ii=+chip.dataset.i;
+ const grpEl=chip.closest('.q-group'), panel=document.getElementById('ans-'+gi);
+ const wasActive=chip.classList.contains('active');
+ grpEl.querySelectorAll('.qchip').forEach(c=>c.classList.remove('active'));
+ if(wasActive){panel.hidden=true; panel.innerHTML=''; return;}
+ chip.classList.add('active');
+ const lang=document.documentElement.lang==='zh'?'zh':'en';
+ panel.innerHTML=QA[lang][gi].items[ii][1];
+ panel.hidden=false;
+});
+
+// static-text dictionary (Chinese; English cached from DOM)
+const I18N={
+ eyebrow:'算力资本市场 · 田野笔记',
+ title:'把 GPU 小时变成<span class="g">可交易的商品</span>',
+ subline:'<span>作者 <b>PlanD</b></span><span class="sep">/</span><span>Tabula</span><span class="sep">/</span><span>快照 <b>2026-07-05</b></span><span class="sep">/</span><span>源自 <b>@0xfishylosopher</b>（Jay Yu）的一条推文</span>',
+ lede:'算力的行为不像玉米或黄金，更像<b>电力</b>——有时间性、不可互换、按小时计价。一条推文提出：在算力期货出现之前，必须先有人建立一个<span class="hl">可信的价格指数</span>。这是对这个市场在 2026 年中真实状态的一次田野考察：三家指数商争当基准、实时的 GPU 租金价、一个运行中的现货市场，以及沿途冒出来的一连串问题。',
+ snap:'Silicon&nbsp;Data 实时读数 · 采集于 2026-07-05',
+ stat1:'SDH100RT · 实际在用的基准',stat2:'约为 neocloud 价的 2.7 倍',stat3:'新一代在涨、H100 在跌',stat4:'上一代的地板价，在悄悄回升',
+ s1h:'争当那个基准',s1hint:'三家指数商 · 争夺结算场馆',
+ s1p:'一张现金结算的期货，到期时需要一个大家都信的数字。谁拥有那个数字，谁就拥有市场——就像标普拥有"标普500"、再授权给每一家交易所和 ETF。三家在争当那个指数；跑得最前的两家各自绑定一个场馆来结算合约——Silicon Data 配 CME，Ornn 配 ICE（外加 Architect 和 Kalshi）。Ornn 的 OCPI 已经上了 Bloomberg 终端。',
+ lane1d:'GPU 租金指数 · CME 的结算基准',lane1v:'首个交易所挂牌的算力期货',lane1b:'已宣布 · 待 CFTC',
+ lane2d:'a16z 领投 · $33M · OCPI 指数',lane2v:'+ Architect/AX 永续 · Kalshi',lane2b:'已宣布 · 多场馆',
+ lane3d:'数据 · 工具 · 券商基建',lane3v:'算力定价 · 对冲 · 融资',lane3b:'最早期',
+ c1k:'为什么指数是咽喉',
+ c1p:'没有可信、抗操纵的参考价 → 无法结算、易被操纵、对冲无用。指数不出现且不被信任之前，流动性无从形成。这就是三家都执着于<b>基于成交</b>方法的原因——正是 <b>LIBOR → SOFR</b> 的教训：从自报问卷转向真实成交，否则整座大厦都可被操纵。',
+ orak:'已在实盘用作预言机 —— 有真实成交量',
+ orak1:'H100 租金市场按 Silicon Data 的 <b>SDH100RT</b> 图结算。单个市场成交 <b>$545K</b>。',
+ orak2:'GPU 价格合约按 Ornn 的 <b>OCPI</b> 结算（CNBC 2026-06 报道）。B200、H100 月度市场在跑。',
+ s2h:'指数究竟展示了什么',s2hint:'Silicon Data 门户 · 2026-07-05',
+ s2p:'指数刻意<b>抹平</b>地区、供应商和租期，为每款芯片产出一个代表性数字——"通用篮子"。一台具体的机器（某地区、某互联、3 个月预留）成交价是<span class="hl">指数 ± basis</span>。注意双轨：<b>hyperscaler</b> 的 H100 接近 $7（多为 AWS/GCP/Azure 的按需 list price），而 <b>neocloud</b> 的 H100 约 $2.70（CoreWeave、Lambda、RunPod、Vast.ai… 的竞争性现货）。这约 2.7 倍的价差<em>本身</em>就是一个 basis——也是 neocloud 存在的理由。',
+ th1:'指数',th2:'代码',th3:'价格',th4:'30 日',
+ tblcap:'来源：portal.silicondata.com——数值于 2026-07-05 实时读取。',
+ capTiers:'同一款芯片、两个世界：按类别的按需租金 $/hr。H100 的 hyperscaler-vs-neocloud 差距就是那个头条 basis。',
+ capFwd:'H100 远期曲线（neocloud），描摹自门户的 36 个月视图。向下倾斜 = <b>backwardation（贴水）</b>：市场给越长的合约越低的价——它预期 H100 会继续变便宜。<a class="srcl" href="https://portal.silicondata.com/forward-curve" target="_blank" rel="noopener">Silicon Data 门户实图 ↗</a>',
+ c2k:'远期曲线只是曲面的一刀',
+ c2p:'价格是<b>两个</b>时间轴的函数——日历日期<em>和</em>合约期限。远期曲线固定"今天"、横扫期限（一行）。要看某个合约的<b>历史</b>，就固定期限、竖扫日历（一列）。Silicon Data 的试用只给今天那一行；历史日期在付费档后面。',
+ cmpLead:'<b>整整一年，直接来自数据源。</b>从 Silicon Data 自己的实时存档拉取——每个指数一年的逐日打点（2025-07 → 2026-07）。头条数字掩盖了两件事：H100 neocloud 其实从 $1.96 谷底<b>反弹了约 28%</b>，而最新的芯片（B200）波动性远高于其他。数据已存档在 <code style="color:var(--ink-dim);font-family:var(--mono);font-size:12px">/data</code>。',
+ capYear:'每个指数、一年逐日打点（周采样）。较新的芯片（H200、B200）从中途才开始——那是它们指数上线的时间。',
+ capSpread:'H100 两档都画出来——hyperscaler（金）与 neocloud（青），中间阴影就是 <b>basis</b>。随着 neocloud H100 上涨，价差悄悄从 ~$5.0 <b>收窄</b>到 ~$4.5。',
+ ct1:'指数',ct2:'现值',ct3:'年内低',ct4:'年内高',ct5:'年涨跌',ct6:'波动率',
+ cmpCap:'波动率 = 日收益率的年化标准差，由存档的日频序列算出。B200 的 25% vs H100-hyper 的 6% 就是全部故事：最前沿的供给，定价比成熟产能紧张得多。',
+ s3h:'把现货市场落到实处',s3hint:'Compute Exchange · 19 个在售池',
+ s3p:'如果说指数是抽象，<b>Compute Exchange</b> 就是地面真相：一个拍卖市场，每一条挂单都是完全指定的 <span class="hl">SKU</span>——型号 × 形态 × 显存 × 互联 × NIC × DPU。它最能说明"一单位算力"到底意味着什么。两点最扎眼：巨大的代际跨度（Ampere → Rubin），以及<b>下一代芯片已作为远期在卖</b>——尚不存在的 Rubin 被挂成"预计 2026-07 · 提交意向"。这就是推文里"容量远期"活生生的样子。',
+ capFlops:'每颗 GPU 的稠密 FP4 吞吐（PFLOPS），按市场池子。Blackwell → Blackwell Ultra → Rubin 大约再翻一倍——正是这种代际跨越让指数成为移动的靶。',
+ capMem:'每颗 GPU 的 HBM 显存（GB）。显存更多更快，是新芯片在 LLM 推理上取胜的原因，与原始 FLOPS 无关。',
+ s3p2:'<b>把目录当作一套 SKU 分类学。</b>下面是部分池子——注意那张金色卡：一张针对尚未出货硬件的容量远期。 <a class="srcl" href="https://app.compute.exchange/" target="_blank" rel="noopener">前往 Compute Exchange ↗</a>',
+ c3k:'推文，落到现实',
+ c3p:'"预约 / 容量远期几乎都是针对特定 SKU 的双边 OTC 交易。"这里就在屏幕上：<b>Vera Rubin NVL</b>——288GB HBM、22 TB/s、35 PFLOPS FP4、NVLink 6——在硅片存在之前数月就被挂出来预约。这些远期能否标准化到足以在交易所对冲，是整个领域悬而未决的问题。',
+ s4h:'会有一个"算力价格"吗？',s4hint:'对推文设想的评论',
+ s4p:'推文设想 dealer 拿特定 SKU 去一个"通用篮子交易所（例如 H200 篮子）"对冲。照字面读，这个篮子是<b>单芯片级</b>的——而它已经存在（SDH100RT、OCPI-H100）。从这个意义上，设想已经落地：CME↔Silicon Data 和 ICE↔Ornn 正在正是这些单芯片篮子上建期货。但更诱人的大想法——一个跨芯片的<em>通用算力价</em>——撞上三堵墙：',
+ w1t:'没有可通约的单位',w1d:'一个 H100-小时和一个 B200-小时干的活天差地别。"算力"没有像一桶油的能量含量那样公认的物理度量。你得按性能归一化——哪种精度？哪种负载？',
+ w2t:'过时太快',w2d:'构成每 ~18 个月换一茬（Hopper→Blackwell→Rubin）。固定篮子需要不断重新加权；其漂移让它成为糟糕的结算锚——你在对冲一个移动的靶。',
+ w3t:'basis 爆炸',w3d:'指数越粗，它与任何真实 SKU 的差距越大——对冲越差。单芯片看起来就是市场已经投票选出的甜点。',
+ c4k:'评论',
+ c4p:'一个单一的"通用算力指数"更可能作为<b>宏观晴雨表</b>（一种 AI 算力的 CPI）出现，而非核心对冲基准。而真正通用的单位也许根本不在 GPU 层——它可能是 <b>$/token</b>。Ornn 的 Token Price Index 和 Silicon Data 的 LLM Token Index 已经直接给有用产出定价，把硬件完全抽象掉。token 比 GPU-小时更同质——所以如果有一天真有一个数字代表"算力的价格"，它也许以 token 计，而不是小时。',
+ s5h:'笔记 · Q&A',s5hint:'一份持续增长的合集 · 点击展开',
+ s5p:'这个项目就是按顺序、把每一个想不通的地方问出来建起来的。按主题分组，这是那份合集——保留其中与算力和市场结构相关、值得留存的部分。',
+ disc:'田野笔记，非投资建议。价格是第三方门户（Silicon Data、Compute Exchange）在 2026-07-05 的时点读数、时刻在变；远期曲线与时间序列图为描摹屏幕形状、仅作示意。公司信息来自公开报道。此处聚焦方向2（指数层）；"市场会不会形成"与 dealer/basis 两条线仍未展开。'
+};
+
+// ---------- inline glossary ----------
+const GLOSS={
+ basis:{en:['basis','The gap between a specific machine\'s price and the generic index. A real H100 might trade at <b>index + $0.30</b> for its region + InfiniBand — exactly what the index smooths away, and where dealers earn and take risk.'],
+        zh:['basis · 基差','某台具体机器的价与通用指数之间的差。一台真实 H100 可能报 <b>指数 + $0.30</b>（因其地区 + InfiniBand）——正是指数抹平的部分，也是 dealer 赚钱和担险的地方。']},
+ SKU:{en:['SKU','A distinctly-priced compute config. Coarse = chip model; fine = form-factor (SXM/PCIe), interconnect, region, term. On Compute Exchange every listing is one — e.g. <b>B200 SXM · 180GB · NVLink 5</b>.'],
+      zh:['SKU · 库存单元','一个可区分定价的算力配置。粗到芯片型号；细到形态（SXM/PCIe）、互联、地区、租期。Compute Exchange 上每条挂单都是一个，如 <b>B200 SXM · 180GB · NVLink 5</b>。']},
+ neocloud:{en:['neocloud','GPU-only specialist clouds — CoreWeave, Lambda, Nebius, RunPod. They rent closer to bare metal at competitive spot rates. H100 neocloud ≈ <b>$2.71/hr</b>.'],
+           zh:['neocloud · 新型云','只做 GPU 的专业云——CoreWeave、Lambda、Nebius、RunPod。更接近裸机、走竞争性现货价。H100 neocloud ≈ <b>$2.71/hr</b>。']},
+ hyperscaler:{en:['hyperscaler','The big general clouds — AWS, GCP, Azure, Oracle. GPU bundled with full enterprise cloud; the quote is on-demand list price. H100 hyperscaler ≈ <b>$7.24/hr</b> — ~2.7× neocloud.'],
+              zh:['hyperscaler · 超大规模云','大型综合云——AWS、GCP、Azure、Oracle。GPU 与整套企业云打包；报的是按需挂牌价。H100 hyperscaler ≈ <b>$7.24/hr</b>——约 neocloud 的 2.7 倍。']},
+ backwardation:{en:['backwardation','A downward-sloping forward curve: longer-dated prices sit below spot. For H100 it means the market prices compute to keep getting <b>cheaper</b> over time.'],
+                zh:['backwardation · 贴水','向下倾斜的远期曲线：越远期的价越低于现货。对 H100 而言，意味着市场预期算力会<b>越来越便宜</b>。']},
+ FP4:{en:['FP4','4-bit floating point — 16 possible values. ~Half the memory and ~2× the throughput of FP8, at lower precision. Blackwell→Rubin dense FP4 spans <b>9 → 35 PFLOPS</b> per GPU.'],
+      zh:['FP4 · 4位浮点','4 比特浮点——只有 16 个可能值。比 FP8 省约一半显存、约两倍吞吐，精度更低。Blackwell→Rubin 稠密 FP4 每卡 <b>9 → 35 PFLOPS</b>。']},
+ LIBOR:{en:['LIBOR','The old benchmark rate, set by banks\' <b>self-reported</b> estimates — and infamously manipulated. Its downfall is why compute indices insist on real transactions.'],
+        zh:['LIBOR · 伦敦同业拆借利率','旧的基准利率，靠银行<b>自报</b>估计定出——并因被操纵而声名狼藉。它的崩塌正是算力指数坚持"真实成交"的原因。']},
+ SOFR:{en:['SOFR','LIBOR\'s replacement — built on <b>real overnight repo trades</b> (~$1T/day), so it can\'t be gamed. The exact template every compute index is copying.'],
+       zh:['SOFR · 担保隔夜融资利率','LIBOR 的替代品——建立在<b>真实隔夜回购成交</b>（每日约 $1 万亿）上，无法操纵。正是每个算力指数在抄的模板。']},
+ H100:{en:['H100 · Hopper','Nvidia\'s 2022 workhorse — 80GB HBM3, FP8. The chip the whole AI boom rented. Neocloud ≈ <b>$2.71/hr</b>, hyperscaler ≈ $7.24.'],
+       zh:['H100 · Hopper 架构','Nvidia 2022 年的主力卡——80GB HBM3、FP8。整轮 AI 热潮都在租它。Neocloud ≈ <b>$2.71/hr</b>，hyperscaler ≈ $7.24。']},
+ A100:{en:['A100 · Ampere','The prior-gen workhorse (2020), 40–80GB. Now the cheap tier — neocloud ≈ <b>$1.64/hr</b>.'],
+       zh:['A100 · Ampere 架构','上一代主力（2020），40–80GB。如今是便宜档——neocloud ≈ <b>$1.64/hr</b>。']},
+ H200:{en:['H200 · Hopper refresh','Same compute as H100 but <b>141GB HBM3e</b> — a big win for LLM inference (fits bigger models). ≈ $2.94/hr.'],
+       zh:['H200 · Hopper 刷新版','算力与 H100 相同，但 <b>141GB HBM3e</b>——推理大模型的一大优势。≈ $2.94/hr。']},
+ B200:{en:['B200 · Blackwell','2024–25 next-gen, 180GB HBM3e, huge FP4/FP8 throughput. Neocloud ≈ <b>$5.73/hr</b> — and the most volatile index (25%).'],
+       zh:['B200 · Blackwell 架构','2024–25 新一代，180GB HBM3e，FP4/FP8 吞吐巨大。Neocloud ≈ <b>$5.73/hr</b>——也是波动最大的指数（25%）。']},
+ MI300X:{en:['MI300X · AMD','AMD\'s answer to H100/H200 — the main non-Nvidia option. ≈ $2.43/hr; its spread to H100 gauges AMD competitiveness.'],
+         zh:['MI300X · AMD','AMD 对标 H100/H200 的卡——主要的非 Nvidia 选择。≈ $2.43/hr；它与 H100 的价差可衡量 AMD 竞争力。']},
+ Rubin:{en:['Rubin','Nvidia\'s generation after Blackwell (2026), named for astronomer Vera Rubin. On Compute Exchange the <b>Vera Rubin NVL</b> is a capacity forward — 288GB, 22 TB/s, 35 PFLOPS FP4 — sold before it ships.'],
+        zh:['Rubin','Nvidia 继 Blackwell 之后的一代（2026），以天文学家 Vera Rubin 命名。Compute Exchange 上 <b>Vera Rubin NVL</b> 是一张容量远期——288GB、22 TB/s、35 PFLOPS FP4——芯片出货前就在卖。']},
+ GB300:{en:['GB300','Grace CPU + Blackwell Ultra superchip. On the marketplace: 288GB HBM, 15 PFLOPS FP4, NVLink 5 — the current top shipping config.'],
+        zh:['GB300','Grace CPU + Blackwell Ultra 超级芯片。市场上：288GB HBM、15 PFLOPS FP4、NVLink 5——当前已上市的顶配。']},
+ NVLink:{en:['NVLink','Nvidia\'s high-speed GPU-to-GPU interconnect (v5/v6). What makes SXM boards fast for multi-GPU training vs plain PCIe.'],
+         zh:['NVLink','Nvidia 的高速 GPU 间互联（v5/v6）。正是它让 SXM 板在多卡训练上远快于普通 PCIe。']},
+ CoreWeave:{en:['CoreWeave','The largest neocloud — a GPU-only cloud that IPO\'d in 2025 and finances its GPUs with contracted-revenue-backed debt.<a class="tipl" href="https://www.coreweave.com/" target="_blank" rel="noopener">coreweave.com ↗</a>'],
+            zh:['CoreWeave','最大的 neocloud——只做 GPU 的云，2025 年上市，用合约收入担保的债务给 GPU 融资。<a class="tipl" href="https://www.coreweave.com/" target="_blank" rel="noopener">coreweave.com ↗</a>']},
+ Lambda:{en:['Lambda','A veteran GPU cloud (Lambda Labs), popular with AI teams for on-demand and reserved H100/H200 clusters.<a class="tipl" href="https://lambda.ai/" target="_blank" rel="noopener">lambda.ai ↗</a>'],
+         zh:['Lambda','老牌 GPU 云（Lambda Labs），以按需和预留的 H100/H200 集群受 AI 团队欢迎。<a class="tipl" href="https://lambda.ai/" target="_blank" rel="noopener">lambda.ai ↗</a>']},
+ RunPod:{en:['RunPod','A hybrid GPU cloud: a managed "Secure Cloud" plus a P2P "Community Cloud" where vetted hosts rent out spare GPUs (cheaper, less guaranteed).<a class="tipl" href="https://www.runpod.io/" target="_blank" rel="noopener">runpod.io ↗</a>'],
+         zh:['RunPod','混血 GPU 云：托管的 "Secure Cloud" + P2P 的 "Community Cloud"（审核过的个人出租闲置 GPU，更便宜、保证更弱）。<a class="tipl" href="https://www.runpod.io/" target="_blank" rel="noopener">runpod.io ↗</a>']},
+ 'Vast.ai':{en:['Vast.ai','The archetypal <b>P2P</b> GPU marketplace — "Airbnb for GPUs." Anyone lists spare cards; cheapest and most variable in reliability.<a class="tipl" href="https://vast.ai/" target="_blank" rel="noopener">vast.ai ↗</a>'],
+            zh:['Vast.ai','最典型的 <b>P2P</b> GPU 市场——"GPU 界的 Airbnb"。任何人都能挂闲置卡；最便宜、可靠性也最参差。<a class="tipl" href="https://vast.ai/" target="_blank" rel="noopener">vast.ai ↗</a>']}
+};
+function decorateTerms(lang){
+ const secs=['#structure','#index','#marketplace','#vision'].map(s=>document.querySelector(s)).filter(Boolean);
+ const done=new Set();
+ const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const terms=Object.keys(GLOSS).sort((a,b)=>b.length-a.length);
+ secs.forEach(sec=>{
+  const w=document.createTreeWalker(sec,NodeFilter.SHOW_TEXT,{acceptNode:n=>{
+    if(!n.nodeValue.trim())return NodeFilter.FILTER_REJECT;
+    if(n.parentElement&&n.parentElement.closest('.term,.tip,code,summary,.gh,.tbl,.qchip,.qa-answer,.stat,.section-head,.oracle'))return NodeFilter.FILTER_REJECT;
+    return NodeFilter.FILTER_ACCEPT;}});
+  const q=[]; let x; while(x=w.nextNode())q.push(x);
+  while(q.length){
+   const node=q.shift(); if(!node.parentNode)continue;
+   let best=null;
+   for(const t of terms){
+    if(done.has(t))continue;
+    const m=node.nodeValue.match(new RegExp('(^|[^A-Za-z0-9])('+esc(t)+')($|[^A-Za-z0-9])'));
+    if(m){const at=m.index+m[1].length; if(!best||at<best.at)best={t,at};}
+   }
+   if(!best)continue;
+   const after=node.splitText(best.at); after.nodeValue=after.nodeValue.slice(best.t.length);
+   const span=document.createElement('span'); span.className='term'; span.tabIndex=0;
+   const g=GLOSS[best.t][lang]||GLOSS[best.t].en;
+   span.innerHTML=best.t+'<span class="tip"><b class="tt">'+g[0]+'</b>'+g[1]+'</span>';
+   node.parentNode.insertBefore(span,after); done.add(best.t);
+   q.unshift(after);
+  }
+ });
+}
+// build a glossary term span for a GLOSS key (same markup decorateTerms emits)
+function termHTML(key,lang){
+ const e=GLOSS[key]; if(!e) return key;
+ const g=e[lang]||e.en;
+ return '<span class="term" tabindex="0">'+key+'<span class="tip"><b class="tt">'+g[0]+'</b>'+g[1]+'</span></span>';
+}
+// comprehensive stats table — chip model in each row is a hoverable glossary term (H100/A100/B200/H200/MI300X)
+function renderCmp(lang){
+ document.getElementById('cmpBody').innerHTML=Object.entries(EMBED.stats).map(([k,s])=>{
+  const up=s.chg>=0, chip=k.split(' ')[0], suffix=k.slice(chip.length);
+  return `<tr><td><span class="nm">${termHTML(chip,lang)}${suffix}</span></td><td class="px">$${s.cur.toFixed(2)}</td><td class="c" style="color:var(--ink-faint)">$${s.lo.toFixed(2)}</td><td class="c" style="color:var(--ink-faint)">$${s.hi.toFixed(2)}</td><td class="c ${up?'up':'down'}">${up?'+':''}${s.chg}%</td><td class="px" style="color:var(--ink-dim)">${s.vol}%</td></tr>`;
+ }).join('');
+}
+
+// cache English innerHTML, then wire toggle
+document.querySelectorAll('[data-i18n]').forEach(el=>el.dataset.en=el.innerHTML);
+function applyLang(lang){
+ document.documentElement.lang = lang;
+ document.querySelectorAll('[data-i18n]').forEach(el=>{
+   const k=el.getAttribute('data-i18n');
+   el.innerHTML = (lang==='zh' && I18N[k]!=null) ? I18N[k] : el.dataset.en;
+ });
+ renderSku(lang); renderCmp(lang); renderQA(lang); decorateTerms(lang);
+ document.querySelectorAll('#langtoggle button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+ try{localStorage.setItem('ccm-lang',lang)}catch(e){}
+}
+document.querySelectorAll('#langtoggle button').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
+let initLang='en'; try{initLang=localStorage.getItem('ccm-lang')||'en'}catch(e){}
+applyLang(initLang);
+
+window.addEventListener('resize',()=>{document.querySelectorAll('.chart').forEach(c=>{const i=echarts.getInstanceByDom(c);if(i)i.resize();});});
+</script>
+</body>
+</html>
