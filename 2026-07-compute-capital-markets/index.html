@@ -195,7 +195,7 @@ details.qa .a .hl{color:var(--accent)}
 
 /* inline glossary terms — gold dashed, hover/tap for a small card */
 .term{color:var(--accent);border-bottom:1px dashed rgba(224,163,70,.55);cursor:help;position:relative;font-weight:500;outline:none}
-.term .tip{position:absolute;left:0;bottom:calc(100% + 9px);width:290px;max-width:78vw;background:var(--bg-raised);border:1px solid rgba(224,163,70,.42);border-radius:11px;padding:13px 15px;font-size:12.5px;line-height:1.58;color:var(--ink-dim);font-weight:400;box-shadow:0 10px 34px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .15s,transform .15s;z-index:60;pointer-events:auto;white-space:normal}
+.term .tip{position:absolute;left:0;bottom:calc(100% + 9px);width:290px;max-width:calc(100vw - 24px);background:var(--bg-raised);border:1px solid rgba(224,163,70,.42);border-radius:11px;padding:13px 15px;font-size:12.5px;line-height:1.58;color:var(--ink-dim);font-weight:400;box-shadow:0 10px 34px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .15s,transform .15s;z-index:60;pointer-events:auto;white-space:normal}
 .term:hover .tip,.term:focus .tip,.term:focus-within .tip{opacity:1;visibility:visible;transform:translateY(0)}
 .term .tip::before{content:"";position:absolute;left:0;right:0;top:100%;height:11px}
 .sku .name .term{color:inherit;border-bottom-color:rgba(224,163,70,.4)}
@@ -203,7 +203,7 @@ details.qa .a .hl{color:var(--accent)}
 .tipl:hover{border-bottom-color:var(--accent)}
 .term .tip .tt{display:block;color:var(--accent);font-family:var(--mono);font-size:11px;letter-spacing:.05em;margin-bottom:6px;font-weight:600}
 .term .tip b{color:var(--ink);font-weight:600}
-.term .tip::after{content:"";position:absolute;left:16px;top:100%;border:6px solid transparent;border-top-color:rgba(224,163,70,.42)}
+.term .tip::after{content:"";position:absolute;left:var(--ax,16px);top:100%;border:6px solid transparent;border-top-color:rgba(224,163,70,.42)}
 
 footer{border-top:1px solid var(--line-soft);margin-top:80px;padding:24px 0;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-align:center}
 .disc{font-family:var(--mono);font-size:11px;color:var(--ink-faint);max-width:80ch;margin:14px auto 0;line-height:1.6;text-align:center;opacity:.85}
@@ -614,10 +614,10 @@ const GLOSS={
                 zh:['backwardation · 贴水','向下倾斜的远期曲线：越远期的价越低于现货。对 H100 而言，意味着市场预期算力会<b>越来越便宜</b>。']},
  FP4:{en:['FP4','4-bit floating point — 16 possible values. ~Half the memory and ~2× the throughput of FP8, at lower precision. Blackwell→Rubin dense FP4 spans <b>9 → 35 PFLOPS</b> per GPU.'],
       zh:['FP4 · 4位浮点','4 比特浮点——只有 16 个可能值。比 FP8 省约一半显存、约两倍吞吐，精度更低。Blackwell→Rubin 稠密 FP4 每卡 <b>9 → 35 PFLOPS</b>。']},
- LIBOR:{en:['LIBOR','The old benchmark rate, set by banks\' <b>self-reported</b> estimates — and infamously manipulated. Its downfall is why compute indices insist on real transactions.'],
-        zh:['LIBOR · 伦敦同业拆借利率','旧的基准利率，靠银行<b>自报</b>估计定出——并因被操纵而声名狼藉。它的崩塌正是算力指数坚持"真实成交"的原因。']},
- SOFR:{en:['SOFR','LIBOR\'s replacement — built on <b>real overnight repo trades</b> (~$1T/day), so it can\'t be gamed. The exact template every compute index is copying.'],
-       zh:['SOFR · 担保隔夜融资利率','LIBOR 的替代品——建立在<b>真实隔夜回购成交</b>（每日约 $1 万亿）上，无法操纵。正是每个算力指数在抄的模板。']},
+ LIBOR:{en:['LIBOR · the cautionary tale','For decades the world\'s key benchmark rate — ~$350T of loans and derivatives priced off it — yet set each day by banks <b>self-reporting</b> estimates, not real trades. In 2012 it broke: traders had colluded for years to nudge the submissions toward their own positions. Billions in fines followed and LIBOR was retired. A survey-based benchmark is riggable.'],
+        zh:['LIBOR · 前车之鉴','几十年里全球最关键的基准利率——约 $350 万亿贷款与衍生品据它定价——却是每天由银行<b>自报</b>估计定出、而非真实成交。2012 年崩盘：交易员多年串通、把报数往自己头寸方向"抹"。多家银行被罚数十亿，LIBOR 最终退场。靠问卷定的基准，可被操纵。']},
+ SOFR:{en:['SOFR · the fix','LIBOR\'s replacement (fully switched over by 2023), built on <b>real overnight Treasury repo trades</b> — about $1T of actual transactions a day. A volume-weighted median of real prints can\'t be "estimated" up or down. This is the exact template every compute index copies: settle on transactions, not surveys.'],
+       zh:['SOFR · 解法','LIBOR 的替代品（2023 年完全切换），建立在<b>真实的隔夜国债回购成交</b>上——每天约 $1 万亿真金白银。真实成交的量加权中位数，没人能把它"估"高或"估"低。这正是每个算力指数照抄的模板：结算靠成交、不靠问卷。']},
  H100:{en:['H100 · Hopper','Nvidia\'s 2022 workhorse — 80GB HBM3, FP8. The chip the whole AI boom rented. Neocloud ≈ <b>$2.71/hr</b>, hyperscaler ≈ $7.24.'],
        zh:['H100 · Hopper 架构','Nvidia 2022 年的主力卡——80GB HBM3、FP8。整轮 AI 热潮都在租它。Neocloud ≈ <b>$2.71/hr</b>，hyperscaler ≈ $7.24。']},
  A100:{en:['A100 · Ampere','The prior-gen workhorse (2020), 40–80GB. Now the cheap tier — neocloud ≈ <b>$1.64/hr</b>.'],
@@ -701,6 +701,20 @@ function applyLang(lang){
 document.querySelectorAll('#langtoggle button').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
 let initLang='zh'; try{initLang=localStorage.getItem('ccm-lang')||'zh'}catch(e){}
 applyLang(initLang);
+
+// keep glossary tooltips inside the content column (avoid right-edge clipping / overflow)
+const _wrap=document.querySelector('.wrap');
+function placeTip(term){
+ const tip=term.querySelector('.tip'); if(!tip) return;
+ const tr=term.getBoundingClientRect(), wr=_wrap.getBoundingClientRect(), tipW=tip.offsetWidth;
+ const minL=wr.left+8, maxL=wr.right-8-tipW;
+ const target=Math.max(minL, Math.min(tr.left, maxL));
+ tip.style.left=(target-tr.left)+'px';
+ const ax=(tr.left+tr.width/2)-target;
+ tip.style.setProperty('--ax', Math.max(12, Math.min(tipW-12, ax))+'px');
+}
+document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('.term'); if(t) placeTip(t);});
+document.addEventListener('focusin',e=>{const t=e.target.closest&&e.target.closest('.term'); if(t) placeTip(t);});
 
 window.addEventListener('resize',()=>{document.querySelectorAll('.chart').forEach(c=>{const i=echarts.getInstanceByDom(c);if(i)i.resize();});});
 </script>
