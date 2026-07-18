@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="description" content="Isometry 对 Agentic Payments、稳定币论坛与白皮书的公司汇报版研究。" />
+<title>Isometry｜Agentic Payments 与稳定币 · 公司汇报</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --clay:#cf7a52; --slate:#6f9bd1; --green:#77b890; --red:#db7c71;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:28px}
+  body{
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 80% -10%,rgba(224,163,70,.07),transparent 60%),
+      radial-gradient(900px 520px at 8% 4%,rgba(111,155,209,.05),transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  a{color:inherit}
+  button{font:inherit}
+  .skip-link{position:fixed;left:16px;top:-60px;z-index:100;background:var(--accent);color:#15110b;padding:9px 14px;border-radius:8px;text-decoration:none;font-weight:600}
+  .skip-link:focus{top:14px}
+  .reading-progress{position:fixed;z-index:90;top:0;left:0;width:100%;height:3px;background:transparent}
+  .reading-progress span{display:block;width:0;height:100%;background:var(--accent);box-shadow:0 0 12px rgba(224,163,70,.55)}
+  .page{max-width:1180px;margin:0 auto;padding:38px 24px 58px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:6px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:600;font-size:15px;color:var(--ink-dim)}
+  .brand-mark{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;background:var(--bg-raised);color:var(--accent);font-weight:700;font-size:17px;text-decoration:none;transition:border-color .16s ease,color .16s ease}
+  .brand-mark:hover,.brand-mark:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+  .top-actions{display:flex;align-items:center;gap:10px}
+  .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;border-radius:999px;border:1px solid var(--line);padding:7px 13px;background:var(--bg-raised);color:var(--ink-dim)}
+  .tag.hot{border-color:rgba(224,163,70,.4);color:var(--accent);background:var(--accent-soft)}
+  .print-btn{border:1px solid var(--line);border-radius:999px;background:var(--bg-raised);color:var(--ink-dim);padding:7px 13px;cursor:pointer;font-family:var(--mono);font-size:11.5px;transition:.16s ease}
+  .print-btn:hover,.print-btn:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+
+  .hero{margin-top:26px}
+  .hero-card{background:var(--bg-raised);border:1px solid var(--line);border-radius:24px;padding:42px 40px 34px;position:relative;overflow:hidden}
+  .hero-card:before{content:"";position:absolute;inset:-120px -120px auto auto;width:340px;height:340px;border-radius:50%;background:rgba(224,163,70,.08);filter:blur(8px)}
+  .kicker{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6.2vw,64px);line-height:1.04;letter-spacing:-.025em;margin:0 0 18px;max-width:900px}
+  h1 .stroke{color:var(--accent)}
+  .subtitle{font-size:17px;line-height:1.7;color:var(--ink-dim);max-width:820px}
+  .hero-answer{margin-top:24px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;background:var(--bg-card);padding:20px 22px;max-width:880px}
+  .hero-answer .label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .hero-answer p{font-family:var(--serif);font-size:clamp(20px,2.8vw,27px);line-height:1.45;color:var(--ink)}
+  .hero-answer strong{color:var(--accent);font-weight:600}
+  .source-note{margin-top:16px;color:var(--ink-faint);font-size:12.5px;line-height:1.65}
+
+  .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+  .quick{border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:17px 16px;min-height:150px}
+  .quick .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em;margin-bottom:13px}
+  .quick h2{font-family:var(--serif);font-weight:500;font-size:18px;line-height:1.25;margin-bottom:8px}
+  .quick p{font-size:12.8px;line-height:1.58;color:var(--ink-dim)}
+
+  .report-layout{display:grid;grid-template-columns:minmax(0,1fr) 235px;gap:28px;margin-top:46px;align-items:start}
+  .content{min-width:0}
+  .toc{position:sticky;top:22px;border:1px solid var(--line);border-radius:15px;background:rgba(22,27,34,.9);backdrop-filter:blur(12px);padding:16px}
+  .toc-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px}
+  .toc a{display:block;text-decoration:none;color:var(--ink-dim);font-size:12.5px;line-height:1.4;padding:8px 10px;border-left:2px solid var(--line);transition:.16s ease}
+  .toc a:hover,.toc a:focus-visible,.toc a.active{color:var(--ink);border-left-color:var(--accent);background:var(--accent-soft);outline:none}
+
+  .section{margin-bottom:54px}
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .section-title{font-family:var(--serif);font-weight:500;font-size:clamp(27px,4vw,36px);letter-spacing:-.015em;line-height:1.2;margin-bottom:12px}
+  .section-lead{color:var(--ink-dim);font-size:15.5px;line-height:1.75;max-width:760px;margin-bottom:22px}
+  .section-lead strong{color:var(--ink)}
+  .subhead{font-family:var(--serif);font-weight:500;font-size:22px;line-height:1.3;margin:28px 0 12px}
+  .body-copy{font-size:14.5px;line-height:1.78;color:var(--ink-dim)}
+  .body-copy strong{color:var(--ink)}
+
+  .example{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);padding:22px;margin:18px 0 24px}
+  .example-label{font-family:var(--mono);font-size:10.5px;color:var(--slate);letter-spacing:.12em;text-transform:uppercase;margin-bottom:11px}
+  .example blockquote{font-family:var(--serif);font-size:20px;line-height:1.55;color:var(--ink);border-left:3px solid var(--slate);padding-left:16px}
+  .question-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+  .question{border:1px solid var(--line-soft);border-radius:11px;background:var(--bg-raised);padding:12px 13px;color:var(--ink-dim);font-size:13px;line-height:1.5}
+  .question:before{content:"?";display:inline-grid;place-items:center;width:20px;height:20px;margin-right:7px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-size:11px}
+
+  .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:18px}
+  .flow-step{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--bg-card);padding:14px 11px;min-height:104px}
+  .flow-step:not(:last-child):after{content:"→";position:absolute;right:-13px;top:42%;z-index:2;width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:var(--bg);color:var(--accent);font-family:var(--mono);font-size:12px}
+  .flow-step .step{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:8px}
+  .flow-step b{display:block;font-size:13px;margin-bottom:5px}
+  .flow-step span{font-size:11.5px;line-height:1.45;color:var(--ink-dim)}
+
+  .sessions{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+  .session{border:1px solid var(--line);border-radius:15px;background:var(--bg-card);padding:20px;display:flex;flex-direction:column}
+  .session .time{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.08em;margin-bottom:12px}
+  .session h3{font-family:var(--serif);font-weight:500;font-size:20px;line-height:1.3;margin-bottom:10px}
+  .session p{font-size:13.2px;line-height:1.65;color:var(--ink-dim)}
+  .session .meaning{margin-top:16px;padding-top:13px;border-top:1px solid var(--line-soft);color:var(--ink);font-size:12.8px;line-height:1.55}
+  .session .meaning b{color:var(--accent)}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+  .panel{border:1px solid var(--line);border-radius:15px;background:var(--bg-card);padding:21px}
+  .panel.good{border-top:3px solid var(--green)}
+  .panel.limit{border-top:3px solid var(--clay)}
+  .panel h3{font-family:var(--serif);font-weight:500;font-size:20px;margin-bottom:12px}
+  .checklist{list-style:none;display:grid;gap:9px}
+  .checklist li{position:relative;padding-left:21px;color:var(--ink-dim);font-size:13px;line-height:1.55}
+  .checklist li:before{position:absolute;left:0;top:0;color:var(--accent);font-family:var(--mono)}
+  .good .checklist li:before{content:"+";color:var(--green)}
+  .limit .checklist li:before{content:"–";color:var(--clay)}
+
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--bg-card)}
+  table{width:100%;border-collapse:collapse;min-width:650px}
+  caption{text-align:left;padding:14px 16px 0;color:var(--ink-faint);font-family:var(--mono);font-size:10.5px;letter-spacing:.08em}
+  th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft);padding:13px 14px;font-size:12.7px;line-height:1.55}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);background:var(--bg-raised)}
+  td{color:var(--ink-dim)}
+  td strong{color:var(--ink)}
+  tr:last-child td{border-bottom:0}
+  .fit{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-family:var(--mono);font-size:10px;white-space:nowrap}
+  .fit.high{color:var(--green);border-color:rgba(119,184,144,.35);background:rgba(119,184,144,.09)}
+  .fit.mid{color:var(--accent);border-color:rgba(224,163,70,.35);background:var(--accent-soft)}
+  .fit.low{color:var(--clay);border-color:rgba(207,122,82,.35);background:rgba(207,122,82,.09)}
+
+  .callout{border:1px solid rgba(224,163,70,.42);border-left:4px solid var(--accent);border-radius:14px;background:var(--accent-soft);padding:18px 20px;margin:18px 0;color:var(--ink);font-size:15px;line-height:1.65}
+  .callout strong{color:var(--accent)}
+
+  .settlement-demo{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+  .settle{border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:18px;position:relative}
+  .settle:not(:last-child):after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);z-index:3;color:var(--accent);font-family:var(--mono)}
+  .settle .big{font-family:var(--serif);font-size:27px;color:var(--accent);margin-bottom:6px}
+  .settle b{font-size:13.5px;display:block;margin-bottom:6px}
+  .settle p{font-size:12px;line-height:1.55;color:var(--ink-dim)}
+
+  .priorities{display:grid;gap:10px;counter-reset:priority}
+  .priority{counter-increment:priority;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:16px 18px}
+  .priority:before{content:counter(priority,decimal-leading-zero);font-family:var(--mono);font-size:17px;color:var(--accent)}
+  .priority h3{font-family:var(--serif);font-weight:500;font-size:18px;margin-bottom:4px}
+  .priority p{font-size:12.5px;line-height:1.5;color:var(--ink-dim)}
+  .priority .when{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);white-space:nowrap}
+
+  .thesis-card{border:1px solid rgba(224,163,70,.42);border-radius:20px;background:linear-gradient(180deg,#191e26,#13171d);box-shadow:0 18px 48px rgba(0,0,0,.3);padding:28px;margin-bottom:18px}
+  .thesis-card .eyebrow{font-family:var(--mono);font-size:10.5px;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+  .thesis-card h3{font-family:var(--serif);font-size:clamp(25px,3.6vw,34px);font-weight:500;line-height:1.25;margin-bottom:12px}
+  .thesis-card h3 span{color:var(--accent)}
+  .thesis-card p{color:var(--ink-dim);font-size:14px;line-height:1.7;max-width:780px}
+  .capability-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .capability{border:1px solid var(--line);border-radius:12px;background:var(--bg-card);padding:15px}
+  .capability .cap-num{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:8px}
+  .capability b{display:block;font-size:13.5px;margin-bottom:5px}
+  .capability p{font-size:11.8px;line-height:1.5;color:var(--ink-dim)}
+  .phase-note{margin-top:13px;border:1px dashed rgba(224,163,70,.38);border-radius:13px;padding:15px 17px;color:var(--ink-dim);font-size:13px;line-height:1.65}
+  .phase-note strong{color:var(--ink)}
+
+  .roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .roadmap-step{border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:18px}
+  .roadmap-step .weeks{font-family:var(--mono);font-size:10.5px;color:var(--accent);letter-spacing:.06em;margin-bottom:11px}
+  .roadmap-step h3{font-family:var(--serif);font-weight:500;font-size:18px;line-height:1.3;margin-bottom:8px}
+  .roadmap-step p{font-size:12px;line-height:1.55;color:var(--ink-dim)}
+
+  .metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .metric{border:1px solid var(--line);border-radius:13px;background:var(--bg-card);padding:16px}
+  .metric b{display:block;font-size:13.5px;margin-bottom:7px;color:var(--ink)}
+  .metric p{font-family:var(--mono);font-size:10.8px;line-height:1.65;color:var(--ink-dim)}
+
+  .unknowns{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .unknown{border:1px solid var(--line);border-left:3px solid var(--clay);border-radius:12px;background:var(--bg-card);padding:14px 15px;color:var(--ink-dim);font-size:12.8px;line-height:1.55}
+  .unknown strong{color:var(--ink)}
+
+  details{border:1px solid var(--line);border-radius:13px;background:var(--bg-card);margin-bottom:9px;overflow:hidden}
+  summary{cursor:pointer;list-style:none;padding:15px 17px;font-size:13.5px;color:var(--ink);font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  summary::-webkit-details-marker{display:none}
+  summary:after{content:"+";font-family:var(--mono);color:var(--accent);font-size:16px}
+  details[open] summary:after{content:"–"}
+  details[open] summary{border-bottom:1px solid var(--line-soft)}
+  .evidence-body{padding:15px 17px;color:var(--ink-dim);font-size:12.7px;line-height:1.7}
+  .evidence-body ul{padding-left:18px;display:grid;gap:6px}
+  .evidence-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .evidence-legend span{font-family:var(--mono);font-size:10px;color:var(--ink-dim);border:1px solid var(--line);border-radius:999px;padding:5px 8px;background:var(--bg-raised)}
+
+  footer{margin-top:48px;border-top:1px solid var(--line-soft);padding-top:21px;display:flex;justify-content:space-between;gap:18px;color:var(--ink-faint);font-family:var(--mono);font-size:10.8px;line-height:1.6}
+
+  @media(max-width:980px){
+    .quick-grid{grid-template-columns:repeat(2,1fr)}
+    .report-layout{grid-template-columns:1fr}.toc{position:static;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.toc-title{grid-column:1/-1}.toc a{border-left:0;border-bottom:2px solid var(--line)}
+    .flow{grid-template-columns:repeat(3,1fr)}.flow-step:nth-child(3):after{display:none}
+    .sessions,.roadmap{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:720px){
+    .page{padding:26px 16px 42px}.hero-card{padding:30px 22px}.topbar{align-items:flex-start}.top-actions{flex-direction:column;align-items:flex-end}.print-btn{display:none}
+    h1{font-size:38px}.subtitle{font-size:15.5px}.quick-grid,.sessions,.split,.settlement-demo,.capability-grid,.roadmap,.metric-grid,.unknowns{grid-template-columns:1fr}
+    .question-grid{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}.flow-step:nth-child(3):after{display:grid}.flow-step:nth-child(2n):after{display:none}
+    .settle:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-18px;transform:translateX(50%)}
+    .priority{grid-template-columns:38px minmax(0,1fr)}.priority .when{grid-column:2}
+    .toc{grid-template-columns:repeat(2,1fr)}footer{display:block}footer span{display:block;margin-top:6px}
+  }
+  @media(max-width:440px){.quick-grid,.toc{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.flow-step:not(:last-child):after{display:none}.tag{display:none}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  @media print{
+    :root{--bg:#fff;--bg-raised:#fff;--bg-card:#fff;--bg-card-2:#fff;--line:#cfd3d8;--line-soft:#e5e7eb;--ink:#14171b;--ink-dim:#444b55;--ink-faint:#6b7280;--accent:#9a5d08;--accent-soft:#f6ead7}
+    body{background:#fff}.reading-progress,.toc,.print-btn{display:none}.page{max-width:none;padding:20px}.report-layout{display:block}.hero-card,.thesis-card{box-shadow:none}.section{break-inside:avoid}.topbar{margin-bottom:20px}a{text-decoration:none}
+  }
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到正文</a>
+  <div class="reading-progress" aria-hidden="true"><span></span></div>
+  <main class="page" id="main-content">
+    <div class="topbar">
+      <div class="brand"><a class="brand-mark" href="../" title="返回 Agentic Payment 研究索引" aria-label="返回研究索引">←</a><div>Isometry · Agentic Payment 研究</div></div>
+      <div class="top-actions"><span class="tag hot">Forum synthesis · 2026-07-17</span><button class="print-btn" type="button" onclick="window.print()">打印 / PDF</button></div>
+    </div>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-card">
+        <div class="kicker">公司汇报版 · 10 分钟读懂</div>
+        <h1 id="page-title">Agentic Payments<br><span class="stroke">真正要解决什么</span></h1>
+        <p class="subtitle">不是让模型“能付款”，而是让 Agent 在明确授权、预算和责任边界内花钱，并且每一步都能解释、追踪和补救。</p>
+        <div class="hero-answer"><span class="label">管理层一句话</span><p>稳定币是一条有条件优势的结算轨道；真正的产品机会，是 Agent 花钱前后的 <strong>授权 · 控制 · 凭证 · 对账 · 恢复</strong>。</p></div>
+        <p class="source-note">依据三场共 90 分钟论坛精修转录与一份 68 页白皮书的页码化笔记。原始 WAV 与 PDF 当前不在本地原路径，因此本文不把发言、市场数字或协议状态包装成已核事实。</p>
+      </div>
+      <div class="quick-grid" aria-label="四个快速结论">
+        <article class="quick"><div class="num">01 · WHAT</div><h2>可证明的委托</h2><p>系统要证明谁允许 Agent，在什么任务、金额、对象和期限内行动。</p></article>
+        <article class="quick"><div class="num">02 · RAIL</div><h2>稳定币是选项</h2><p>跨境和机器原生更适配；本地受理、退款与责任仍要靠完整支付体系。</p></article>
+        <article class="quick"><div class="num">03 · WEDGE</div><h2>B2B / API 先行</h2><p>规则明确、可计量、可限制预算，比开放式 C 端代购更容易验证。</p></article>
+        <article class="quick"><div class="num">04 · NEXT</div><h2>90 天受控试点</h2><p>先做控制层，用同一真实负载比较余额、卡与稳定币，不先造新轨道。</p></article>
+      </div>
+    </section>
+
+    <div class="report-layout">
+      <div class="content">
+        <section class="section" id="what">
+          <div class="section-label">01 · Definition</div>
+          <h2 class="section-title">这到底是什么</h2>
+          <p class="section-lead">传统支付只需判断“能否扣款”。Agentic Payments 还必须回答：<strong>这笔钱为什么可以被 Agent 花掉？</strong></p>
+          <div class="example">
+            <div class="example-label">一个企业场景</div>
+            <blockquote>“比较三家模型 API；在本月 5 万元预算内买最合适的套餐。价格上涨超过 10%，先找我确认。”</blockquote>
+            <div class="question-grid">
+              <div class="question">这是不是员工真实提出的任务？</div>
+              <div class="question">Agent 是否有权代表公司购买？</div>
+              <div class="question">供应商、用途与金额是否合规？</div>
+              <div class="question">买错、未交付或重复扣款怎么办？</div>
+            </div>
+          </div>
+          <h3 class="subhead">完整流程不是“Agent → 钱包”</h3>
+          <div class="flow" aria-label="Agentic Payments 六步流程">
+            <div class="flow-step"><div class="step">STEP 01</div><b>支付意图</b><span>为什么买、买什么、服务哪个任务</span></div>
+            <div class="flow-step"><div class="step">STEP 02</div><b>授权</b><span>谁允许、额度、对象、期限与撤销</span></div>
+            <div class="flow-step"><div class="step">STEP 03</div><b>政策与风险</b><span>预算、供应商、欺诈与合规检查</span></div>
+            <div class="flow-step"><div class="step">STEP 04</div><b>多轨执行</b><span>卡、银行、余额、发票或稳定币</span></div>
+            <div class="flow-step"><div class="step">STEP 05</div><b>结算</b><span>最终性、费用、FX 与流动性</span></div>
+            <div class="flow-step"><div class="step">STEP 06</div><b>凭证与恢复</b><span>交付、对账、退款、争议与审计</span></div>
+          </div>
+          <div class="callout"><strong>核心对象：Payment Intent。</strong> 它把原始任务与付款主体、供应商、金额、用途、期限和审批规则绑定起来，让金融执行不必直接相信模型。</div>
+        </section>
+
+        <section class="section" id="sessions">
+          <div class="section-label">02 · Forum</div>
+          <h2 class="section-title">三场会议，各自补上哪块拼图</h2>
+          <p class="section-lead">一场讲安全，一场讲成本，一场讲产品与市场。三者最后收敛到同一个问题：<strong>授权和责任。</strong></p>
+          <div class="sessions">
+            <article class="session"><div class="time">14:13 · 安全与合规</div><h3>钱在链上，不等于安全</h3><p>托管有密钥风险或对手方风险；智能合约容易盲签；地址风险会变化；稳定币还可能被冻结。</p><div class="meaning"><b>产品含义：</b>授权与风险检查必须在付款前内联，不能只留事后日志。</div></article>
+            <article class="session"><div class="time">14:30 · 单位经济</div><h3>机器支付先算清成本</h3><p>小额高频交易难以承受高固定处理费。API、模型和数据消费比普通零售更像早期场景。</p><div class="meaning"><b>产品含义：</b>逐请求计量，不必逐请求外部结算。</div></article>
+            <article class="session"><div class="time">14:57 · PMF 与投资</div><h3>最稀缺的是授权凭证</h3><p>企业需要管理 Agent 的消费权限和错误责任；市场仍早，尚未出现公认 PMF，B2B 比 C 端更 ready。</p><div class="meaning"><b>产品含义：</b>先做窄场景试点，不用“2027 爆发”替代需求证据。</div></article>
+          </div>
+        </section>
+
+        <section class="section" id="stablecoin">
+          <div class="section-label">03 · Stablecoin</div>
+          <h2 class="section-title">稳定币：什么时候有用，什么时候不是答案</h2>
+          <p class="section-lead">稳定币改善的是某些结算条件，不会自动补齐完整支付产品。</p>
+          <div class="split">
+            <div class="panel good"><h3>它擅长</h3><ul class="checklist"><li>跨境和 24/7 结算</li><li>API 原生、可编程资金移动</li><li>已经在链上的机器间支付</li><li>低额高频场景的聚合后结算</li></ul></div>
+            <div class="panel limit"><h3>它不自动解决</h3><ul class="checklist"><li>用户授权、商户受理与责任</li><li>退款、拒付、错误购买与未交付</li><li>法币出入金、FX、税务和财务集成</li><li>冻结、脱锚、链或桥故障后的恢复</li></ul></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <caption>稳定币场景适配判断</caption>
+              <thead><tr><th>场景</th><th>适配度</th><th>为什么</th><th>真正门槛</th></tr></thead>
+              <tbody>
+                <tr><td><strong>跨境 B2B / payout</strong></td><td><span class="fit high">高，有条件</span></td><td>24/7、共享状态、可编程</td><td>牌照、FX、本地出金、冻结</td></tr>
+                <tr><td><strong>API / 模型 / 数据消费</strong></td><td><span class="fit high">中高</span></td><td>适合程序化和聚合结算</td><td>亚美分端到端成本与供应商接受度</td></tr>
+                <tr><td><strong>链上 Agent-to-Agent</strong></td><td><span class="fit high">高</span></td><td>减少资产和轨道转换</td><td>服务交付证明、重放与合约风险</td></tr>
+                <tr><td><strong>国内本地零售</strong></td><td><span class="fit mid">低到中</span></td><td>现有卡、钱包和银行更成熟</td><td>商户覆盖、消费者保护、监管</td></tr>
+                <tr><td><strong>开放式 C 端代购</strong></td><td><span class="fit low">低到中</span></td><td>错误购买与退款要求高</td><td>MoR、拒付、责任和用户信任</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout"><strong>最终判断：multi-rail，而不是 stablecoin-only。</strong> Agent 应根据受理、成本、地域、风险和恢复要求，在卡、银行、余额、发票与稳定币之间选择。</div>
+        </section>
+
+        <section class="section" id="settlement">
+          <div class="section-label">04 · Unit economics</div>
+          <h2 class="section-title">每次调用计费，不等于每次调用都结算</h2>
+          <p class="section-lead">机器服务需要逐次知道“用了什么、多少钱、是否获授权”；资金却可以按阈值、时间窗口或净额批量移动。</p>
+          <div class="settlement-demo" aria-label="逐请求计量与聚合结算示意">
+            <div class="settle"><div class="big">10,000×</div><b>逐请求计量</b><p>每次模型/API 调用记录价格、用量、授权与交付凭证。</p></div>
+            <div class="settle"><div class="big">1 ledger</div><b>内部余额扣记</b><p>请求成功后更新企业余额或应付账，不立即触发外部资金移动。</p></div>
+            <div class="settle"><div class="big">1×</div><b>聚合外部结算</b><p>达到金额或时间阈值后，通过卡、银行或稳定币完成一次结算。</p></div>
+          </div>
+          <p class="body-copy" style="margin-top:16px">这样既能缩短服务商的信用周期，也不会让一万次调用承担一万次完整支付成本。真正要比较的是端到端成本：支付费、风险检查、流动性、失败、退款和对账，而不只是 gas。</p>
+        </section>
+
+        <section class="section" id="wedge">
+          <div class="section-label">05 · Market wedge</div>
+          <h2 class="section-title">从哪里切入，验证速度最快</h2>
+          <p class="section-lead">排序依据不是想象中的总市场，而是需求是否明确、边界能否控制、价值能否测量。</p>
+          <div class="priorities">
+            <article class="priority"><div><h3>企业 API、模型、数据与工具消费</h3><p>统一多供应商预算、逐次计量、降低应收风险并自动对账。</p></div><span class="when">现在验证</span></article>
+            <article class="priority"><div><h3>规则明确的企业 Agent 费用</h3><p>白名单供应商、低额度、明确用途；越界时再找人审批。</p></div><span class="when">现在验证</span></article>
+            <article class="priority"><div><h3>跨境 B2B 供应商付款</h3><p>验证更快结算与费用透明能否覆盖出入金、流动性和合规成本。</p></div><span class="when">条件验证</span></article>
+            <article class="priority"><div><h3>开放式 C 端购物与旅行</h3><p>受理、错误购买、退款、拒付和消费者保护最复杂。</p></div><span class="when">暂不优先</span></article>
+          </div>
+        </section>
+
+        <section class="section" id="product">
+          <div class="section-label">06 · Product thesis</div>
+          <h2 class="section-title">对公司的产品建议</h2>
+          <div class="thesis-card"><div class="eyebrow">Recommended position</div><h3>先做 <span>Agent Spend Control Layer</span><br>再决定是否承接完整责任</h3><p>先帮助企业回答“这笔 Agent 支出为什么可以发生”，再逐步解决“发生错误后由谁赔”。这与团队已有的“责任层”方向一致，但把第一步收窄到可软件化、可试点的授权、凭证与对账。</p></div>
+          <div class="capability-grid">
+            <article class="capability"><div class="cap-num">01</div><b>授权</b><p>谁允许哪个 Agent，在什么范围、额度和期限内花钱。</p></article>
+            <article class="capability"><div class="cap-num">02</div><b>政策</b><p>供应商、用途、地域、时间、频率和升级审批规则。</p></article>
+            <article class="capability"><div class="cap-num">03</div><b>执行</b><p>按场景选择卡、银行、余额、发票或稳定币。</p></article>
+            <article class="capability"><div class="cap-num">04</div><b>凭证</b><p>连接原始任务、报价、服务交付和支付结果。</p></article>
+            <article class="capability"><div class="cap-num">05</div><b>对账</b><p>把每次使用、内部账和外部结算准确对上。</p></article>
+            <article class="capability"><div class="cap-num">06</div><b>恢复</b><p>重复扣款、未交付或异常时暂停、退款和人工接管。</p></article>
+          </div>
+          <div class="phase-note"><strong>不要在第一阶段轻易承诺“我们赔”。</strong> Merchant of Record、保证金、保险或赔付意味着资本、牌照、定价与风险承保。先证明企业愿意为控制层付费，再决定责任层做多重。</div>
+        </section>
+
+        <section class="section" id="roadmap">
+          <div class="section-label">07 · 90-day plan</div>
+          <h2 class="section-title">90 天行动方案</h2>
+          <p class="section-lead">目标不是完成一个“通用支付网络”，而是用真实资金流推翻或证实产品假设。</p>
+          <div class="roadmap">
+            <article class="roadmap-step"><div class="weeks">WEEK 1–2</div><h3>选窄场景</h3><p>在多模型/API 费用控制与跨境 B2B payout 中选一个，记录客户当前审批、信用和月结流程。</p></article>
+            <article class="roadmap-step"><div class="weeks">WEEK 3–6</div><h3>做最小控制层</h3><p>实现 Intent、Mandate、Policy、Execution、Receipt 与 Dispute 六个对象。</p></article>
+            <article class="roadmap-step"><div class="weeks">WEEK 7–10</div><h3>同负载比轨道</h3><p>至少比较余额、虚拟卡、稳定币中的两种，测完整成本与失败恢复。</p></article>
+            <article class="roadmap-step"><div class="weeks">WEEK 11–13</div><h3>受控生产试点</h3><p>白名单、低额度、短期授权、人工接管；用真实资金验证。</p></article>
+          </div>
+        </section>
+
+        <section class="section" id="metrics">
+          <div class="section-label">08 · Decision metrics</div>
+          <h2 class="section-title">公司应该看哪些指标</h2>
+          <p class="section-lead">不要用协议发布数、测试网交易数或市场预测判断成败。</p>
+          <div class="metric-grid">
+            <article class="metric"><b>客户价值</b><p>WTP · 审批时间 · 自动完成率 · 月结工时</p></article>
+            <article class="metric"><b>风险</b><p>越权支出 · 重复扣款 · 退款率 · 争议定位时间</p></article>
+            <article class="metric"><b>单位经济</b><p>每请求收入 · 完整支付成本 · 流动性 · 人工成本</p></article>
+            <article class="metric"><b>可靠性</b><p>成功率 · P95/P99 延迟 · 重试重复 · 恢复时间</p></article>
+            <article class="metric"><b>商业</b><p>集成周期 · 重复付费 · 留存 · 毛利 · 销售周期</p></article>
+            <article class="metric"><b>推翻条件</b><p>客户不单独付费，或现有 OAuth + 虚拟卡已足够</p></article>
+          </div>
+        </section>
+
+        <section class="section" id="unknowns">
+          <div class="section-label">09 · Evidence gaps</div>
+          <h2 class="section-title">现在还不能下结论的事</h2>
+          <p class="section-lead">这些说法在录音或白皮书中出现过，但没有被本轮独立验证。</p>
+          <div class="unknowns">
+            <div class="unknown"><strong>市场时点：</strong>“2027 年爆发”没有生产采用定义。</div>
+            <div class="unknown"><strong>市场数字：</strong>稳定币增速、支付占比、卡费和损失金额。</div>
+            <div class="unknown"><strong>协议能力：</strong>x402、AP2 等当前是否达到生产要求。</div>
+            <div class="unknown"><strong>监管责任：</strong>不同地区的牌照、MoR、KYC/KYB 与报告主体。</div>
+            <div class="unknown"><strong>真实经济性：</strong>亚美分支付的完整毛利、失败和对账成本。</div>
+            <div class="unknown"><strong>PMF：</strong>哪家公司已经获得可持续客户留存和毛利。</div>
+          </div>
+          <div class="callout"><strong>证据限制：</strong>原始三段 WAV 与 PDF 当前不在 README 所指路径。正式引用人名、数字、法规或逐字发言前，应恢复原件、比对既有 SHA256，并定点回听或视觉复核。</div>
+        </section>
+
+        <section class="section" id="evidence">
+          <div class="section-label">10 · Evidence</div>
+          <h2 class="section-title">关键证据放在这里</h2>
+          <p class="section-lead">正文只保留决策逻辑；需要追溯时，再展开时间戳与白皮书页码。</p>
+          <details><summary>14:13 · 安全、托管、盲签、KYT 与冻结</summary><div class="evidence-body"><ul><li>00:05:12–00:08:22：自托管与第三方托管的风险权衡。</li><li>00:08:23–00:09:55：盲签与独立签名前检查。</li><li>00:09:55–00:13:21：KYT、持续监控与稳定币冻结风险。</li></ul></div></details>
+          <details><summary>14:30 · 信任、单位经济与 API 场景</summary><div class="evidence-body"><ul><li>00:08:53–00:09:15：Agentic infrastructure 不必依赖区块链。</li><li>00:10:20–00:13:55：核心瓶颈是信任和风控；小额高频成本问题。</li><li>00:13:55–00:17:28：API pay-as-you-go、信用敞口与基础设施阶段。</li></ul></div></details>
+          <details><summary>14:57 · 授权凭证、B2B 与 PMF</summary><div class="evidence-body"><ul><li>00:10:30–00:12:19：把真实用户授权扩展给 Agent、应用或协议。</li><li>00:39:42–00:43:40：授权凭证、错误责任、付款与收款两侧。</li><li>00:45:32–00:48:52：未见公认 PMF；B2B 规则化支出更 ready。</li></ul></div></details>
+          <details><summary>白皮书 · 架构与页码</summary><div class="evidence-body"><ul><li>PDF 19–29 / 页脚 17–27：Human-Delegated 与 Machine-Native 两类需求。</li><li>PDF 30–49 / 页脚 28–47：生产级标准、九层栈、Payment Intent 与多轨执行。</li><li>PDF 52–58 / 页脚 50–56：风险、治理、市场展望与 intent-centric 结论。</li></ul></div></details>
+          <div class="evidence-legend"><span>录音主张 ≠ 已验证事实</span><span>白皮书主张 ≠ 独立基准</span><span>综合判断 = 待试点推翻</span><span>数字 / 法规 / 专名 = NEEDS EVIDENCE</span></div>
+        </section>
+
+        <div class="thesis-card"><div class="eyebrow">Final takeaway</div><h3>现在最值得验证的，不是哪条链，<br>而是企业是否愿意为 <span>“让 Agent 安全地花钱”</span> 付费。</h3><p>如果控制层不能降低审批、风险或对账成本，Agentic Payments 就只是新的接口叙事；如果它能，结算轨道才是下一步优化问题。</p></div>
+      </div>
+
+      <nav class="toc" aria-label="报告目录">
+        <div class="toc-title">Report map</div>
+        <a href="#what">这是什么</a>
+        <a href="#sessions">三场会议</a>
+        <a href="#stablecoin">稳定币边界</a>
+        <a href="#settlement">计量与结算</a>
+        <a href="#wedge">切入场景</a>
+        <a href="#product">产品建议</a>
+        <a href="#roadmap">90 天计划</a>
+        <a href="#metrics">决策指标</a>
+        <a href="#unknowns">未证实事项</a>
+        <a href="#evidence">证据索引</a>
+      </nav>
+    </div>
+
+    <footer><div>Isometry · Agentic Payment 论坛与白皮书综合研究</div><span>证据受限版 · 2026-07-18 · 不构成法律、合规或投资意见</span></footer>
+  </main>
+<script>
+  const progress = document.querySelector('.reading-progress span');
+  const tocLinks = [...document.querySelectorAll('.toc a')];
+  const sections = tocLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+
+  function updateProgress(){
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = scrollable > 0 ? window.scrollY / scrollable : 0;
+    progress.style.width = `${Math.min(100,Math.max(0,ratio * 100))}%`;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if(!visible) return;
+    tocLinks.forEach(link => link.classList.toggle('active',link.getAttribute('href') === `#${visible.target.id}`));
+  },{rootMargin:'-15% 0px -70% 0px',threshold:[0,.1,.4]});
+
+  sections.forEach(section => observer.observe(section));
+  window.addEventListener('scroll',updateProgress,{passive:true});
+  updateProgress();
+</script>
+</body>
+</html>
