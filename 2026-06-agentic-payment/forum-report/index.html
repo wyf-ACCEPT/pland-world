@@ -4,8 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
-<meta name="description" content="Isometry 对 Agentic Payment 的论坛与白皮书综合判断：授权、控制、结算与责任。" />
-<title>Isometry｜Agentic Payment 的本质</title>
+<meta name="description" content="用一个具体例子解释 Agentic Payment：预算管权限，预留资金防坏账，资金可以合并结算。" />
+<title>Isometry｜Agentic Payment 到底解决什么</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
@@ -19,206 +19,183 @@
     --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
   body{
-    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh;
-    background:radial-gradient(1100px 620px at 82% -10%,rgba(224,163,70,.08),transparent 60%),radial-gradient(800px 480px at 4% 6%,rgba(111,155,209,.05),transparent 55%),var(--bg)
+    min-height:100vh;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background:radial-gradient(1000px 560px at 82% -10%,rgba(224,163,70,.08),transparent 60%),var(--bg)
   }
-  a{color:inherit}
-  .page{max-width:1060px;margin:0 auto;padding:36px 24px 58px}
+  a{color:inherit}.page{max-width:980px;margin:0 auto;padding:36px 24px 58px}
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px}
   .brand{display:flex;align-items:center;gap:12px;color:var(--dim);font-size:14px;font-weight:600}
-  .back{width:34px;height:34px;display:grid;place-items:center;text-decoration:none;color:var(--accent);background:var(--raised);border:1px solid var(--line);border-radius:9px;transition:.16s ease}
+  .back{width:34px;height:34px;display:grid;place-items:center;text-decoration:none;color:var(--accent);background:var(--raised);border:1px solid var(--line);border-radius:9px}
   .back:hover,.back:focus-visible{border-color:var(--accent);outline:none}
-  .tag{font:500 11px var(--mono);letter-spacing:.07em;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(224,163,70,.38);border-radius:999px;padding:7px 12px}
+  .tag{font:500 11px var(--mono);color:var(--accent);background:var(--accent-soft);border:1px solid rgba(224,163,70,.38);border-radius:999px;padding:7px 12px}
 
-  .hero{margin-top:26px;background:var(--raised);border:1px solid var(--line);border-radius:24px;padding:42px 40px 34px;position:relative;overflow:hidden}
-  .hero:before{content:"";position:absolute;right:-110px;top:-130px;width:330px;height:330px;border-radius:50%;background:rgba(224,163,70,.08)}
-  .kicker{font:500 11px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:15px}
-  h1{font:500 clamp(42px,7vw,68px)/1.03 var(--serif);letter-spacing:-.025em;max-width:880px;margin-bottom:18px}
-  h1 span{color:var(--accent)}
-  .subtitle{max-width:790px;color:var(--dim);font-size:17px;line-height:1.7}
-  .punchline{margin-top:23px;max-width:840px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:18px 20px;font:500 clamp(19px,2.8vw,25px)/1.48 var(--serif)}
-  .punchline strong{color:var(--accent);font-weight:600}
-  .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:17px}
-  .hero-point{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-  .hero-point b{display:block;font-size:13px;margin-bottom:5px}
-  .hero-point p{color:var(--dim);font-size:12px;line-height:1.5}
+  .hero{margin-top:26px;background:var(--raised);border:1px solid var(--line);border-radius:24px;padding:42px 40px 36px}
+  .kicker{font:500 11px var(--mono);letter-spacing:.18em;color:var(--accent);margin-bottom:15px}
+  h1{font:500 clamp(39px,6.6vw,64px)/1.07 var(--serif);letter-spacing:-.025em;max-width:900px;margin-bottom:18px}
+  h1 span,.accent{color:var(--accent)}
+  .subtitle{max-width:780px;color:var(--dim);font-size:16px;line-height:1.72}
+  .answer{margin-top:23px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:20px 22px;font:500 clamp(21px,3.2vw,29px)/1.5 var(--serif)}
+  .answer strong{color:var(--accent);font-weight:600}
 
-  .section{margin-top:52px;scroll-margin-top:22px}
-  .section-label{font:500 10.5px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-  h2{font:500 clamp(28px,4.5vw,38px)/1.2 var(--serif);letter-spacing:-.015em;margin-bottom:12px}
-  .lead{max-width:780px;color:var(--dim);font-size:15.5px;line-height:1.75;margin-bottom:22px}
-  .lead strong{color:var(--ink)}
+  .section{margin-top:50px}
+  .section-label{font:500 10.5px var(--mono);letter-spacing:.16em;color:var(--accent);margin-bottom:8px}
+  h2{font:500 clamp(28px,4.3vw,37px)/1.22 var(--serif);letter-spacing:-.015em;margin-bottom:12px}
+  .lead{max-width:800px;color:var(--dim);font-size:15.5px;line-height:1.75;margin-bottom:20px}.lead strong{color:var(--ink)}
 
-  .case-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
-  .case-step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:19px;min-height:145px}
-  .case-step:not(:last-child):after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);z-index:2;width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:var(--bg);color:var(--accent);font-family:var(--mono)}
-  .case-step .num{font:500 10px var(--mono);letter-spacing:.1em;color:var(--accent);margin-bottom:12px}
-  .case-step h3{font:500 20px/1.3 var(--serif);margin-bottom:8px}
-  .case-step p{color:var(--dim);font-size:12.8px;line-height:1.6}
-  .tradeoff{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:12px}
-  .side{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:17px}
-  .side.fast{border-top:3px solid var(--clay)}.side.batch{border-top:3px solid var(--blue)}
-  .side b{display:block;margin-bottom:7px;font-size:13.5px}.side p{color:var(--dim);font-size:12.5px;line-height:1.58}
-  .insight{margin-top:13px;padding:18px 20px;background:var(--accent-soft);border:1px solid rgba(224,163,70,.4);border-left:4px solid var(--accent);border-radius:14px;font-size:15px;line-height:1.7}
-  .insight strong{color:var(--accent)}
+  .choice{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .choice-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:19px}
+  .choice-card:first-child{border-top:3px solid var(--clay)}.choice-card:last-child{border-top:3px solid var(--blue)}
+  .choice-card .label{font:500 10px var(--mono);color:var(--faint);margin-bottom:9px}
+  .choice-card h3{font:500 21px/1.35 var(--serif);margin-bottom:8px}.choice-card p{color:var(--dim);font-size:13px;line-height:1.64}
+  .plain-solution{margin-top:12px;background:var(--accent-soft);border:1px solid rgba(224,163,70,.42);border-radius:15px;padding:20px}
+  .plain-solution h3{font:500 23px/1.4 var(--serif);margin-bottom:8px}.plain-solution p{color:var(--dim);font-size:14px;line-height:1.68}
+  .case-note{margin-top:10px;color:var(--faint);font-size:12px;line-height:1.65}
 
-  .converge{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
-  .source{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-  .source .time{font:500 10.5px var(--mono);color:var(--accent);letter-spacing:.07em;margin-bottom:9px}
-  .source h3{font:500 18px/1.3 var(--serif);margin-bottom:7px}.source p{color:var(--dim);font-size:12.5px;line-height:1.58}
+  .example{background:var(--raised);border:1px solid var(--line);border-radius:20px;padding:25px}
+  .example-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}
+  .example-head h3{font:500 clamp(22px,3.5vw,29px)/1.35 var(--serif)}.budget{font:500 12px var(--mono);color:var(--accent);white-space:nowrap;background:var(--accent-soft);border-radius:999px;padding:8px 11px}
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:134px}
+  .step:not(:last-child):after{content:"→";position:absolute;right:-13px;top:50%;z-index:2;color:var(--accent);font-family:var(--mono)}
+  .step .num{font:500 9.5px var(--mono);color:var(--accent);margin-bottom:8px}.step h4{font:500 16px/1.35 var(--serif);margin-bottom:6px}.step p{color:var(--dim);font-size:11.5px;line-height:1.52}
+  .example-result{margin-top:13px;border-left:4px solid var(--green);background:rgba(119,184,144,.09);border-radius:11px;padding:15px 17px;font-size:14px;line-height:1.65}
 
-  .control-loop{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .phase{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:20px}
-  .phase.before{border-top:3px solid var(--blue)}.phase.during{border-top:3px solid var(--accent)}.phase.after{border-top:3px solid var(--green)}
-  .phase .phase-label{font:500 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
-  .phase h3{font:500 21px/1.3 var(--serif);margin-bottom:11px}
-  .phase ul{list-style:none;display:grid;gap:8px}
-  .phase li{position:relative;padding-left:16px;color:var(--dim);font-size:12.5px;line-height:1.5}
-  .phase li:before{content:"·";position:absolute;left:2px;color:var(--accent);font-weight:700}
-  .primitive{margin-top:13px;background:linear-gradient(180deg,#191e26,#13171d);border:1px solid rgba(224,163,70,.42);border-radius:17px;padding:22px;text-align:center}
-  .primitive .small{font:500 10px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
-  .primitive p{font:500 clamp(21px,3.5vw,29px)/1.42 var(--serif)}
-  .primitive span{color:var(--accent)}
+  .meaning{display:grid;grid-template-columns:1.1fr .9fr;gap:11px}
+  .meaning-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:21px}
+  .meaning-card .small{font:500 10px var(--mono);letter-spacing:.1em;color:var(--accent);margin-bottom:9px}
+  .meaning-card h3{font:500 23px/1.35 var(--serif);margin-bottom:9px}.meaning-card p{color:var(--dim);font-size:13px;line-height:1.68}
+  .meaning-card ul{list-style:none;display:grid;gap:8px;margin-top:12px}
+  .meaning-card li{position:relative;padding-left:16px;color:var(--dim);font-size:12.5px;line-height:1.55}.meaning-card li:before{content:"·";position:absolute;left:2px;color:var(--accent)}
+  .not-wallet{border-color:rgba(224,163,70,.42)}
 
-  .product{background:var(--raised);border:1px solid var(--line);border-radius:20px;padding:26px}
-  .product-title{font:500 clamp(25px,4vw,34px)/1.3 var(--serif);margin-bottom:11px}.product-title span{color:var(--accent)}
-  .product>p{max-width:760px;color:var(--dim);font-size:14px;line-height:1.7}
-  .capabilities{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:17px}
-  .cap{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px}
-  .cap b{display:block;font-size:13px;margin-bottom:5px}.cap p{color:var(--dim);font-size:11.5px;line-height:1.5}
-  .rail-note{margin-top:12px;border:1px dashed rgba(224,163,70,.38);border-radius:12px;padding:13px 15px;color:var(--dim);font-size:12.5px;line-height:1.6}
-  .rail-note strong{color:var(--ink)}
+  .takeaways{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .takeaway{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:18px}
+  .takeaway .num{font:500 10px var(--mono);color:var(--accent);margin-bottom:9px}.takeaway h3{font:500 19px/1.35 var(--serif);margin-bottom:7px}.takeaway p{color:var(--dim);font-size:12.4px;line-height:1.63}
+  .product{margin-top:12px;background:var(--raised);border:1px solid var(--line);border-radius:17px;padding:22px}
+  .product h3{font:500 clamp(22px,3.4vw,29px)/1.4 var(--serif);margin-bottom:9px}.product h3 span{color:var(--accent)}
+  .product p{max-width:800px;color:var(--dim);font-size:13.5px;line-height:1.7}
+  .stop{margin-top:11px;color:var(--ink);background:rgba(207,122,82,.08);border:1px solid rgba(207,122,82,.4);border-radius:11px;padding:14px 16px;font-size:13px;line-height:1.65}
 
-  .wedge{display:grid;grid-template-columns:1.35fr .65fr;gap:12px;margin-top:13px}
-  .wedge-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
-  .wedge-card .label{font:500 10px var(--mono);letter-spacing:.1em;color:var(--accent);margin-bottom:9px}
-  .wedge-card h3{font:500 21px/1.3 var(--serif);margin-bottom:8px}.wedge-card p{color:var(--dim);font-size:12.8px;line-height:1.62}
-  .example-rule{margin-top:12px;font:400 11.5px/1.65 var(--mono);color:var(--dim);background:var(--raised);border-radius:9px;padding:11px 12px}
-
-  .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-  .road{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:17px}
-  .road .weeks{font:500 10px var(--mono);color:var(--accent);letter-spacing:.08em;margin-bottom:9px}
-  .road h3{font:500 18px/1.3 var(--serif);margin-bottom:7px}.road p{color:var(--dim);font-size:12px;line-height:1.55}
-  .metrics{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
-  .metrics span{font:400 10.5px var(--mono);color:var(--dim);background:var(--raised);border:1px solid var(--line);border-radius:999px;padding:6px 9px}
-
+  .test{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px}
+  .metric b{display:block;font-size:13px;margin-bottom:6px}.metric p{color:var(--dim);font-size:11.8px;line-height:1.55}
   details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
   summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;padding:14px 16px;font-size:13px;font-weight:600}
   summary::-webkit-details-marker{display:none}summary:after{content:"+";color:var(--accent);font-family:var(--mono)}details[open] summary:after{content:"–"}
-  .evidence{border-top:1px solid var(--line-soft);padding:13px 16px;color:var(--dim);font-size:12px;line-height:1.7}
-  .evidence a{color:var(--accent)}
-  .final{margin-top:38px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:15px;padding:20px;font:500 clamp(20px,3.2vw,27px)/1.5 var(--serif)}
+  .evidence{border-top:1px solid var(--line-soft);padding:13px 16px;color:var(--dim);font-size:12px;line-height:1.72}.evidence strong{color:var(--ink)}.evidence a{color:var(--accent)}
+  .final{margin-top:36px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:15px;padding:20px;font:500 clamp(19px,3vw,26px)/1.52 var(--serif)}
   .final span{color:var(--accent)}
-  footer{margin-top:44px;border-top:1px solid var(--line-soft);padding-top:18px;display:flex;justify-content:space-between;gap:16px;color:var(--faint);font:400 10.5px/1.6 var(--mono)}
+  footer{margin-top:42px;border-top:1px solid var(--line-soft);padding-top:18px;display:flex;justify-content:space-between;gap:16px;color:var(--faint);font:400 10.5px/1.6 var(--mono)}
 
-  @media(max-width:800px){.hero-grid,.converge,.control-loop,.roadmap{grid-template-columns:1fr}.capabilities{grid-template-columns:repeat(2,1fr)}.wedge{grid-template-columns:1fr}.case-flow{grid-template-columns:1fr}.case-step:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-19px;transform:translateX(50%)}.tradeoff{grid-template-columns:1fr}}
-  @media(max-width:520px){.page{padding:25px 15px 40px}.hero{padding:29px 21px}.tag{display:none}h1{font-size:39px}.subtitle{font-size:15px}.capabilities{grid-template-columns:1fr}footer{display:block}footer span{display:block;margin-top:5px}}
-  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  @media print{:root{--bg:#fff;--raised:#fff;--card:#fff;--line:#cfd3d8;--line-soft:#e5e7eb;--ink:#15171a;--dim:#444b55;--faint:#6b7280;--accent:#945a08;--accent-soft:#f7ead6}body{background:#fff}.page{max-width:none;padding:18px}.hero,.product{break-inside:avoid}.back{display:none}}
+  @media(max-width:820px){.flow{grid-template-columns:1fr}.step:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-17px}.meaning{grid-template-columns:1fr}.takeaways{grid-template-columns:1fr}.test{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.page{padding:25px 15px 40px}.hero{padding:29px 21px}.tag{display:none}h1{font-size:38px}.choice{grid-template-columns:1fr}.example-head{display:block}.budget{display:inline-block;margin-top:10px}.test{grid-template-columns:1fr}footer{display:block}footer span{display:block;margin-top:5px}}
+  @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+  @media print{:root{--bg:#fff;--raised:#fff;--card:#fff;--line:#cfd3d8;--line-soft:#e5e7eb;--ink:#15171a;--dim:#444b55;--faint:#6b7280;--accent:#945a08;--accent-soft:#f7ead6}body{background:#fff}.page{max-width:none;padding:18px}.hero,.example{break-inside:avoid}.back{display:none}}
 </style>
 </head>
 <body>
 <main class="page">
   <div class="topbar">
     <div class="brand"><a class="back" href="../" aria-label="返回研究索引" title="返回 Agentic Payment 研究索引">←</a><div>Isometry · Agentic Payment 研究</div></div>
-    <span class="tag">FORUM SYNTHESIS · 2026-07-17</span>
+    <span class="tag">论坛复盘 · 2026-07-17</span>
   </div>
 
   <header class="hero">
-    <div class="kicker">公司简报 · 5 分钟读懂</div>
-    <h1>Agentic Payment<br><span>真正改变了什么</span></h1>
-    <p class="subtitle">当软件开始自主选择供应商、调用 API、购买服务，它不只是“帮人付款”——它开始持续地产生财务后果。</p>
-    <div class="punchline">核心问题不是给 Agent 一张卡，而是让它在 <strong>可证明的授权</strong> 内花钱，并把错误半径锁在公司承受得起的范围。</div>
-    <div class="hero-grid">
-      <div class="hero-point"><b>旧系统的对象</b><p>一笔 transaction：能不能扣款。</p></div>
-      <div class="hero-point"><b>新系统的对象</b><p>一个 mandate：为什么能花、最多花多少。</p></div>
-      <div class="hero-point"><b>产品机会</b><p>授权、预算、执行、凭证与恢复的控制层。</p></div>
-    </div>
+    <div class="kicker">一句话结论</div>
+    <h1>AI 每用一次服务，<br><span>先确保这笔钱收得到</span></h1>
+    <p class="subtitle">公司预算只能说明“允许花”；服务商要避免坏账，还必须提前锁住真实资金，或获得可兑现的担保额度。</p>
+    <div class="answer">正确机制是：<strong>预算管权限，预留金管坏账；</strong>每次使用从预留金中扣除，资金再合并结算。</div>
   </header>
 
-  <section class="section" id="problem">
-    <div class="section-label">01 · The structural problem</div>
-    <h2>一个 Facebook 广告案例，就能看懂旧支付栈为什么不够</h2>
-    <p class="lead">广告是连续发生的经济活动，但卡支付通常不是连续结算。两者之间的时间差，就是信用风险。</p>
-    <div class="case-flow">
-      <article class="case-step"><div class="num">STEP 01</div><h3>广告先交付</h3><p>Meta 已经提供曝光或点击，广告主先获得了服务。</p></article>
-      <article class="case-step"><div class="num">STEP 02</div><h3>累计后扣款</h3><p>消费达到 payment threshold 或账单日，Meta 才向卡发起扣款。</p></article>
-      <article class="case-step"><div class="num">STEP 03</div><h3>卡可能失败</h3><p>余额不足、虚拟卡失效或账户被抛弃，已交付服务变成应收款；追不回才形成坏账。</p></article>
+  <section class="section">
+    <div class="section-label">01 · 为什么需要它</div>
+    <h2>今天只有两个都不太好的选择</h2>
+    <div class="choice">
+      <article class="choice-card"><div class="label">选择 A</div><h3>每用一次，就刷一次卡</h3><p>服务商几乎没有收不回钱的风险，但一次几分钱的 API 调用也要承担一笔支付处理成本，不划算。</p></article>
+      <article class="choice-card"><div class="label">选择 B</div><h3>先用一个月，月底再付</h3><p>支付次数少了，但服务已经给出去了。如果卡失效或客户不付款，服务商只能承担损失。</p></article>
     </div>
-    <div class="tradeoff">
-      <div class="side fast"><b>每次消费立即刷卡</b><p>信用敞口小，但极小额交易的固定处理成本可能吃掉收入。</p></div>
-      <div class="side batch"><b>攒到较大金额再刷</b><p>处理成本下降，但服务商必须先给信用，承担扣款失败风险。</p></div>
+    <div class="plain-solution">
+      <h3>Agentic Payment 提供第三种选择</h3>
+      <p><span class="accent">先锁住一笔真正可收取的资金或担保额度，</span>每次使用都从这笔预留中扣减并记账，之后再合并结算。这样既不用每几分钱刷一次卡，也不会把整个月的服务无担保地送出去。</p>
     </div>
-    <div class="insight"><strong>我们的语义判断：</strong>这个案例不是为了证明“必须用稳定币”，而是在证明——当经济活动变成机器速度，支付、信用控制和服务交付必须进入同一个实时工作流。</div>
+    <p class="case-note">论坛里的 Facebook 广告坏账正好说明：如果只是累计账单，却没有提前锁住可收取的资金，服务交付越多，潜在坏账就越大。</p>
   </section>
 
-  <section class="section" id="evidence-chain">
-    <div class="section-label">02 · What the forum converged on</div>
-    <h2>三场会议，其实都在回答同一个问题</h2>
-    <p class="lead"><strong>怎样让 Agent 获得足够的自主权，又不获得无限的财务权限？</strong></p>
-    <div class="converge">
-      <article class="source"><div class="time">14:13 · RISK</div><h3>签名不等于正确</h3><p>托管、盲签、KYT 和冻结说明：钱能移动，不代表交易安全、合规或可恢复。</p></article>
-      <article class="source"><div class="time">14:30 · ECONOMICS</div><h3>支付频率不等于结算频率</h3><p>逐请求计量可以实时；外部资金可以按余额、阈值或账期聚合结算。</p></article>
-      <article class="source"><div class="time">14:57 · PRODUCT</div><h3>稀缺的是授权凭证</h3><p>企业真正需要的是把用户授权安全地扩展给 Agent、应用和协议，并处理错误责任。</p></article>
-    </div>
-  </section>
-
-  <section class="section" id="system">
-    <div class="section-label">03 · The control loop</div>
-    <h2>Agentic Payment 是一个控制闭环，不是一根付款管道</h2>
-    <p class="lead">Agent 可以提出行动，但金融执行必须由确定性的权限、政策和账务系统约束。</p>
-    <div class="control-loop">
-      <article class="phase before"><div class="phase-label">Before payment</div><h3>花钱之前</h3><ul><li>谁代表谁行动</li><li>任务、用途和供应商</li><li>额度、频率、期限与审批</li><li>风险与合规检查</li></ul></article>
-      <article class="phase during"><div class="phase-label">During payment</div><h3>花钱之中</h3><ul><li>计量用量与实时预算</li><li>预留资金或控制信用敞口</li><li>选择卡、银行、余额等轨道</li><li>幂等、重试和异常暂停</li></ul></article>
-      <article class="phase after"><div class="phase-label">After payment</div><h3>花钱之后</h3><ul><li>证明服务是否交付</li><li>把请求、账务和结算对上</li><li>退款、争议与人工接管</li><li>重建完整决策证据</li></ul></article>
-    </div>
-    <div class="primitive"><div class="small">The new primitive</div><p>Agent 需要的不是无限钱包，而是一张可撤销、可解释的 <span>Spending Mandate</span>。</p></div>
-  </section>
-
-  <section class="section" id="product">
-    <div class="section-label">04 · Product thesis</div>
-    <h2>公司的切入点：Agent Spend Control Layer</h2>
-    <div class="product">
-      <div class="product-title">先回答“为什么可以花”，<br>再处理“出错后<span>谁负责</span>”。</div>
-      <p>产品不是替 Agent 再接一个支付 API，而是在 Agent 与任何支付轨道之间加入统一的委托、预算、账本和证据层。</p>
-      <div class="capabilities">
-        <div class="cap"><b>委托</b><p>主体、任务、范围、额度、期限与撤销。</p></div>
-        <div class="cap"><b>控制</b><p>政策、风险、审批升级和异常停止。</p></div>
-        <div class="cap"><b>账务</b><p>逐请求计量、资金预留与聚合结算。</p></div>
-        <div class="cap"><b>证据</b><p>交付、对账、退款和争议材料。</p></div>
+  <section class="section">
+    <div class="section-label">02 · 一个具体例子</div>
+    <h2>公司给 AI 1,000 元预算，并先锁住 100 元</h2>
+    <div class="example">
+      <div class="example-head">
+        <h3>AI 想调用一次收费 0.02 元的数据 API</h3>
+        <div class="budget">预算 ¥1,000 · 已锁 ¥100</div>
       </div>
-      <div class="rail-note"><strong>轨道是实现选择，不是产品定义。</strong> 卡、银行、预付余额或稳定币都可以接入；稳定币可能改善某些预付和跨境结算，但不替代授权与责任。</div>
-    </div>
-    <div class="wedge">
-      <article class="wedge-card"><div class="label">FIRST WEDGE</div><h3>企业 API / 模型 / 数据 / 工具消费</h3><p>这是最接近 Agent 原生工作的支出：频率高、可计量、供应商明确、预算可限制，也能直接观察信用敞口和对账成本。</p><div class="example-rule">每月预算 50,000 · 白名单供应商 · 每请求记账 · 达阈值聚合结算 · 越界转人工审批</div></article>
-      <article class="wedge-card"><div class="label">NOT YET</div><h3>开放式 C 端代购</h3><p>错误购买、受理、退款、拒付和消费者保护过于复杂，不适合作为第一个验证场景。</p></article>
+      <div class="flow">
+        <article class="step"><div class="num">01</div><h4>AI 发起请求</h4><p>它说明要买什么服务、价格多少、为哪个任务使用。</p></article>
+        <article class="step"><div class="num">02</div><h4>系统检查</h4><p>供应商是否允许？任务是否合规？预算和已锁资金是否都足够？</p></article>
+        <article class="step"><div class="num">03</div><h4>占用 0.02 元</h4><p>预算变成 999.98 元，已锁余额变成 99.98 元；这笔钱已经有保障。</p></article>
+        <article class="step"><div class="num">04</div><h4>服务执行并记账</h4><p>系统把这次 API 结果、用量和费用放在同一条记录里。</p></article>
+        <article class="step"><div class="num">05</div><h4>合并结算</h4><p>一天结束或累计到阈值后，把已占用的预留金一次性结给供应商。</p></article>
+      </div>
+      <div class="example-result">预留金不足时，系统先尝试补足；补不进去，下一次 API 请求就停止。服务商不会像 Facebook 案例那样，在交付一大段服务后才发现卡里没有钱。</div>
     </div>
   </section>
 
-  <section class="section" id="action">
-    <div class="section-label">05 · 90-day test</div>
-    <h2>90 天只验证一件事：企业会不会为“安全自主”付费</h2>
-    <p class="lead">不要先造通用协议或新链。用真实请求与真实资金流，验证控制层是否降低审批、信用和对账成本。</p>
-    <div class="roadmap">
-      <article class="road"><div class="weeks">WEEK 1–2</div><h3>找到真实支出流</h3><p>选择一个多模型/API 企业客户，画清审批、扣款、信用与月结流程。</p></article>
-      <article class="road"><div class="weeks">WEEK 3–8</div><h3>搭最小控制闭环</h3><p>实现 mandate、政策、计量账本、资金预留、凭证与异常接管。</p></article>
-      <article class="road"><div class="weeks">WEEK 9–13</div><h3>受控生产试点</h3><p>白名单、低额度、短授权；对比现有卡/余额方案的真实结果。</p></article>
+  <section class="section">
+    <div class="section-label">03 · 所以它到底是什么</div>
+    <h2>预算和付款保障，是两件不同的事</h2>
+    <div class="meaning">
+      <article class="meaning-card">
+        <div class="small">BUDGET · 管权限</div>
+        <h3>公司允许 AI 花多少</h3>
+        <ul><li>谁授权这个 AI 花钱</li><li>它可以买哪些服务</li><li>单次和每月最多花多少</li><li>什么情况需要人工批准</li></ul>
+      </article>
+      <article class="meaning-card not-wallet">
+        <div class="small">RESERVE · 管坏账</div>
+        <h3>服务商能否真的收到钱</h3>
+        <p>预付余额、托管资金、卡预授权或有担保额度都可以。关键不是账面上“扣了预算”，而是这笔服务发生前，已经有一笔可兑现的资金保障。</p>
+      </article>
     </div>
-    <div class="metrics"><span>安全自动完成率</span><span>最大信用敞口</span><span>每个经济事件成本</span><span>异常 / 重复率</span><span>对账工时</span><span>客户愿付价格</span></div>
   </section>
 
-  <section class="section" id="sources">
-    <div class="section-label">Evidence · click to expand</div>
-    <h2>证据边界</h2>
-    <details><summary>Facebook 广告计费机制</summary><div class="evidence">Meta 官方说明：自动计费账户达到 payment threshold 或月度账单日才扣款；扣款失败后广告暂停、账户进入未结状态。具体“2,000 美元阈值”和“每年十几亿美元损失”只是论坛发言，未被本轮验证。<br><a href="https://www.facebook.com/business/help/105373712886516">Meta · When Meta charges you for ads</a> · <a href="https://www.facebook.com/business/help/268196136699959">Meta · Fix a failed payment</a></div></details>
-    <details><summary>论坛录音定位</summary><div class="evidence">14:13：00:05:12–00:13:21，托管、盲签、KYT 与冻结。<br>14:30：00:10:20–00:17:28，信任、卡成本、Facebook 阈值扣款与 API 场景。<br>14:57：00:39:42–00:48:52，授权凭证、责任、PMF 与 B2B。</div></details>
-    <details><summary>白皮书定位与材料限制</summary><div class="evidence">PDF 19–29：两类需求；PDF 30–49：生产级控制、Payment Intent 与执行栈；PDF 52–58：治理与市场展望。原始三段 WAV 和 PDF 当前不在本地原路径，本文依据精修转录和页码化笔记，不是人工逐字复核。</div></details>
+  <section class="section">
+    <div class="section-label">04 · 这次论坛真正留下什么</div>
+    <h2>三个可以带回公司的判断</h2>
+    <div class="takeaways">
+      <article class="takeaway"><div class="num">01</div><h3>先做机器服务，不先做代购</h3><p>API、模型、数据和工具容易计量、容易限制，也更容易证明服务是否交付。</p></article>
+      <article class="takeaway"><div class="num">02</div><h3>授权和资金保障缺一不可</h3><p>只有授权会导致“允许消费但收不到钱”；只有锁钱又无法判断这次消费是否符合用户真实意图。</p></article>
+      <article class="takeaway"><div class="num">03</div><h3>行业还没有证明 PMF</h3><p>论坛嘉宾也没有看到明确赢家。现在应该验证真实损失和付费意愿，而不是先造通用协议。</p></article>
+    </div>
+    <div class="product">
+      <h3>值得测试的产品：<span>企业 AI 支出控制与资金预留</span></h3>
+      <p>先接入一个企业的模型和 API 流量，统一管理多个 AI、多个供应商的授权、预算、滚动预留金、用量、付款和对账。它只有在减少真实坏账、资金占用、人工审批或对账成本时才有价值。</p>
+      <div class="stop">如果一家企业现有的 API key、预付余额和预算提醒已经够用，或者它只想看报表、不愿让系统自动阻断消费，这个产品就不成立。</div>
+    </div>
   </section>
 
-  <div class="final">Agentic Payment 的机会，不在“让软件付得更快”，而在让软件获得 <span>可控的经济自主权</span>。</div>
-  <footer><div>Isometry · Agentic Payment 研究</div><span>证据受限版 · 2026-07-18 · 不构成法律、合规或投资意见</span></footer>
+  <section class="section">
+    <div class="section-label">05 · 怎么验证</div>
+    <h2>拿真实 API 流量跑 30 天</h2>
+    <p class="lead">不要先做新支付网络。先找一个愿意把小额、可控流量接进来的企业，只看四个结果。</p>
+    <div class="test">
+      <div class="metric"><b>审批减少了吗</b><p>多少笔消费不用再由人逐一确认。</p></div>
+      <div class="metric"><b>坏账变小了吗</b><p>已经交付、但没有预留资金覆盖的服务还有多少。</p></div>
+      <div class="metric"><b>账更好对了吗</b><p>API 使用记录能否自动对应到费用和付款。</p></div>
+      <div class="metric"><b>客户愿意付费吗</b><p>不是觉得有趣，而是愿意持续付钱使用。</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-label">证据边界</div>
+    <h2>哪些是来源，哪些是我们的判断</h2>
+    <details><summary>录音里直接说了什么</summary><div class="evidence">14:30 的 00:11:23–00:16:53 对比了小额卡处理成本与月结信用风险，并把 API 按量消费视为更自然的早期场景。14:57 的 00:40:21–00:48:52 强调用户授权、错误责任、企业场景，以及当前尚未出现明确 PMF。</div></details>
+    <details><summary>白皮书提供了什么</summary><div class="evidence">PDF 24–25、49–50 同时列出逐请求支付、预付余额、企业发票和月度净额等方式。<strong>“预算管权限、预留金管坏账，再批量结算”是我们基于这些材料提出的产品判断，不是白皮书原句。</strong></div></details>
+    <details><summary>Facebook 案例确认了什么</summary><div class="evidence">Meta 官方说明，广告账户会在达到 payment threshold 或月度账单日扣款，付款失败后广告可能暂停。论坛提到的具体阈值和年度损失数字没有被验证，也不作为本页结论依据。<br><a href="https://www.facebook.com/business/help/105373712886516">Meta · When Meta charges you for ads</a> · <a href="https://www.facebook.com/business/help/268196136699959">Meta · Fix a failed payment</a></div></details>
+    <details><summary>材料有什么限制</summary><div class="evidence">本页依据 GPU 转录后的精修文本和白皮书页码化笔记。语义精修不等于人工逐字复核；未核实的专名、预测和商业数字没有作为核心依据。</div></details>
+  </section>
+
+  <div class="final"><span>预算只能证明“允许花”，预留金才能保证“收得到”。</span>Agentic Payment 要把两者放进同一次机器行动里，再把已保障的小额消费合并结算。</div>
+  <footer><div>Isometry · Agentic Payment 研究</div><span>录音 + 白皮书综合 · 2026-07-18</span></footer>
 </main>
 </body>
 </html>
