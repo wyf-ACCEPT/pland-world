@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="color-scheme" content="dark" />
+<title>数据脱敏相关调研｜Agent 训练数据市场</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --clay:#cf7a52; --slate:#6f9bd1; --good:#5fb98c; --warn:#d9884e; --bad:#d9635e;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 80% -10%, rgba(111,155,209,.08), transparent 60%),
+      radial-gradient(900px 520px at 8% 4%, rgba(224,163,70,.045), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .page{max-width:1000px;margin:0 auto;padding:38px 24px 56px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:600;font-size:15px;color:var(--ink-dim)}
+  .brand a{color:var(--ink-dim);text-decoration:none}
+  .brand a:hover{color:var(--slate)}
+  .brand-mark{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;background:var(--bg-raised);color:var(--slate);font-weight:700;font-size:17px;text-decoration:none;transition:border-color .16s ease;flex:none}
+  .brand-mark:hover{border-color:var(--slate)}
+  .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;border-radius:999px;border:1px solid var(--line);padding:7px 13px;background:var(--bg-raised);color:var(--ink-dim);white-space:nowrap}
+  .tag.hot{border-color:rgba(111,155,209,.4);color:var(--slate);background:rgba(111,155,209,.12)}
+
+  .hero{margin-top:34px;max-width:820px}
+  .kicker{font-family:var(--mono);font-size:12px;color:var(--slate);font-weight:500;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,5.4vw,52px);line-height:1.06;letter-spacing:-.02em;margin:0 0 18px}
+  .subtitle{font-size:17px;line-height:1.7;color:var(--ink-dim);margin:0}
+  .subtitle b{color:var(--ink)}
+
+  h2{font-family:var(--serif);font-weight:500;font-size:29px;letter-spacing:-.01em;margin:0 0 8px;color:var(--ink)}
+  h3{font-family:var(--serif);font-weight:500;font-size:20px;margin:0 0 8px;color:var(--ink)}
+  .sec{margin-top:56px}
+  .sec > .lead{color:var(--ink-dim);font-size:15.5px;line-height:1.72;margin:0 0 22px;max-width:820px}
+  .sec > .lead b{color:var(--ink)}
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:26px 0}
+  .stat{border:1px solid var(--line);border-radius:13px;background:var(--bg-card);padding:18px 18px}
+  .stat .v{font-family:var(--mono);font-size:25px;font-weight:600;color:var(--slate);line-height:1.1;letter-spacing:-.01em}
+  .stat .k{font-size:12.5px;color:var(--ink-faint);margin-top:8px;line-height:1.5}
+
+  .callout{border:1px solid var(--line);border-left:3px solid var(--slate);border-radius:12px;background:var(--bg-card);padding:22px 24px;margin:26px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.gold{border-left-color:var(--accent)}
+  .callout.bad{border-left-color:var(--bad)}
+  .callout .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-bottom:10px}
+  .callout.warn .lab{color:var(--warn)}
+  .callout.gold .lab{color:var(--accent)}
+  .callout.bad .lab{color:var(--bad)}
+  .callout p{font-size:15.5px;line-height:1.72;color:var(--ink-dim);margin:0}
+  .callout p b{color:var(--ink)}
+  .callout p + p{margin-top:12px}
+
+  .quote{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(111,155,209,.07),rgba(26,32,41,.6));padding:26px 28px;margin:26px 0}
+  .quote .q{font-family:var(--serif);font-size:21px;line-height:1.6;color:var(--ink);letter-spacing:-.005em}
+  .quote .q b{color:var(--slate);font-weight:500}
+  .quote .attr{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:14px;letter-spacing:.04em}
+
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--bg-card)}
+  table{border-collapse:collapse;width:100%;min-width:600px;font-size:14px}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.6}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;background:rgba(22,27,34,.6);white-space:nowrap}
+  td{color:var(--ink-dim)}
+  td b{color:var(--ink);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:rgba(29,36,48,.4)}
+  td.m,.m{font-family:var(--mono);font-size:12.5px}
+  .ph{font-family:var(--mono);font-size:12px;color:var(--good);background:rgba(95,185,140,.1);border:1px solid rgba(95,185,140,.28);border-radius:5px;padding:1px 6px;white-space:nowrap}
+
+  pre{font-family:var(--mono);font-size:12.5px;line-height:1.85;background:#0b0e13;border:1px solid var(--line);border-radius:12px;padding:20px 22px;overflow-x:auto;color:var(--ink-dim);margin:0}
+  pre .cm{color:var(--ink-faint)}
+  pre .hi{color:var(--clay)}
+  pre .ok{color:var(--good)}
+  pre .st{color:var(--slate)}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--bg-raised);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--slate)}
+
+  .steps{display:grid;gap:12px;margin:22px 0}
+  .step{display:flex;gap:16px;border:1px solid var(--line);border-radius:13px;background:var(--bg-card);padding:19px 21px}
+  .step .n{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--slate);border:1px solid rgba(111,155,209,.35);background:rgba(111,155,209,.1);border-radius:7px;padding:5px 9px;height:fit-content;flex:none}
+  .step .t{font-size:15.5px;font-weight:600;color:var(--ink);margin-bottom:5px}
+  .step .d{font-size:14.5px;line-height:1.7;color:var(--ink-dim)}
+  .step .d b{color:var(--ink)}
+
+  .three{display:grid;gap:12px;margin:22px 0}
+  .lay{display:flex;gap:18px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;background:var(--bg-card);padding:22px 24px;position:relative;overflow:hidden}
+  .lay:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
+  .lay.done{--c:var(--good)} .lay.no{--c:var(--bad)}
+  .lay .mark{font-size:22px;flex:none;line-height:1.2}
+  .lay .t{font-size:17px;font-weight:600;color:var(--ink);margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .lay .st{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;border-radius:5px;padding:2px 8px;border:1px solid var(--c);color:var(--c)}
+  .lay .d{font-size:14.5px;line-height:1.72;color:var(--ink-dim)}
+  .lay .d b{color:var(--ink)}
+
+  ul.bul{margin:0;padding-left:20px}
+  ul.bul li{color:var(--ink-dim);font-size:15px;line-height:1.74;margin-bottom:10px}
+  ul.bul li:last-child{margin-bottom:0}
+  ul.bul li b{color:var(--ink)}
+
+  .foot-note{font-size:13.5px;color:var(--ink-faint);line-height:1.7;margin-top:14px}
+
+  .backlink{display:inline-flex;align-items:center;gap:8px;margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--ink-dim);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:9px 16px;background:var(--bg-raised);transition:border-color .16s ease,color .16s ease}
+  .backlink:hover{border-color:var(--slate);color:var(--slate)}
+
+  footer{margin-top:46px;border-top:1px solid var(--line-soft);padding-top:20px;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-align:center;letter-spacing:.04em;line-height:1.9}
+
+  @media(max-width:760px){
+    h1{font-size:32px} h2{font-size:24px}
+    .topbar{display:block}.tag{display:inline-block;margin-top:12px}
+    .page{padding:26px 16px 40px}
+    .step{flex-direction:column;gap:10px}
+    pre{font-size:11.5px}
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand">
+        <a class="brand-mark" href="/" title="返回 pland.world" aria-label="返回 pland.world">⌂</a>
+        <div><a href="../">Agent 训练数据市场</a> <span style="color:var(--ink-faint)">/</span> 数据脱敏</div>
+      </div>
+      <span class="tag hot">实做记录 · 2026-08</span>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">专题二 · 供给侧</div>
+      <h1>数据脱敏相关调研</h1>
+      <p class="subtitle">一套真正跑过 <b>5.4 GB 真实 coding-agent 会话</b>的凭证清除方案——不是纸面方案。它解决了一个很具体的问题，也<b>明确没有解决</b>另外两个更大的问题。两部分同样重要。</p>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><div class="v">18,380</div><div class="k">条完整对话</div></div>
+      <div class="stat"><div class="v">129 万</div><div class="k">条消息</div></div>
+      <div class="stat"><div class="v">5.4 GB</div><div class="k">原始数据量</div></div>
+      <div class="stat"><div class="v">4.3%</div><div class="k">的记录里混着活体凭证</div></div>
+      <div class="stat"><div class="v">9,837</div><div class="k">次替换 · 复扫零残留</div></div>
+    </div>
+
+    <div class="callout">
+      <div class="lab">背景</div>
+      <p>数据来自 API 中转层录制的真实 coding-agent 会话。真实流量里<b>不可避免地混着活体凭证</b>——API key、云平台密钥、私钥文件内容——而且它们会出现在任何位置：消息正文、工具调用参数、工具返回、用户随手粘贴的代码块。</p>
+      <p>目标很明确：<b>清除所有可用凭证，同时对数据做字节级的最小改动</b>。训练数据的价值在于真实性，所以消息文本、代码、文件路径、项目名一律保持原样，只有凭证子串被换成带类型的占位符。工具是一个约 130 行、<b>无第三方依赖</b>的 Python 脚本。</p>
+    </div>
+
+    <!-- ============ 设计取舍 ============ -->
+    <section class="sec">
+      <div class="section-label">设计取舍</div>
+      <h2>在字节层替换，不解析 JSON</h2>
+      <p class="lead">脚本逐行处理 JSONL，<b>直接对原始字符串做正则替换</b>，不做「反序列化 → 改 → 重新序列化」。这个选择贯穿了后面所有设计，理由有三个：</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">01</div>
+          <div><div class="t">无死角</div><div class="d">凭证可能藏在任何嵌套深度——消息文本里、工具参数里、工具返回里、粘贴的代码里。<b>在字符串层面替换，无论它在结构的哪个位置都会被命中</b>，不需要预先知道数据长什么样。</div></div>
+        </div>
+        <div class="step">
+          <div class="n">02</div>
+          <div><div class="t">不动结构</div><div class="d">5 GB 数据不用重排。<b>替换点之外的每一个字节都与原始录制完全一致</b>——这对「保真」这个目标很关键，重新序列化会悄悄改变键序、空白和数字格式。</div></div>
+        </div>
+        <div class="step">
+          <div class="n">03</div>
+          <div><div class="t">可验证</div><div class="d">处理后逐行 <code>json.loads</code> 校验，<b>任何一次替换只要破坏了 JSON 结构就立即中止</b>，杜绝静默损坏。宁可整批失败，不要悄悄产出坏数据。</div></div>
+        </div>
+      </div>
+
+      <p class="foot-note">代价是：正则必须自己尊重 JSON 的转义规则。这个代价在第二层里变成了一个真实的坑，见下文的护栏。</p>
+    </section>
+
+    <!-- ============ 第一层 ============ -->
+    <section class="sec">
+      <div class="section-label">第一层</div>
+      <h2>八条类型化正则</h2>
+      <p class="lead">按顺序应用，<b>更特殊的模式必须排在前面</b>——<code>sk-ant-</code> 要先于 <code>sk-</code>，否则 Anthropic 的 key 会被误标成 OpenAI 的。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:150px">类别</th><th>匹配要点</th><th style="width:230px">占位符</th></tr></thead>
+          <tbody>
+            <tr><td class="m"><b>private_key</b></td><td>以 <span class="m">-----BEGIN … PRIVATE KEY-----</span> 起始，吞掉后续 base64 体；<b>END 标记可选</b></td><td><span class="ph">&lt;REDACTED_PRIVATE_KEY&gt;</span></td></tr>
+            <tr><td class="m"><b>anthropic_key</b></td><td><span class="m">sk-ant-</span> + 20 位以上</td><td><span class="ph">&lt;REDACTED_ANTHROPIC_KEY&gt;</span></td></tr>
+            <tr><td class="m"><b>openai_key</b></td><td><span class="m">sk-</span>（负向前瞻排除 <span class="m">sk-ant-</span>）+ 20 位以上</td><td><span class="ph">&lt;REDACTED_OPENAI_KEY&gt;</span></td></tr>
+            <tr><td class="m"><b>github_token</b></td><td><span class="m">ghp_ / gho_ / ghu_ / ghs_ / ghr_</span> 及 <span class="m">github_pat_</span></td><td><span class="ph">&lt;REDACTED_GITHUB_TOKEN&gt;</span></td></tr>
+            <tr><td class="m"><b>aws_key</b></td><td><span class="m">AKIA</span> + 16 位</td><td><span class="ph">&lt;REDACTED_AWS_KEY&gt;</span></td></tr>
+            <tr><td class="m"><b>gcp_key</b></td><td><span class="m">AIza</span> + 35 位</td><td><span class="ph">&lt;REDACTED_GCP_KEY&gt;</span></td></tr>
+            <tr><td class="m"><b>slack_token</b></td><td><span class="m">xox[baprs]-</span></td><td><span class="ph">&lt;REDACTED_SLACK_TOKEN&gt;</span></td></tr>
+            <tr><td class="m"><b>bearer</b></td><td><span class="m">Bearer</span> 后 30 位以上的 token（<b>保留 Bearer 字样</b>）</td><td><span class="ph">Bearer &lt;REDACTED_TOKEN&gt;</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="lab">一个容易忽略的细节</div>
+        <p>私钥规则<b>刻意</b>做成「从头吃到 base64 体」，而不是「从头匹配到尾标记」。因为对话里出现的私钥经常是<b>粘贴过来的半截</b>——没有 <span class="m">-----END-----</span>——<b>但残体依然是可用的密钥材料，必须照删</b>。要求匹配到结束标记的规则会把它们全部漏掉。</p>
+      </div>
+    </section>
+
+    <!-- ============ 第二层 ============ -->
+    <section class="sec">
+      <div class="section-label">第二层 · 最难的一类</div>
+      <h2>被源码「打散」的私钥</h2>
+      <p class="lead">最麻烦的情况是私钥<b>以代码形态出现</b>：被宿主语言包装，比如字符串拼接、转义的换行、heredoc。此时私钥被切成许多短 base64 片段，<b>任何「整块匹配」的正则都必然漏</b>。</p>
+
+      <pre><span class="cm">// 真实数据里长这样 —— 密钥被 " + " 切成了碎片</span>
+<span class="cm">// 整块正则匹配不到任何一段足够长的 base64</span>
+
+const PRIVATE_KEY =
+  <span class="hi">"-----BEGIN RSA PRIVATE KEY-----\n"</span> +   <span class="cm">← 只有头是完整的</span>
+  <span class="hi">"MIIEowIBAAKCAQEAxK9fQ2"</span> +                  <span class="cm">← 22 字符，太短</span>
+  <span class="hi">"vN8mR4tYuI0pAsDfGhJkLz"</span> +                  <span class="cm">← 22 字符，太短</span>
+  <span class="hi">"XcVbNmQwErTyUiOpAsDfGh\n"</span> +                <span class="cm">← 22 字符，太短</span>
+  <span class="hi">"-----END RSA PRIVATE KEY-----"</span>;</pre>
+
+      <p class="lead" style="margin-top:22px">对策是<b>放弃匹配「块的形状」，改为锚定加清扫</b>：</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">锚定</div>
+          <div><div class="t">找到每个 BEGIN 头</div><div class="d">不管后面被切得多碎，<b>头几乎总是完整的</b>——因为它是一个整体的字符串字面量。以它作为定位锚点。</div></div>
+        </div>
+        <div class="step">
+          <div class="n">求证</div>
+          <div><div class="t">在头之后 6,000 字符的窗口内，找一段 ≥40 字符的连续 base64</div><div class="d">找到了，才认定这里<b>真的是密钥区</b>。这一步是为了避免误伤：如果只是散文里提了一句「PEM 格式」，窗口里不会有大段 base64，内容原样不动。</div></div>
+        </div>
+        <div class="step">
+          <div class="n">清扫</div>
+          <div><div class="t">确认后，把窗口内所有 ≥12 字符的 base64 片段全部替换掉</div><div class="d">阈值从 40 降到 12——<b>拼接打散的短片段由此一网打尽</b>。降阈值之所以安全，正是因为「求证」那一步已经确认了这块区域的性质。</div></div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="lab">⚠️ 护栏：字节层替换的代价在这里现形</div>
+        <p>base64 的匹配带一个负向后顾断言 <code>(?&lt;!\\)</code>，<b>禁止从 JSON 转义序列的字母上起步</b>。</p>
+        <p>因为 <span class="m">\n</span>、<span class="m">\uXXXX</span> 里的 <span class="m">n</span>、<span class="m">u</span> 本身就是合法的 base64 字符。不加这道护栏，正则会从转义序列的字母开始吃，<b>吃掉那个字母、留下一个悬空的反斜杠，整条 JSON 记录就此损坏</b>。</p>
+      </div>
+    </section>
+
+    <!-- ============ 结果 ============ -->
+    <section class="sec">
+      <div class="section-label">结果</div>
+      <h2>替换统计与验证</h2>
+
+      <div class="tbl-wrap" style="margin-bottom:16px">
+        <table style="min-width:480px">
+          <thead><tr><th>类别</th><th style="width:120px">替换次数</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td class="m"><b>openai_key</b></td><td class="m" style="color:var(--slate)">9,358</td><td>占了绝大多数</td></tr>
+            <tr><td class="m"><b>key_material</b></td><td class="m" style="color:var(--slate)">369</td><td>第二层「锚定–求证–清扫」的战果</td></tr>
+            <tr><td class="m"><b>bearer</b></td><td class="m" style="color:var(--slate)">45</td><td></td></tr>
+            <tr><td class="m"><b>github_token</b></td><td class="m" style="color:var(--slate)">41</td><td></td></tr>
+            <tr><td class="m"><b>aws_key</b></td><td class="m" style="color:var(--slate)">20</td><td></td></tr>
+            <tr><td class="m"><b>gcp_key</b></td><td class="m" style="color:var(--slate)">2</td><td></td></tr>
+            <tr><td class="m"><b>anthropic_key</b></td><td class="m" style="color:var(--slate)">1</td><td></td></tr>
+            <tr><td class="m"><b>private_key</b></td><td class="m" style="color:var(--slate)">1</td><td>整块完整的私钥只有一个——其余全是被打散的</td></tr>
+            <tr><td class="m"><b>slack_token</b></td><td class="m" style="color:var(--ink-faint)">0</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot-note" style="margin-top:0">计数按<b>出现次数</b>：同一把密钥每出现一次记一次，所以次数远大于不同密钥的数量。<b>796 条记录（4.3%）含凭证</b>。</p>
+
+      <div class="callout gold" style="margin-top:26px">
+        <div class="lab">事后独立验证</div>
+        <p>① 对输出文件<b>重新扫描全部凭证模式，零残留</b>；② 全部 18,380 条记录仍能通过 JSON 解析（逐行校验在替换时同步执行，坏一条即中止导出）。</p>
+        <p>另有一道与脚本无关的前置防线：<b>中转层导出时从不携带调用方元数据</b>（IP、token 哈希等），它们根本不进数据集。</p>
+      </div>
+    </section>
+
+    <!-- ============ 教训 ============ -->
+    <section class="sec">
+      <div class="section-label">教训</div>
+      <h2>正则迭代了三轮才收敛</h2>
+      <p class="lead">两个坑都在私钥上，而且都指向同一个方向：</p>
+      <ul class="bul">
+        <li><b>截断私钥</b>——早期规则要求匹配到 <span class="m">-----END-----</span>，漏掉了对话里粘贴的半截密钥。修正：END 标记改为可选，匹配「头 + base64 体」。</li>
+        <li><b>源码拼接私钥</b>——被 <span class="m">" + "</span> 打散的片段短于任何合理的整块阈值。修正：引入第二层的「锚定 + 求证 + 清扫」。</li>
+      </ul>
+
+      <div class="quote">
+        <div class="q">对「密钥<b>长什么样</b>」建模是脆弱的；<br />对「密钥<b>出现在哪个语境</b>」建模——header 锚点 + 邻近窗口——更稳。</div>
+        <div class="attr">— 这套方案最有迁移价值的一条经验</div>
+      </div>
+    </section>
+
+    <!-- ============ 边界（核心增量） ============ -->
+    <section class="sec">
+      <div class="section-label">边界 · 这一节最重要</div>
+      <h2>它没有解决什么</h2>
+      <p class="lead">原文档第 6 节把边界写得很清楚：<b>脱的是各类活体凭证</b>，无论出现在文本、代码还是工具输出里；<b>不脱的是文件路径、项目名、用户粘贴的其他内容——全部原样保留</b>。</p>
+      <p class="lead">这个诚实的边界声明，恰好点出了一个更大的问题：日常说的「脱敏」其实混着<b>三件完全不同的事</b>，而这套方案只覆盖第一件。</p>
+
+      <div class="three">
+        <div class="lay done">
+          <div class="mark">✅</div>
+          <div>
+            <div class="t">凭证不泄露 <span class="st">已解决</span></div>
+            <div class="d">这是<b>安全</b>问题。上面整套机制解决的就是它，而且解得很扎实：零残留、结构无损、有独立复验。</div>
+          </div>
+        </div>
+        <div class="lay no">
+          <div class="mark">✕</div>
+          <div>
+            <div class="t">来源不可追溯 <span class="st">未解决</span></div>
+            <div class="d">这是<b>重识别</b>问题。文件路径、项目名、内部服务名全部原样保留——而代码风格、依赖组合、目录结构本身就是指纹。<b>去掉密钥不等于抹掉来源。</b></div>
+          </div>
+        </div>
+        <div class="lay no">
+          <div class="mark">✕</div>
+          <div>
+            <div class="t">有权转售 <span class="st">脱敏解决不了</span></div>
+            <div class="d">这是<b>权利</b>问题，而且它<b>本质上不是技术问题</b>。雇主的代码、客户信息、第三方网页内容、闭源模型的输出——都不能默认贡献者有权出售。<b>再干净的脱敏也变不出一份授权。</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout bad">
+        <div class="lab">⚠️ 这三层为什么必须分开讲</div>
+        <p>因为对外说「我们做了脱敏」时，对方听到的往往是第三层。而<b>买方真正会追问的也是第三层</b>——他们关心的是授权链，不是密钥。</p>
+        <p>把三件事混成一句「已脱敏」，会让「安全上没问题」被误读成「法律上可以卖了」。这两件事之间隔着的东西，<b>一行正则也补不上</b>。</p>
+      </div>
+    </section>
+
+    <!-- ============ 对照 ============ -->
+    <section class="sec">
+      <div class="section-label">对照</div>
+      <h2>市场上买方怎么描述同一件事</h2>
+      <p class="lead">把这套方案和<a href="../buyer-map/" style="color:var(--slate)">买方地图</a>里 Mercor Data 的公开说法放在一起，差距很说明问题。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:33%">维度</th><th>本方案</th><th>Mercor Data 的公开描述</th></tr></thead>
+          <tbody>
+            <tr><td><b>目标</b></td><td>清除<b>活体凭证</b></td><td>不可逆遮蔽 <b>PII、PHI、BII</b>（个人 / 健康 / 商业身份信息）</td></tr>
+            <tr><td><b>手段</b></td><td>类型化正则 + 语境锚定窗口</td><td>「确定性模式匹配 + 生成式 AI」</td></tr>
+            <tr><td><b>对原文的改动</b></td><td><b>字节级最小改动</b>，替换点之外完全一致</td><td>未公开</td></tr>
+            <tr><td><b>在流程中的位置</b></td><td>数据集导出后的<b>后处理</b></td><td>产品流程的<b>内建一环</b>，且前置了只读 OAuth 授权与企业签约</td></tr>
+            <tr><td><b>授权链</b></td><td><b>不在处理范围内</b></td><td>由企业签约与 OAuth 授权在<b>抽取之前</b>就解决</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout gold">
+        <div class="lab">⚠️ 推论</div>
+        <p>差别不在正则写得好不好——本方案在纯技术层面做得更细致，也更透明。</p>
+        <p>差别在<b>顺序</b>：Mercor 把授权放在采集<b>之前</b>，所以它的匿名化只需要解决安全问题；而对一份已经录好的存量数据做后处理，<b>无论做得多干净，都补不回一个当初不存在的授权</b>。这也正是买方地图里那条链的含义——<b>市场付费的形态是「先拿到同意，再采集」，不是「先采集，再脱敏」。</b></p>
+      </div>
+    </section>
+
+    <a class="backlink" href="../">← 返回研究索引</a>
+
+    <footer>
+      实做与方法说明 思鹏（Sipeng）· 边界分析与编排 PlanD<br />
+      数据集 agent-traces-20260806 · 方法说明 2026-08
+    </footer>
+  </main>
+</body>
+</html>

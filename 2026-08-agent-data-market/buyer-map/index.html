@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="color-scheme" content="dark" />
+<title>数据买方品类地图｜Agent 训练数据市场</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --clay:#cf7a52; --slate:#6f9bd1; --good:#5fb98c; --warn:#d9884e;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 80% -10%, rgba(224,163,70,.07), transparent 60%),
+      radial-gradient(900px 520px at 8% 4%, rgba(111,155,209,.05), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .page{max-width:1000px;margin:0 auto;padding:38px 24px 56px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:600;font-size:15px;color:var(--ink-dim)}
+  .brand a{color:var(--ink-dim);text-decoration:none}
+  .brand a:hover{color:var(--accent)}
+  .brand-mark{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;background:var(--bg-raised);color:var(--accent);font-weight:700;font-size:17px;text-decoration:none;transition:border-color .16s ease,color .16s ease;flex:none}
+  .brand-mark:hover{border-color:var(--accent)}
+  .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;border-radius:999px;border:1px solid var(--line);padding:7px 13px;background:var(--bg-raised);color:var(--ink-dim);white-space:nowrap}
+  .tag.hot{border-color:rgba(224,163,70,.4);color:var(--accent);background:var(--accent-soft)}
+
+  .hero{margin-top:34px;max-width:820px}
+  .kicker{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,5.4vw,52px);line-height:1.06;letter-spacing:-.02em;margin:0 0 18px}
+  .subtitle{font-size:17px;line-height:1.7;color:var(--ink-dim);margin:0}
+  .subtitle b{color:var(--ink)}
+
+  h2{font-family:var(--serif);font-weight:500;font-size:29px;letter-spacing:-.01em;margin:0 0 8px;color:var(--ink)}
+  h3{font-family:var(--serif);font-weight:500;font-size:21px;margin:0 0 8px;color:var(--ink)}
+  .sec{margin-top:56px}
+  .sec > .lead{color:var(--ink-dim);font-size:15.5px;line-height:1.72;margin:0 0 22px;max-width:820px}
+  .sec > .lead b{color:var(--ink)}
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px}
+
+  .callout{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;background:var(--bg-card);padding:22px 24px;margin:26px 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.slate{border-left-color:var(--slate)}
+  .callout .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+  .callout.warn .lab{color:var(--warn)}
+  .callout.slate .lab{color:var(--slate)}
+  .callout p{font-size:15.5px;line-height:1.72;color:var(--ink-dim);margin:0}
+  .callout p b{color:var(--ink)}
+  .callout p + p{margin-top:12px}
+
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--bg-card)}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+  th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.6}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;background:rgba(22,27,34,.6);white-space:nowrap}
+  td{color:var(--ink-dim)}
+  td b,td strong{color:var(--ink);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:rgba(29,36,48,.4)}
+  .num{font-family:var(--mono);font-size:13px;color:var(--accent);white-space:nowrap}
+
+  .badge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;border-radius:5px;padding:2px 7px;border:1px solid;white-space:nowrap}
+  .b-ok{color:var(--good);border-color:rgba(95,185,140,.4);background:rgba(95,185,140,.1)}
+  .b-warn{color:var(--warn);border-color:rgba(217,136,78,.42);background:rgba(217,136,78,.1)}
+  .b-info{color:var(--slate);border-color:rgba(111,155,209,.4);background:rgba(111,155,209,.1)}
+  .b-gold{color:var(--accent);border-color:rgba(224,163,70,.42);background:var(--accent-soft)}
+
+  .co{border:1px solid var(--line);border-radius:16px;background:var(--bg-card);padding:26px 26px;margin-bottom:16px;position:relative;overflow:hidden}
+  .co:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--acc,var(--accent))}
+  .co.g2{--acc:var(--slate)}
+  .co-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .co-head .nm{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--ink)}
+  .co-role{font-family:var(--mono);font-size:11.5px;color:var(--acc,var(--accent));letter-spacing:.03em}
+  .co-url{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-decoration:none;border-bottom:1px dotted var(--line)}
+  .co-url:hover{color:var(--accent);border-color:var(--accent)}
+  .kv{margin-top:18px;display:grid;grid-template-columns:132px 1fr;gap:11px 18px;font-size:14.5px;line-height:1.7}
+  .kv dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);padding-top:4px}
+  .kv dd{color:var(--ink-dim);margin:0}
+  .kv dd b{color:var(--ink)}
+
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .pill{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);background:var(--bg-raised);border-radius:7px;padding:5px 10px;color:var(--ink-dim)}
+  .pill.urgent{border-color:rgba(207,122,82,.45);color:var(--clay);background:rgba(207,122,82,.1)}
+
+  ul.bul{margin:0;padding-left:20px}
+  ul.bul li{color:var(--ink-dim);font-size:15px;line-height:1.74;margin-bottom:10px}
+  ul.bul li:last-child{margin-bottom:0}
+  ul.bul li b{color:var(--ink)}
+
+  code{font-family:var(--mono);font-size:12.5px;background:var(--bg-raised);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--accent)}
+
+  .flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:8px 0 4px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg-card)}
+  .flow .st{flex:1 1 140px;min-width:130px;padding:18px 16px;border-right:1px solid var(--line-soft);position:relative}
+  .flow .st:last-child{border-right:none}
+  .flow .st .n{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--accent);margin-bottom:7px}
+  .flow .st .t{font-size:14px;line-height:1.55;color:var(--ink);font-weight:600}
+  .flow .st .d{font-size:12.5px;line-height:1.55;color:var(--ink-faint);margin-top:5px}
+
+  .foot-note{font-size:13.5px;color:var(--ink-faint);line-height:1.7;margin-top:14px}
+  .foot-note a{color:var(--ink-dim);text-decoration:none;border-bottom:1px dotted var(--line)}
+  .foot-note a:hover{color:var(--accent);border-color:var(--accent)}
+
+  .srcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:6px}
+  .srcs a{display:block;text-decoration:none;border:1px solid var(--line-soft);border-radius:10px;background:rgba(22,27,34,.5);padding:13px 15px;transition:border-color .16s ease,background .16s ease}
+  .srcs a:hover{border-color:var(--accent);background:var(--bg-card)}
+  .srcs .s-nm{font-size:13.5px;color:var(--ink);font-weight:600}
+  .srcs .s-u{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:4px;word-break:break-all}
+
+  .backlink{display:inline-flex;align-items:center;gap:8px;margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--ink-dim);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:9px 16px;background:var(--bg-raised);transition:border-color .16s ease,color .16s ease}
+  .backlink:hover{border-color:var(--accent);color:var(--accent)}
+
+  footer{margin-top:46px;border-top:1px solid var(--line-soft);padding-top:20px;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-align:center;letter-spacing:.04em;line-height:1.9}
+
+  @media(max-width:760px){
+    h1{font-size:32px} h2{font-size:24px}
+    .topbar{display:block}.tag{display:inline-block;margin-top:12px}
+    .page{padding:26px 16px 40px}
+    .kv{grid-template-columns:1fr;gap:4px 0}
+    .kv dt{padding-top:10px}
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand">
+        <a class="brand-mark" href="/" title="返回 pland.world" aria-label="返回 pland.world">⌂</a>
+        <div><a href="../">Agent 训练数据市场</a> <span style="color:var(--ink-faint)">/</span> 买方地图</div>
+      </div>
+      <span class="tag hot">核实于 2026-08-18</span>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">专题一 · 需求侧</div>
+      <h1>数据买方品类地图</h1>
+      <p class="subtitle">谁在公开买 agent 数据、买什么品类、按什么指标验收、出什么价。<b>只收公开且能落地的采购证据</b>——「技术方向对得上」「正在大规模招人」「理论上肯定需要数据」这类一律不算数。按这个门槛筛完，结果和直觉差得很远。</p>
+    </section>
+
+    <div class="callout">
+      <div class="lab">一句话结论</div>
+      <p>公开挂着实时需求、能直接对接的<b>直接数据买方只有两家</b>：Labelbox Prism 和 Mercor Data。Turing、Surge AI、Mercor 专项和 Handshake 买的是<b>按题目生产的环境与专家产能</b>，不是现成的数据包。</p>
+      <p>⚠️ 而 OpenAI、Anthropic、Cursor、Kimi、Qwen、Poolside —— <b>一家都没有公开的采购入口</b>。</p>
+    </div>
+
+    <!-- ============ 核实 ============ -->
+    <section class="sec">
+      <div class="section-label">先看这个</div>
+      <h2>核实结果</h2>
+      <p class="lead">原始调研由思鹏在 2026-08-13 完成。本页把其中<b>每一条价格和规格都打回官方页面重新核对</b>了一遍（2026-08-18）。<b>五天里已经有两条来源失效</b>——这类页面的时效性比想象中短得多，所以核不动的地方会明说核不动，不照抄。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>核实项</th><th>结果</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Labelbox Prism</b><br />数据品类与报价</td>
+              <td><span class="badge b-ok">✅ 通过</span></td>
+              <td>不仅全部属实，官方页面比原摘要<b>更细</b>：实际是 <b>8 个品类</b>，且分「Urgent Priority / High Demand」两档。原摘要漏了「多模态医疗记录」和「授权的肖像与声音」两类。</td>
+            </tr>
+            <tr>
+              <td><b>Mercor Data</b><br />流程与付款</td>
+              <td><span class="badge b-ok">✅ 通过</span></td>
+              <td>只读 OAuth、自动匿名化、2–4 周电汇、推荐奖励最高 $100K 全部核实。官方另称「无前置费用、无 setup fee、不从款项中扣减」。</td>
+            </tr>
+            <tr>
+              <td><b>Surge AI</b><br />$100–150+/h、20–40+ h/周</td>
+              <td><span class="badge b-ok">✅ 通过</span></td>
+              <td>逐字一致。页面另标了年化口径 <b>$200–300k+/年</b>，并明确「不需要有 AI / 机器学习背景」。</td>
+            </tr>
+            <tr>
+              <td><b>Turing</b><br />案例：500+ 任务 / Pass@10 门槛</td>
+              <td><span class="badge b-ok">✅ 通过</span></td>
+              <td>案例页数字精确。且比原摘要更细：<b>100+ 任务模板</b>；难度分档 Easy = Pass@10 &gt; 7、Medium &lt; 7、<b>Hard &lt; 2</b>。</td>
+            </tr>
+            <tr>
+              <td><b>Mercor 专项</b><br />$50–190/h 等全部规格</td>
+              <td><span class="badge b-ok">✅ 通过</span><br /><span class="badge b-warn" style="margin-top:6px">已关闭</span></td>
+              <td>数字全部核实（$50–190/h、20+ h/周、账号需 ~6 个月历史、24 小时内交付、限美国）。<b>原文写「可能已关闭」，现已确认关闭</b>：页面显示「This listing is no longer accepting applications」。</td>
+            </tr>
+            <tr>
+              <td><b>Turing</b><br />$30–80/h（招聘页）</td>
+              <td><span class="badge b-warn">⚠️ 核不动</span></td>
+              <td>引用的招聘链接现在返回 <b>「Job Not Found」</b>。这个时薪<b>无法从来源核实</b>，本页不采信。</td>
+            </tr>
+            <tr>
+              <td><b>Handshake</b><br />$65–150/h</td>
+              <td><span class="badge b-warn">⚠️ 有出入</span></td>
+              <td>引用的岗位<b>已从招聘板下架</b>。查其公开 job board API，今天还挂着的合同制岗位是 <b>$80/h</b>（Physics Tutor）与 <b>$32–95/h</b>（AI Red Teamer）——<b>区间低于原文</b>。原数字可能来自已下架的岗位，也可能来自另一个投递入口。</td>
+            </tr>
+            <tr>
+              <td><b>模型厂商无公开采购入口</b></td>
+              <td><span class="badge b-info">ⓘ 未发现反证</span></td>
+              <td>这是个否定性结论，<b>无法被正面证实</b>。复核时未检索到 OpenAI / Anthropic 面向 agent trace 的公开品类、schema、报价或投递入口。只能说「没找到反例」，不能说「已证明不存在」。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 分类口径 ============ -->
+    <section class="sec">
+      <div class="section-label">分类口径</div>
+      <h2>「买方」是怎么定义的</h2>
+      <p class="lead">这套分类的价值在于<b>它能被证伪</b>。一家公司在招 AI 训练相关的岗位、或者技术路线上显然需要数据，都<b>不足以</b>说明它在买数据。要进这张地图，必须有公开、能落地的证据。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:200px">类别</th><th>进表门槛</th><th>对卖方意味着什么</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>直接买现成数据</b><br /><span style="font-size:12.5px;color:var(--ink-faint)">挂着实时需求</span></td>
+              <td>公开列出正在收的数据类型、经济条款，并有投递入口</td>
+              <td><span class="badge b-gold">可直接卖存量资产</span> 手上已有的数据可以直接报过去</td>
+            </tr>
+            <tr>
+              <td><b>直接买现成数据</b><br /><span style="font-size:12.5px;color:var(--ink-faint)">需先谈合作</span></td>
+              <td>公开数据范围、抽取与匿名化流程、付款节点</td>
+              <td>可以谈区域供给或数据处理合作，但<b>要先确认字段规格与价格</b></td>
+            </tr>
+            <tr>
+              <td><b>不买现成的</b><br /><span style="font-size:12.5px;color:var(--ink-faint)">按题目委托生产</span></td>
+              <td>公开付费题目、交付物、贡献者要求，以及价格或验收标准</td>
+              <td>卖的是<b>团队和产能</b>，不是数据包。攒好的日志在这里没有对应的收购口</td>
+            </tr>
+            <tr>
+              <td><b>相邻的授权市场</b></td>
+              <td>权利、质检、许可、分成机制清晰，但数据品类不是 agent trace</td>
+              <td>只用来<b>学机制</b>，不计入买方数量</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot-note">原始文档里这四类记作 A1 / A2 / B1 / C，另配 P0–P2 三档优先级。此处直接写成中文，含义不变。</p>
+    </section>
+
+    <!-- ============ 直接买方 ============ -->
+    <section class="sec">
+      <div class="section-label">第一类</div>
+      <h2>直接买现成数据的两家</h2>
+      <p class="lead">这两家公开接收或授权已有的企业数据资产，并且把数据类型、流程或价格信号摆在了明面上。</p>
+
+      <div class="co">
+        <div class="co-head">
+          <span class="nm">Labelbox Prism</span>
+          <span class="co-role">挂着实时需求 · 可直接投</span>
+          <a class="co-url" href="https://prism.labelbox.com/" target="_blank" rel="noopener">prism.labelbox.com ↗</a>
+        </div>
+        <dl class="kv">
+          <dt>最急的三类</dt>
+          <dd>
+            <div class="pill-row">
+              <span class="pill urgent">金融推理轨迹</span>
+              <span class="pill urgent">科学推理轨迹</span>
+              <span class="pill urgent">跨系统交互数据</span>
+            </div>
+            <div style="margin-top:9px;font-size:13.5px;color:var(--ink-faint);line-height:1.65">金融侧要的是承销、估值、预测、投资、并购流程里的专家决策过程；科学侧要「逐步的专家思考」，从诊断链、化合物合成到电路设计；跨系统那类原文举的例子是 <b style="color:var(--ink-dim)">Salesforce ↔ Jira ↔ Slack</b> 的 agentic 工作流。</div>
+          </dd>
+          <dt>其余五类</dt>
+          <dd>
+            <div class="pill-row">
+              <span class="pill">6+ 个月客服记录</span>
+              <span class="pill">多模态医疗记录</span>
+              <span class="pill">真实机器人遥测</span>
+              <span class="pill">代码生成与编辑轨迹</span>
+              <span class="pill">授权的肖像与声音</span>
+            </div>
+          </dd>
+          <dt>字段要求</dt>
+          <dd>跨系统类要<b>时间戳、用户角色、因果顺序</b>；客服类要<b>≥6 个月、多渠道、带 resolution 标签</b>，偏好高流量 B2C；代码类要<b>完整 IDE 会话日志：diff、测试结果、review 意见</b>，重点语言 Python / Rust / TypeScript / Go；医疗类要 IRB 批准或合格的去标识化。</dd>
+          <dt>价格</dt>
+          <dd><span class="num">小型数据集约 $50K</span> · <span class="num">大型企业合作 $1M+</span>；高度专精的可以再往上。结构是<b>签约时付一笔前置授权费，再加下游使用的收入分成</b>。</dd>
+          <dt>时间线</dt>
+          <dd>报价 <span class="num">48 小时内</span>；从对接到首笔付款 <span class="num">21 天内</span>。</dd>
+        </dl>
+        <div class="callout warn" style="margin:20px 0 0">
+          <div class="lab">⚠️ 读这条的时候要注意</div>
+          <p>「代码生成与编辑轨迹」要的是<b>完整 IDE 会话</b>——diff、测试结果、review 意见。这几项恰好是 API 中转层<b>录不到</b>的：中转层看得见消息、工具调用和工具返回，看不见文件状态变化、最终产物和成功失败信号。<b>同样叫「coding 数据」，采集位置不同，落在这张表上的档位就完全不同。</b></p>
+        </div>
+      </div>
+
+      <div class="co g2">
+        <div class="co-head">
+          <span class="nm">Mercor Data</span>
+          <span class="co-role">直接数据合作 · 需先谈</span>
+          <a class="co-url" href="https://www.mercor.com/data/" target="_blank" rel="noopener">mercor.com/data ↗</a>
+        </div>
+        <dl class="kv">
+          <dt>在收什么</dt>
+          <dd>企业的<b>运营流水</b>：消息、会议、文档、项目追踪；邮件、日历事件、文档编辑、任务完成、会话活动；代码仓库与工程流程；销售 / CRM；财务与 HR。支持 <b>50+ 集成</b>。</dd>
+          <dt>流程</dt>
+          <dd>
+            <div class="flow" style="margin-top:2px">
+              <div class="st"><div class="n">01</div><div class="t">摸底</div><div class="d">梳理工作流、工具与数据分布</div></div>
+              <div class="st"><div class="n">02</div><div class="t">连接</div><div class="d">OAuth 只读授权</div></div>
+              <div class="st"><div class="n">03</div><div class="t">抽取</div><div class="d">后台自动运行</div></div>
+              <div class="st"><div class="n">04</div><div class="t">匿名化</div><div class="d">确定性模式匹配 + 生成式 AI 不可逆遮蔽 PII / PHI / BII</div></div>
+              <div class="st"><div class="n">05</div><div class="t">付款</div><div class="d">交付后电汇</div></div>
+            </div>
+          </dd>
+          <dt>付款</dt>
+          <dd>签约后 <span class="num">2–4 周</span>内电汇，交付匿名化数据集后支付。<b>无前置费用、无 setup fee、不从款项中扣减。</b>金额取决于数据量、连接的工具数和数据深度——<b>无统一公开单价</b>。企业推荐奖励最高 <span class="num">$100K</span>。</dd>
+        </dl>
+        <div class="callout slate" style="margin:20px 0 0">
+          <div class="lab">值得对照的一点</div>
+          <p>Mercor 把匿名化写成了产品的一环，用词是「<b>确定性模式匹配 + 生成式 AI，不可逆地遮蔽 PII、PHI、BII</b>」。这正好可以和<a href="../redaction/" style="color:var(--slate)">专题二</a>里那套只做凭证清除的脱敏脚本对照着看——<b>两者的目标根本不是一回事</b>。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 委托生产 ============ -->
+    <section class="sec">
+      <div class="section-label">第二类</div>
+      <h2>按题目委托生产的四家</h2>
+      <p class="lead">这一类<b>不收购囤好的轨迹</b>。他们买的是任务、环境、轨迹、评分标准和专家产能——先定义题目和验收，再付钱生产。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:120px">公司</th><th>交付物</th><th>指标 / 要求</th><th style="width:120px">公开价格</th><th style="width:96px">核实</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Surge AI</b></td>
+              <td>Coding RL 环境、benchmark、测试、评分标准、成功判据、red-team</td>
+              <td>真实软件工程任务；质量优先；<b>明确说不需要 AI / ML 背景</b>，但要有真正扛过生产系统的经验</td>
+              <td><span class="num">$100–150+/h</span><br /><span style="font-size:12px;color:var(--ink-faint)">20–40+ h/周<br />年化 $200–300k+</span></td>
+              <td><span class="badge b-ok">✅</span></td>
+            </tr>
+            <tr>
+              <td><b>Turing</b></td>
+              <td>详细题目说明、标准答案、数据集、元数据、测试 notebook、跨模型评测、轨迹分析</td>
+              <td>案例：<b>500+ 条带验证器的任务</b>、100+ 任务模板；<b>&gt;50% 能打穿 SOTA</b>；难度按 Pass@10 分档（Hard &lt; 2）；验证器动态绑定环境状态，<b>可反复 rollout 而不失效</b></td>
+              <td><span style="color:var(--warn)">时薪无法核实</span><br /><span style="font-size:12px;color:var(--ink-faint)">原引用页已失效</span></td>
+              <td><span class="badge b-ok">✅ 案例</span><br /><span class="badge b-warn" style="margin-top:5px">⚠️ 时薪</span></td>
+            </tr>
+            <tr>
+              <td><b>Mercor 专项</b><br /><span style="font-size:11.5px;color:var(--ink-faint)">MCP / 连接器</span></td>
+              <td>连接器任务、<b>全程录屏</b>、用自己的真实账号、成功与失败的书面解释、详细评分标准、逐任务同意书</td>
+              <td>账号需 <b>~6 个月</b>活跃历史；自带 connector；任务 <b>24 小时内</b>交付；限美国；<b>需通过 DocuSign 签数据共享同意书</b></td>
+              <td><span class="num">$50–190/h</span><br /><span style="font-size:12px;color:var(--ink-faint)">20+ h/周<br />周结，Stripe / Wise</span></td>
+              <td><span class="badge b-ok">✅</span><br /><span class="badge b-warn" style="margin-top:5px">已关闭</span></td>
+            </tr>
+            <tr>
+              <td><b>Handshake</b></td>
+              <td>真实岗位场景的 coding 题、代码审查、结构化反馈；并向 CAD / EDA / 科学工具扩展</td>
+              <td>通常要 4+ 年经验 + 测评；从正确性、效率、清晰度和工程实践打分</td>
+              <td><span style="color:var(--warn)">原文 $65–150/h</span><br /><span style="font-size:12px;color:var(--ink-faint)">今日在挂：$80/h<br />及 $32–95/h</span></td>
+              <td><span class="badge b-warn">⚠️ 有出入</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="lab">这张表最值钱的一条信息</div>
+        <p>把上面所有金额放在一起看：它们要么是<b>付给专家的时薪</b>，要么是<b>买一整个企业数据集的总价</b>。</p>
+        <p>⚠️ <b>没有任何一家的公开信息里，有「每条轨迹多少钱」这个计价单位。</b>这比「搜不到报价」是更强的结论——不是价格藏起来了，而是<b>按条卖轨迹这个交易形态在公开市场上并不存在</b>。</p>
+      </div>
+    </section>
+
+    <!-- ============ 谁不在名单上 ============ -->
+    <section class="sec">
+      <div class="section-label">反直觉的部分</div>
+      <h2>谁不在这张地图上</h2>
+      <p class="lead">下面这些公司长期看多半是终端客户，但按前面的门槛，<b>现在都没有足够公开、可落地的采购规格</b>，因此不进主表。</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:180px">公司</th><th>为什么不进表</th><th style="width:220px">什么情况下重新纳入</th></tr></thead>
+          <tbody>
+            <tr><td><b>OpenAI</b></td><td>有一般性的 Data Partnerships，但<b>没有</b>针对 agent trace 的实时品类、统一 schema、价格或验收指标</td><td>出现 agent / workflow 的公开招标、供应商准入或明确题目</td></tr>
+            <tr><td><b>Anthropic</b></td><td>公开在建 RL、Computer Use、Evals，但<b>无公开采购题目或供应商准入要求</b></td><td>出现 environment / trace 的公开采购入口</td></tr>
+            <tr><td><b>Cursor</b></td><td>自己就握着极强的一方 coding 数据闭环；无公开外购规格</td><td>发布外部数据 / benchmark 采购需求</td></tr>
+            <tr><td><b>Kimi / Qwen / Seed</b></td><td>技术方向显示存在潜在需求，但<b>无公开外采要求、价格和投递入口</b></td><td>出现采购联系人、招标、付费项目或供应商准入</td></tr>
+            <tr><td><b>Poolside</b></td><td>公开披露过曾从外部供应商<b>战略性收购数据</b>，但没有当前的采购需求、schema 或入口</td><td>出现新的外部数据需求或收购入口</td></tr>
+            <tr><td><b>Scale / Mechanize / Invisible 等</b></td><td>主要身份是<b>向模型公司卖数据和环境的供应商</b>，更接近同行或渠道，不是买方</td><td>公开采购区域供给、垂直产能或分包</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <div class="lab">⚠️ 这条要小心引用</div>
+        <p>「没有公开采购入口」<b>不等于「不买数据」</b>。它们几乎肯定在买，只是<b>不在台面上买</b>——走的是私下的供应商关系和保密合同。</p>
+        <p>所以这张地图真正说明的是：<b>公开渠道能触达的买方，和实际花钱最多的买方，不是同一批人。</b>想接触后者，公开调研到此为止，只能靠人脉。</p>
+      </div>
+    </section>
+
+    <!-- ============ 机制 ============ -->
+    <section class="sec">
+      <div class="section-label">机制</div>
+      <h2>市场到底在为什么付钱</h2>
+      <p class="lead">把四家委托生产方的做法叠在一起，会看到同一条链——个人产生的 agent 轨迹<b>确实已经被付费了</b>，但产品形态<b>不是开放上传市场</b>。</p>
+
+      <div class="flow">
+        <div class="st"><div class="n">01</div><div class="t">买方出题</div><div class="d">先定义要什么能力、什么验收标准</div></div>
+        <div class="st"><div class="n">02</div><div class="t">受控执行</div><div class="d">贡献者在指定环境里真的做一遍</div></div>
+        <div class="st"><div class="n">03</div><div class="t">同步录制</div><div class="d">录屏 + 工具调用轨迹</div></div>
+        <div class="st"><div class="n">04</div><div class="t">结果</div><div class="d">成功还是失败，有明确判据</div></div>
+        <div class="st"><div class="n">05</div><div class="t">人工解释</div><div class="d">书面说明 + 评分标准打分</div></div>
+        <div class="st"><div class="n">06</div><div class="t">授权证据</div><div class="d">逐任务同意书，权利链可查</div></div>
+      </div>
+
+      <div class="callout">
+        <div class="lab">推论</div>
+        <p>⚠️ 这条链意味着：<b>「先攒一堆历史日志、再脱敏、再转卖」这条路，市场已经用「按题目生产」绕过去了。</b></p>
+        <p>因为从源头就是买方定义的、贡献者知情同意的、权利干净的数据，<b>根本不需要事后补一层脱敏去追回权利</b>。存量日志要挤进这条链，缺的不只是字段，还有从一开始就该在场的<b>同意书</b>。</p>
+      </div>
+    </section>
+
+    <!-- ============ 来源 ============ -->
+    <section class="sec">
+      <div class="section-label">来源</div>
+      <h2>官方页面</h2>
+      <p class="lead">全部为公司官方页面，核实于 2026-08-18。<b>页面会变、岗位会下架</b>——引用前请复核。</p>
+      <div class="srcs">
+        <a href="https://prism.labelbox.com/" target="_blank" rel="noopener"><div class="s-nm">Labelbox Prism ✅</div><div class="s-u">prism.labelbox.com</div></a>
+        <a href="https://www.mercor.com/data/" target="_blank" rel="noopener"><div class="s-nm">Mercor Data ✅</div><div class="s-u">mercor.com/data</div></a>
+        <a href="https://surgehq.ai/swe" target="_blank" rel="noopener"><div class="s-nm">Surge AI · Coding RL ✅</div><div class="s-u">surgehq.ai/swe</div></a>
+        <a href="https://www.turing.com/case-study/building-production-grade-web-environments-and-verifier-backed-tasks-for-computer-use-agent-rl-training" target="_blank" rel="noopener"><div class="s-nm">Turing · 案例研究 ✅</div><div class="s-u">turing.com/case-study/…</div></a>
+        <a href="https://work.mercor.com/jobs/list_AAABn2iTYgGwOjAmmqRJt7IX/mcp-plug-in-connectors-expert" target="_blank" rel="noopener"><div class="s-nm">Mercor MCP 专项 ⚠️ 已关闭</div><div class="s-u">work.mercor.com/jobs/…</div></a>
+        <a href="https://jobs.ashbyhq.com/handshake" target="_blank" rel="noopener"><div class="s-nm">Handshake 招聘板 ⚠️ 原岗位已下架</div><div class="s-u">jobs.ashbyhq.com/handshake</div></a>
+      </div>
+      <p class="foot-note">已失效：Turing 招聘页 <code>work.turing.com/r/A3jed8eF9q</code>（Job Not Found）· Handshake 岗位 <code>bd12564f-…</code>（已从招聘板下架）。相邻授权市场 Waffle Video 与 Troveo 未纳入本页，它们的数据品类不是 agent trace，只用于参考贡献者机制。</p>
+    </section>
+
+    <a class="backlink" href="../">← 返回研究索引</a>
+
+    <footer>
+      调研 思鹏（Sipeng）· 核实与编排 PlanD<br />
+      原始调研 2026-08-13 · 逐条核实 2026-08-18
+    </footer>
+  </main>
+</body>
+</html>

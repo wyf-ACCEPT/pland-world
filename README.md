@@ -15,6 +15,7 @@ favicon.svg, og.png             # site icon + link-preview card
 2026-06-agentic-payment/        # project: Isometry agentic-payment research (synced — see below)
 2026-07-compute-capital-markets/# project: GPU-hour index and futures field study
 2026-08-gripdata-refinery/      # project: Refinery pipeline console (synced — see below)
+2026-08-agent-data-market/      # project: who buys agent training data, and how it gets redacted
 ```
 
 Each project lives in its own `YYYY-MM-topic/` folder and is fully self-contained. The homepage carries one card per project, newest first.

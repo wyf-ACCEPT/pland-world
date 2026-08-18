@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="color-scheme" content="dark" />
+<title>Agent 训练数据市场｜研究索引</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029; --bg-card-2:#1d2430;
+    --line:#2a313c; --line-soft:#20262f;
+    --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+    --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+    --clay:#cf7a52; --slate:#6f9bd1; --good:#5fb98c;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --serif:"Fraunces","Noto Serif SC","Songti SC",Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 80% -10%, rgba(224,163,70,.07), transparent 60%),
+      radial-gradient(900px 520px at 8% 4%, rgba(111,155,209,.05), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .page{max-width:1000px;margin:0 auto;padding:38px 24px 56px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:600;font-size:15px;color:var(--ink-dim)}
+  .brand-mark{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;background:var(--bg-raised);color:var(--accent);font-weight:700;font-size:17px;text-decoration:none;transition:border-color .16s ease,color .16s ease}
+  .brand-mark:hover{border-color:var(--accent);color:var(--accent)}
+  .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;border-radius:999px;border:1px solid var(--line);padding:7px 13px;background:var(--bg-raised);color:var(--ink-dim)}
+  .tag.hot{border-color:rgba(224,163,70,.4);color:var(--accent);background:var(--accent-soft)}
+
+  .hero{margin-top:34px;max-width:800px}
+  .kicker{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(38px,6vw,58px);line-height:1.05;letter-spacing:-.02em;margin:0 0 18px}
+  .subtitle{font-size:17px;line-height:1.66;color:var(--ink-dim);margin:0}
+  .subtitle b{color:var(--ink)}
+
+  .callout{margin-top:28px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;background:var(--bg-card);padding:22px 24px;max-width:800px}
+  .callout .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+  .callout p{font-size:15.5px;line-height:1.72;color:var(--ink-dim);margin:0}
+  .callout p b{color:var(--ink)}
+  .callout p + p{margin-top:12px}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:44px 0 14px}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{display:flex;flex-direction:column;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:18px;background:var(--bg-card);padding:28px 26px;transition:border-color .16s ease,transform .16s ease,background .16s ease;position:relative;overflow:hidden}
+  .card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--acc,var(--accent))}
+  .card.c1{--acc:var(--accent)} .card.c2{--acc:var(--slate)}
+  .card:hover{border-color:var(--acc);transform:translateY(-3px);background:var(--bg-card-2)}
+  .card-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .card .ico{font-size:24px;width:50px;height:50px;display:grid;place-items:center;border:1px solid var(--line);border-radius:13px;background:var(--bg-raised);flex:none}
+  .card .lab{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+  .card .by{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:4px;letter-spacing:.02em}
+  .card .arrow{margin-left:auto;font-size:20px;line-height:1;color:var(--ink-faint);transition:color .16s ease,transform .16s ease}
+  .card:hover .arrow{color:var(--acc);transform:translateX(3px)}
+  .card h2{font-family:var(--serif);font-weight:500;font-size:24px;letter-spacing:-.01em;margin:0 0 11px;color:var(--ink)}
+  .card p{margin:0;color:var(--ink-dim);font-size:14px;line-height:1.66;flex:1}
+  .card p b{color:var(--ink)}
+  .card-foot{display:flex;align-items:center;gap:12px;margin-top:20px}
+  .card .meta{font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.02em}
+  .card .go{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--acc);background:var(--accent-soft);border:1px solid rgba(224,163,70,.42);border-radius:999px;padding:8px 14px;transition:background .16s ease,border-color .16s ease}
+  .card.c2 .go{background:rgba(111,155,209,.12);border-color:rgba(111,155,209,.42)}
+  .card:hover .go{border-color:var(--acc)}
+
+  .notes{margin-top:14px;border:1px solid var(--line-soft);border-radius:14px;background:rgba(22,27,34,.5);padding:22px 24px}
+  .notes h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;margin:0 0 14px}
+  .notes ul{margin:0;padding-left:20px}
+  .notes li{color:var(--ink-dim);font-size:14px;line-height:1.72;margin-bottom:9px}
+  .notes li:last-child{margin-bottom:0}
+  .notes li b{color:var(--ink)}
+  .notes code{font-family:var(--mono);font-size:12.5px;background:var(--bg-raised);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--accent)}
+
+  footer{margin-top:46px;border-top:1px solid var(--line-soft);padding-top:20px;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);text-align:center;letter-spacing:.04em;line-height:1.9}
+
+  @media(max-width:760px){
+    h1{font-size:36px}
+    .cards{grid-template-columns:1fr}
+    .topbar{display:block}.tag{display:inline-block;margin-top:12px}
+    .page{padding:26px 16px 40px}
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand"><a class="brand-mark" href="/" title="返回 pland.world" aria-label="返回 pland.world">⌂</a><div>Agent 训练数据市场</div></div>
+      <span class="tag hot">Market research · 2026-08</span>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">研究索引 · 两个专题</div>
+      <h1>Agent 训练数据市场</h1>
+      <p class="subtitle">当「真实的 agent 交互记录」被当成商品，两个问题立刻摆在面前：<b>到底谁在买、按什么标准买</b>，以及<b>这些数据要处理到什么程度才敢卖</b>。这两个专题各回答一个。</p>
+    </section>
+
+    <div class="callout">
+      <div class="lab">一句话结论</div>
+      <p>公开市场上真正在买 agent 数据的，<b>不是模型厂商本身</b>——OpenAI、Anthropic、Cursor 都没有公开的采购入口。挂着实时需求的是中间商。而且他们付费买的单位<b>不是「历史日志」</b>，是「买方先出题、贡献者在受控环境里做完、带着验收和授权证据交付」。</p>
+      <p>换句话说：<b>「攒一堆日志再脱敏转卖」这条路，市场已经用「按需生产」绕过去了。</b></p>
+    </div>
+
+    <div class="section-label">两个专题</div>
+    <div class="cards">
+      <a class="card c1" href="buyer-map/">
+        <div class="card-top">
+          <span class="ico">🗺️</span>
+          <div>
+            <div class="lab">专题一 · 需求侧</div>
+            <div class="by">思鹏 调研 · PlanD 逐条核实</div>
+          </div>
+          <span class="arrow">→</span>
+        </div>
+        <h2>数据买方品类地图</h2>
+        <p>只认公开且能落地的采购证据——<b>「技术方向」「在招人」「理论上需要数据」一律不算</b>。按这个门槛筛下来，公开挂着需求的只剩两家，另外四家买的是产能不是数据。每条价格都回到官方页面重新核对过。</p>
+        <div class="card-foot">
+          <span class="meta">6 家 · 8 个数据品类 · 逐条核实</span>
+          <span class="go">进入 →</span>
+        </div>
+      </a>
+      <a class="card c2" href="redaction/">
+        <div class="card-top">
+          <span class="ico">🔒</span>
+          <div>
+            <div class="lab">专题二 · 供给侧</div>
+            <div class="by">思鹏 实做 · PlanD 补充边界分析</div>
+          </div>
+          <span class="arrow">→</span>
+        </div>
+        <h2>数据脱敏相关调研</h2>
+        <p>一套跑在 <b>5.4 GB 真实 coding-agent 会话</b>上的凭证清除方案，不是纸面方案。核心是一条反直觉的经验：<b>对「密钥长什么样」建模是脆弱的，对「密钥出现在哪个语境」建模才稳</b>。附一节讲清楚它<b>没有</b>解决什么。</p>
+        <div class="card-foot">
+          <span class="meta">18,380 条会话 · 两层机制 · 零残留</span>
+          <span class="go">进入 →</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="section-label">读之前需要知道的</div>
+    <div class="notes">
+      <h3>口径</h3>
+      <ul>
+        <li><b>可信度分三档。</b><code>✅</code> = 官方页面或官方公告可查；<code>🟡</code> = 单方自述、聚合站或传闻，未独立审计；<code>⚠️</code> = 我们的推论，不是事实。<b>推论被当事实转述会出事，所以逐条标注。</b></li>
+        <li><b>价格全部回源核对过。</b>两个专题的所有金额都在 2026-08-18 打回官方页面重新验证；<b>核不动的会明说核不动</b>，不会照抄。</li>
+        <li><b>这里只放调研发现。</b>内部的产品化清单、报价策略和合同条款不在公开页面上。</li>
+        <li><b>会过期。</b>招聘页会下架、报价会变。买方地图里已经有两条链接在五天内失效了——每条结论都带着核实日期。</li>
+      </ul>
+    </div>
+
+    <footer>
+      Agent 训练数据市场 · 调研 思鹏（Sipeng）· 核实与编排 PlanD<br />
+      内容核实于 2026-08-18 · 引用前请复核时效
+    </footer>
+  </main>
+</body>
+</html>
