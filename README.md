@@ -16,9 +16,12 @@ favicon.svg, og.png             # site icon + link-preview card
 2026-07-compute-capital-markets/# project: GPU-hour index and futures field study
 2026-08-gripdata-refinery/      # project: Refinery pipeline console (synced — see below)
 2026-08-agent-data-market/      # project: who buys agent training data, and how it gets redacted
+2026-10-token-cost-atlas/       # independent archive snapshot of the token-cost atlas
 ```
 
 Each project lives in its own `YYYY-MM-topic/` folder and is fully self-contained. The homepage carries one card per project, newest first.
+
+`2026-10-token-cost-atlas/` is a standalone snapshot of the public GPT Site's 2026-10-21 source, restyled for pland.world. It has no sync workflow. Update this archive only when PlanD explicitly requests it.
 
 Pages are plain HTML, but nothing stops a project from shipping a compiled app: `2026-08-gripdata-refinery/` is a React bundle. Static hosting only cares that the files are served as-is — how much the page does once it reaches the browser is not this repo's problem. Such a project needs `base: './'` (relative asset paths, since it lives in a subfolder) and hash routing (no server rewrites available).
 
