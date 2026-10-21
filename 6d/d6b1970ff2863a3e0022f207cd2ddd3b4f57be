@@ -1,0 +1,44 @@
+README.md
+  s_ecaa97efee2c58::t_424b71f2cdbd4c 19,24
+  s_8a3f3fc6cdc69d::t_cec92a1df6418b 25
+2026-10-token-cost-atlas/DESIGN.md
+  s_ecaa97efee2c58::t_48d9f47fd5e9ae 1-17
+2026-10-token-cost-atlas/index.html
+  s_ecaa97efee2c58::t_5e237e6ee9bc98 17
+  s_ecaa97efee2c58::t_e25ccb6eb0e185 8-13
+  s_ecaa97efee2c58::t_424b71f2cdbd4c 1-7,14-16,18-204
+2026-10-token-cost-atlas/README.md
+  s_ecaa97efee2c58::t_48d9f47fd5e9ae 1-5
+2026-10-token-cost-atlas/app.js
+  s_ecaa97efee2c58::t_5e237e6ee9bc98 1-215
+index.html
+  s_ecaa97efee2c58::t_424b71f2cdbd4c 134-141
+2026-10-token-cost-atlas/archive-theme.css
+  s_ecaa97efee2c58::t_e2bc953408dea9 1-131
+2026-10-token-cost-atlas/style.css
+  s_ecaa97efee2c58::t_03a97914f4f3aa 1-315
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6dd6b1970ff2863a3e0022f207cd2ddd3b4f57be",
+  "prompts": {},
+  "sessions": {
+    "s_8a3f3fc6cdc69d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0f59c-849a-78d1-ac84-9cf7844156b0",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    },
+    "s_ecaa97efee2c58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ed42-ade1-7e43-95ea-98b10fe5d51b",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
