@@ -1,0 +1,19 @@
+index.html
+  s_ecaa97efee2c58::t_80933d4421e4d8 138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7b5832fc5e31eb6a49afbcfd6a05639bb26b686d",
+  "prompts": {},
+  "sessions": {
+    "s_ecaa97efee2c58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ed42-ade1-7e43-95ea-98b10fe5d51b",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
