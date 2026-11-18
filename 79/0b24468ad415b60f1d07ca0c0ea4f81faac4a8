@@ -1,0 +1,19 @@
+crafts/index.html
+  s_b7be95dc006347::t_fbc2412502d23e 60-64,122,141,160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "790b24468ad415b60f1d07ca0c0ea4f81faac4a8",
+  "prompts": {},
+  "sessions": {
+    "s_b7be95dc006347": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49aab1d4-0dbb-4505-8651-fd8f23f15632",
+        "model": "unknown"
+      },
+      "human_author": "wyf-ACCEPT <importwyf@gmail.com>"
+    }
+  }
+}
