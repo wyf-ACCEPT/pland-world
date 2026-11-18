@@ -9,7 +9,9 @@ Plain static HTML/CSS — no build step, no framework. **Cloudflare** serves thi
 ## Layout
 
 ```
-index.html                      # homepage — links out to each project
+index.html                      # homepage = Research section — links out to each project
+crafts/                         # Crafts section: apps PlanD built, each with a short film (crafts/media/)
+assets/site.css, assets/lang.js # shared top nav, tokens and the EN / 中 language switch
 favicon.svg, og.png             # site icon + link-preview card
 2026-06-us-ipo-aftermarket/     # project: US IPO aftermarket study
 2026-06-agentic-payment/        # project: Isometry agentic-payment research (synced — see below)
@@ -24,6 +26,12 @@ Each project lives in its own `YYYY-MM-topic/` folder and is fully self-containe
 `2026-10-token-cost-atlas/` is a standalone snapshot of the public GPT Site's 2026-10-21 source, restyled for pland.world. It has no sync workflow. Update this archive only when PlanD explicitly requests it.
 
 Pages are plain HTML, but nothing stops a project from shipping a compiled app: `2026-08-gripdata-refinery/` is a React bundle. Static hosting only cares that the files are served as-is — how much the page does once it reaches the browser is not this repo's problem. Such a project needs `base: './'` (relative asset paths, since it lives in a subfolder) and hash routing (no server rewrites available).
+
+## Sections and language
+
+The top nav has two sections: **Research** (`/`, the project cards) and **Crafts** (`/crafts/`). Both pages share `assets/site.css` and `assets/lang.js`. Bilingual strings ship as a pair of spans, `<span class="i-en">…</span><span class="i-zh">…</span>`, and `data-lang` on `<html>` hides one of them. An inline snippet in each page's `<head>` picks the language before first paint (`?lang=en|zh`, then the viewer's saved choice, then the browser language). Project pages under `YYYY-MM-topic/` don't use the switch.
+
+Crafts films are plain MP4 files in `crafts/media/` (one per language, plus a JPG poster), served by Cloudflare Pages like everything else. Pages caps a single file at 25 MiB, so encode each film for the web first (H.264, `-crf 25 -preset slow -movflags +faststart`, AAC 128k; the current ones are 4–6 MB). If films outgrow that, move them to R2 and keep only the links here.
 
 ## Synced projects (do not hand-edit)
 
