@@ -57,6 +57,11 @@
   .desc{margin-top:12px; max-width:64ch; color:var(--ink-dim); font-size:15px; line-height:1.65; text-wrap:balance}
   .tagline, .craft h2, .lede{text-wrap:balance}
   /* Chinese: break only at punctuation so phrases like 人名 or 要回 never split across lines. */
+  .repo{display:inline-flex; align-items:center; gap:9px; margin-top:14px; text-decoration:none;
+    font-size:13.5px; color:var(--ink-dim); transition:color .16s ease}
+  .repo svg{width:15px; height:15px; fill:currentColor}
+  .repo .path{font-family:var(--mono); font-size:12px; color:var(--ink-faint); transition:color .16s ease}
+  .repo:hover, .repo:hover .path{color:var(--accent)}
   :root[data-lang="zh"] .desc{line-height:1.8; word-break:keep-all; overflow-wrap:anywhere}
 
 
@@ -114,6 +119,7 @@
       </div>
       <p class="tagline"><span class="i-en">Speak naturally. Keep your words.</span><span class="i-zh">随口一说，说话算数。</span></p>
       <p class="desc"><span class="i-en">Dictation for the Mac and iPhone. Press Fn, talk, press Fn again: what you said is transcribed, tidied up and typed right where your cursor was, in any app, Chinese and English mixed. It never presses Return for you, and names and terms you teach it follow you to the phone.</span><span class="i-zh">Mac 和 iPhone 上的语音输入。按一下 Fn 开口说，再按一下，说的话就被转写、理顺，落在光标所在的地方。哪个 app 都行，中英混说也行。回车始终留给你按；教过它的人名和术语，手机上也认得。</span></p>
+      <a class="repo" href="https://github.com/wyf-ACCEPT/utter-leaf" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="i-en">Source on GitHub</span><span class="i-zh">GitHub 源码</span><span class="path">wyf-ACCEPT/utter-leaf</span></a>
     </article>
 
     <article class="craft" id="ccgram">
@@ -132,6 +138,7 @@
       </div>
       <p class="tagline"><span class="i-en">Your terminal, in your pocket.</span><span class="i-zh">终端，揣进口袋。</span></p>
       <p class="desc"><span class="i-en">Every Claude Code and Codex session on the Mac becomes a Telegram topic. Away from the desk, read what each agent is doing, approve a command with one tap, answer its questions, send the next instruction and get files back. It also lends agents to friends: each guest gets their own group, fenced into their own folder.</span><span class="i-zh">Mac 上每个 Claude Code 和 Codex 会话，都是 Telegram 里的一个话题。人不在桌前，也能看每个 Agent 在干什么，一点就批准命令，回答它的提问，发下一条指令，把文件要回手机。还能把 Agent 借给朋友：每位访客一个群，只碰得到自己的文件夹。</span></p>
+      <a class="repo" href="https://github.com/wyf-ACCEPT/ccgram" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="i-en">Source on GitHub</span><span class="i-zh">GitHub 源码</span><span class="path">wyf-ACCEPT/ccgram</span></a>
     </article>
 
     <article class="craft" id="hush">
@@ -150,6 +157,7 @@
       </div>
       <p class="tagline"><span class="i-en">Just the video.</span><span class="i-zh">只放片，不打扰。</span></p>
       <p class="desc"><span class="i-en">An ad-free video player for the Mac: mpv underneath, a small native shell on top. Several windows play at once, speed goes from 0.25× to 4× in steps as fine as 0.05, the seek bar previews frames as you hover, and it picks up where you left off.</span><span class="i-zh">Mac 上没有广告的视频播放器：底层是 mpv，外面一层轻巧的原生界面。几个窗口可以同时播，倍速从 0.25× 到 4×、最细调到 0.05，鼠标停在进度条上就能预览画面，下次打开从上回停下的地方接着放。</span></p>
+      <a class="repo" href="https://github.com/wyf-ACCEPT/Hush" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span class="i-en">Source on GitHub</span><span class="i-zh">GitHub 源码</span><span class="path">wyf-ACCEPT/Hush</span></a>
     </article>
   </main>
   <footer>© 2026 pland.world</footer>
