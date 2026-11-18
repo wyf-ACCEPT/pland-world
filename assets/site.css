@@ -1,0 +1,110 @@
+/* Shared pland.world chrome: tokens, ambient background, hero type, top nav, language switch. */
+:root{
+  --bg:#0e1116; --bg-raised:#161b22; --bg-card:#1a2029;
+  --line:#2a313c; --line-soft:#20262f;
+  --ink:#e8ecf1; --ink-dim:#9aa6b4; --ink-faint:#6b7787;
+  --accent:#e0a346; --accent-soft:rgba(224,163,70,.14);
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --sans:"IBM Plex Sans",system-ui,sans-serif;
+  --serif:"Fraunces",Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(1100px 600px at 78% -8%, rgba(224,163,70,.06), transparent 60%),
+    var(--bg);
+  color:var(--ink); font-family:var(--sans);
+  -webkit-font-smoothing:antialiased; min-height:100vh;
+  display:flex; flex-direction:column;
+}
+
+/* Animated ambient gold orbs — drift slowly behind all content.
+   Palette is centered tightly on the accent gold (#e0a346) with small
+   warm/deep shifts so the glow reads as one coherent theme color. */
+.aurora{
+  position:fixed; inset:0; z-index:-1; overflow:hidden;
+  pointer-events:none; filter:blur(45px) saturate(118%);
+}
+.aurora .orb{position:absolute; border-radius:50%; mix-blend-mode:screen; will-change:transform}
+.aurora .o1{width:44vw; height:44vw; left:-6vw; top:-8vw; opacity:.5;
+  background:radial-gradient(circle at 50% 50%, rgba(224,163,70,.52), rgba(224,163,70,0) 70%);
+  animation:drift1 11s ease-in-out infinite}
+.aurora .o2{width:38vw; height:38vw; right:-8vw; top:2vw; opacity:.46;
+  background:radial-gradient(circle at 50% 50%, rgba(214,150,58,.5), rgba(214,150,58,0) 70%);
+  animation:drift2 14s ease-in-out infinite}
+.aurora .o3{width:48vw; height:48vw; left:16vw; bottom:-20vw; opacity:.42;
+  background:radial-gradient(circle at 50% 50%, rgba(232,178,92,.46), rgba(232,178,92,0) 70%);
+  animation:drift3 18s ease-in-out infinite}
+.aurora .o4{width:28vw; height:28vw; right:12vw; bottom:0; opacity:.46;
+  background:radial-gradient(circle at 50% 50%, rgba(201,138,53,.48), rgba(201,138,53,0) 70%);
+  animation:drift4 12s ease-in-out infinite}
+.aurora .o5{width:34vw; height:34vw; left:34vw; top:-16vw; opacity:.38;
+  background:radial-gradient(circle at 50% 50%, rgba(224,163,70,.42), rgba(224,163,70,0) 70%);
+  animation:drift5 15s ease-in-out infinite}
+.aurora .o6{width:24vw; height:24vw; left:4vw; top:42vh; opacity:.4;
+  background:radial-gradient(circle at 50% 50%, rgba(218,160,72,.46), rgba(218,160,72,0) 70%);
+  animation:drift6 10s ease-in-out infinite}
+.aurora .o7{width:30vw; height:30vw; right:22vw; top:30vh; opacity:.36;
+  background:radial-gradient(circle at 50% 50%, rgba(208,146,56,.42), rgba(208,146,56,0) 70%);
+  animation:drift7 19s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(7vw,5vw) scale(1.12)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-6vw,8vw) scale(1.08)}}
+@keyframes drift3{0%,100%{transform:translate(0,0) scale(1.04)}50%{transform:translate(5vw,-7vw) scale(.92)}}
+@keyframes drift4{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-8vw,-4vw) scale(1.16)}}
+@keyframes drift5{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-5vw,7vw) scale(1.1)}}
+@keyframes drift6{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,-6vw) scale(1.14)}}
+@keyframes drift7{0%,100%{transform:translate(0,0) scale(1.02)}50%{transform:translate(-7vw,5vw) scale(.9)}}
+@media (prefers-reduced-motion: reduce){
+  .aurora .orb{animation:none}
+}
+.wrap{width:100%; max-width:760px; margin:0 auto; padding:clamp(40px,9vh,120px) 28px 48px; flex:1 0 auto}
+.kicker{font-family:var(--mono); font-size:12px; letter-spacing:.22em; color:var(--accent); text-transform:uppercase}
+.rule{height:1px; background:linear-gradient(90deg,var(--line),transparent); margin:18px 0 26px}
+h1{font-family:var(--serif); font-weight:500; font-size:clamp(40px,7vw,68px); line-height:1.02; letter-spacing:-.02em}
+h1 .dot{color:var(--accent)}
+.status{margin-top:18px; display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--mono); font-size:12.5px; color:var(--ink-dim);
+  background:var(--bg-raised); border:1px solid var(--line); border-radius:999px; padding:7px 14px}
+.status .blip{width:7px; height:7px; border-radius:50%; background:var(--accent);
+  box-shadow:0 0 0 0 rgba(224,163,70,.5); animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(224,163,70,.45)}70%{box-shadow:0 0 0 7px rgba(224,163,70,0)}100%{box-shadow:0 0 0 0 rgba(224,163,70,0)}}
+.lede{margin-top:24px; max-width:54ch; color:var(--ink-dim); font-size:16px; line-height:1.6}
+.lede .by{color:var(--accent); font-weight:600}
+.section-label{margin:48px 0 14px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-faint)}
+footer{flex-shrink:0; border-top:1px solid var(--line-soft);
+  padding:20px 28px; font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); text-align:center}
+
+/* Language switch: every bilingual string ships both spans; the root data-lang picks one. */
+:root[data-lang="en"] .i-zh, :root[data-lang="zh"] .i-en{display:none !important}
+:root[data-lang="zh"] body{font-family:var(--sans), "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif}
+
+/* Top nav */
+.topnav{position:sticky; top:0; z-index:10;
+  background:rgba(14,17,22,.72); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid var(--line-soft)}
+.topnav-in{max-width:var(--page-w,760px); margin:0 auto; padding:0 28px; height:58px;
+  display:flex; align-items:center; gap:28px}
+.brand{font-family:var(--serif); font-weight:500; font-size:19px; letter-spacing:-.01em; color:var(--ink); text-decoration:none}
+.brand .dot{color:var(--accent)}
+.sections{display:flex; gap:22px; margin-right:auto}
+.sections a{position:relative; color:var(--ink-dim); text-decoration:none; font-size:14.5px; padding:6px 0; transition:color .16s ease}
+.sections a:hover{color:var(--ink)}
+.sections a[aria-current="page"]{color:var(--ink)}
+/* The current section gets the site's gold dot, echoing the one in "pland.world". */
+.sections a[aria-current="page"]::after{content:""; position:absolute; left:50%; bottom:-4px;
+  width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--accent)}
+.langs{display:inline-flex; padding:3px; gap:2px; background:var(--bg-raised); border:1px solid var(--line); border-radius:999px}
+.langs button{font:500 12px/1 var(--mono); color:var(--ink-faint); background:none; border:0; border-radius:999px;
+  padding:6px 10px; cursor:pointer; transition:color .16s ease, background .16s ease}
+.langs button:hover{color:var(--ink)}
+.langs button[aria-pressed="true"]{color:var(--accent); background:var(--accent-soft)}
+.langs button[data-set-lang="zh"]{font-family:var(--sans), "PingFang SC", sans-serif; font-size:12.5px}
+a:focus-visible, button:focus-visible, video:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:6px}
+@media (max-width:480px){
+  .topnav-in{padding:0 16px; gap:16px}
+  .sections{gap:16px}
+  .brand{font-size:17px}
+}
+@media (max-width:360px){ .brand{display:none} }
